@@ -24,7 +24,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; background: var(--ink); }
+html { -webkit-text-size-adjust: 100%; background: var(--ink); scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f); -webkit-tap-highlight-color: transparent; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
@@ -58,30 +58,63 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .langs a { padding: 6px 9px; border-radius: 999px; font-size: 12px; }
 .langs a[aria-current='true'] { background: #fff; color: var(--ink); }
 
-/* hero */
-.hero { padding-block: 84px 28px; border-radius: 0 0 28px 28px; }
-.hero h1 { font-size: clamp(34px, 7.4vw, 64px); line-height: 1.04; letter-spacing: -0.03em; }
-.hero h1 em { font-style: normal; color: var(--lime); display: block; }
-.hero .sub { margin-top: 14px; color: var(--soft); font-size: clamp(15px, 2.2vw, 18px); max-width: 520px; }
-.hero-grid { display: grid; gap: 24px; }
-@media (min-width: 900px) { .hero-grid { grid-template-columns: 1fr 1fr; align-items: center; gap: 48px; } .hero { padding-block: 120px 56px; } }
-
-/* quiz */
-.quiz { background: var(--ink-2); border-radius: 22px; padding: 18px; }
-.quiz .dots { display: flex; gap: 5px; margin-bottom: 12px; }
-.quiz .dots i { height: 4px; flex: 1; border-radius: 4px; background: var(--lime); opacity: 0.2; transition: opacity 0.3s ease; }
-.quiz .dots i.on { opacity: 1; }
-.quiz .q { font: 500 17px/1.3 var(--f); margin-bottom: 12px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--muted); font: 500 15px/1 var(--f); color: #fff; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
-.chip:hover, .chip.on { background: var(--lime); border-color: var(--lime); color: var(--ink); }
-.quiz .note { margin-top: 12px; font-size: 13px; color: var(--grey); }
-.quiz .again { margin-top: 12px; font-size: 13px; color: var(--grey); text-decoration: underline; }
-.offer { background: var(--lime); color: var(--ink); border-radius: 22px; padding: 18px; }
-.offer .badge { display: inline-block; background: var(--ink); color: var(--lime); border-radius: 999px; padding: 5px 11px; font: 500 12px/1.2 var(--f); }
-.offer h2 { font-size: 24px; line-height: 1.12; margin: 12px 0 8px; }
-.offer p { font-size: 15px; margin-bottom: 14px; }
+/* quiz: fills the first screen; phone = one column, laptop = slogan left, question right */
+.quizfull { min-height: 100svh; display: flex; padding-block: 84px 28px; border-radius: 0 0 28px 28px; }
+.quizfull > .wrap { flex: 1; width: 100%; }
+/* phone: the slogan on top, the question and its cards take all the height that is left */
+.qf { display: grid; gap: 24px; grid-template-rows: auto 1fr; min-height: calc(100svh - 112px); }
+.qf-side h1 { font-size: clamp(30px, 7vw, 64px); line-height: 1.04; letter-spacing: -0.03em; }
+.qf-side h1 em { font-style: normal; color: var(--lime); display: block; }
+.qf-side .sub { margin-top: 12px; color: var(--soft); font-size: clamp(15px, 2vw, 18px); max-width: 460px; }
+.qf-main { min-width: 0; display: flex; flex-direction: column; }
+.qf-step { flex: 1; display: flex; flex-direction: column; }
+.qf-offer .qf-actions { margin-top: auto; }
+.qf-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey); white-space: nowrap; }
+.qf-progress b { color: var(--lime); font-weight: 500; }
+.dots { display: flex; gap: 5px; flex: 1; }
+.dots i { height: 4px; flex: 1; border-radius: 4px; background: var(--lime); opacity: 0.2; transition: opacity 0.3s ease; }
+.dots i.on { opacity: 1; }
+.qf-q { font-size: clamp(26px, 4.6vw, 44px); line-height: 1.08; margin-bottom: 18px; }
+.cards { flex: 1; display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; }
+.card { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 18px; min-height: 132px; min-width: 0; padding: 16px;
+        border-radius: 20px; border: 1px solid var(--line-dark); background: var(--ink-2); color: #fff; font: 500 17px/1.2 var(--f); text-align: left;
+        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+.card .icon { color: var(--lime); flex: none; width: 56px; height: 56px; transition: color 0.2s ease; }
+.card:hover, .card:focus-visible { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.card:hover .icon, .card:focus-visible .icon { color: var(--ink); }
+.card:active { transform: scale(0.98); }
+.cards.n3 { grid-template-columns: 1fr; }
+.cards.n3 .card { flex-direction: row; align-items: center; justify-content: flex-start; min-height: 84px; }
+.qf-note { margin-top: 16px; font-size: 13px; color: var(--grey); }
+.qf-note a { color: var(--soft); white-space: nowrap; }
+.qf-offer .badge { display: inline-block; background: var(--lime); color: var(--ink); border-radius: 999px; padding: 5px 11px; font: 500 12px/1.2 var(--f); margin-bottom: 12px; }
+.qf-text { color: var(--soft); max-width: 520px; margin-bottom: 18px; }
+.instead { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; font: 500 15px/1.2 var(--f); color: var(--grey); }
+.instead span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; }
+.instead .was { border: 1px solid var(--line-dark); text-decoration: line-through; }
+.instead .now { background: var(--lime); color: var(--ink); }
+.tiles { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
+.tiles li { min-width: 0; background: var(--ink-2); border-radius: 16px; padding: 14px 12px; display: grid; gap: 10px; align-content: start; font-size: 13px; line-height: 1.3; color: var(--soft); }
+.tiles .icon { color: var(--lime); }
+.qf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.qf-actions .price { color: var(--soft); font-size: 15px; }
+.again { display: block; margin-top: 16px; font-size: 13px; color: var(--grey); text-decoration: underline; }
 [hidden] { display: none !important; }
+@media (min-width: 600px) {
+  .cards.n3 { grid-template-columns: repeat(3, 1fr); }
+  .cards.n3 .card { flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 132px; }
+}
+@media (min-width: 900px) {
+  .quizfull { padding-block: 110px 56px; }
+  .qf { grid-template-columns: 5fr 6fr; grid-template-rows: none; min-height: 0; height: 100%; align-items: center; align-content: center; gap: 64px; }
+  .qf-step, .cards { flex: none; }
+  .cards { grid-auto-rows: auto; }
+  .qf-offer .qf-actions { margin-top: 0; }
+  .card .icon { width: 64px; height: 64px; }
+  .card { min-height: 164px; padding: 20px; font-size: 19px; }
+  .cards.n3 .card { min-height: 164px; }
+  .tiles li { font-size: 14px; padding: 16px 14px; }
+}
 
 /* blocks */
 .fuel { background: var(--ink-2); color: #fff; border-radius: 22px; padding: 22px 18px; }
@@ -168,10 +201,23 @@ details p { margin-top: 8px; color: var(--muted); }
 .g-cta { margin-top: 14px; }
 .g-cta .fine { text-align: center; font-size: 12px; color: var(--grey); margin-top: 10px; }
 .garage.inset { border-radius: 24px; }
+.garage-screen.first { padding-top: 64px; }
 .garage.page .stage { height: clamp(360px, 56vh, 520px); }
-.garage.page .eyebrow { position: absolute; top: 76px; left: 0; right: 0; text-align: center; z-index: 2; }
+.garage.page .eyebrow { position: absolute; top: 24px; left: 0; right: 0; text-align: center; z-index: 2; }
+.col-b { margin-top: 40px; }
+/* laptop: the moped on the left, its name, bars and choice on the right */
+@media (min-width: 900px) {
+  .garage.page { display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; max-width: var(--page); margin-inline: auto; min-height: min(100svh, 820px); }
+  .garage.page .stage { height: min(74vh, 640px); }
+  .garage.page .g-body { width: 100%; max-width: 440px; padding-bottom: 0; }
+  .garage.page .eyebrow { top: 40px; text-align: left; padding-left: var(--gutter); }
+  .garage.page .name b { font-size: 48px; }
+  .garage.page .names { height: 118px; }
+  .col-b { margin-top: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .ring { animation: none; }
-  .car, .name, .stat u::after, .btn { transition: none; }
+  .car, .name, .stat u::after, .btn, .card { transition: none; }
 }
