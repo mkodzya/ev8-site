@@ -89,7 +89,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cards.n3 .card { flex-direction: row; align-items: center; justify-content: flex-start; min-height: 84px; }
 .qf-note { margin-top: 16px; font-size: 13px; color: var(--grey); }
 .qf-note a { color: var(--soft); white-space: nowrap; }
-.qf-offer .badge { display: inline-block; align-self: flex-start; background: var(--lime); color: var(--ink); border-radius: 999px; padding: 5px 11px; font: 500 12px/1.2 var(--f); margin-bottom: 12px; }
 .qf-text { color: var(--soft); max-width: 520px; margin-bottom: 18px; }
 .instead { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; font: 500 15px/1.2 var(--f); color: var(--grey); }
 .instead span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; }
