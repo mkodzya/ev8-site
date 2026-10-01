@@ -247,7 +247,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .sub input[type='radio'], .sub input[type='checkbox'] { position: absolute; opacity: 0; pointer-events: none; }
 .mopeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .moped { position: relative; min-width: 0; display: grid; gap: 2px; padding: 8px 8px 10px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
-.moped-img { aspect-ratio: 1700 / 1536; border-radius: 10px; background: var(--ink) center / cover no-repeat; margin-bottom: 6px; }
+.moped-img { aspect-ratio: 1 / 1; border-radius: 10px; background: var(--ink) center / cover no-repeat; margin-bottom: 6px; }
 .moped b { font: 500 14px/1.2 var(--f); }
 .moped small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .moped:has(input:checked) { border-color: var(--ink); background: var(--lime); }
@@ -339,7 +339,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .sub input[type='radio'], .sub input[type='checkbox'] { position: absolute; opacity: 0; pointer-events: none; }
 .mopeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .moped { position: relative; min-width: 0; display: grid; gap: 2px; padding: 8px 8px 10px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
-.moped-img { aspect-ratio: 1700 / 1536; border-radius: 10px; background: var(--ink) center / cover no-repeat; margin-bottom: 6px; }
+.moped-img { aspect-ratio: 1 / 1; border-radius: 10px; background: var(--ink) center / cover no-repeat; margin-bottom: 6px; }
 .moped b { font: 500 14px/1.2 var(--f); }
 .moped small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .moped:has(input:checked) { border-color: var(--ink); background: var(--lime); }
@@ -515,3 +515,8 @@ details p { margin-top: 8px; color: var(--muted); }
   .sub-bar > div { display: grid; grid-template-columns: auto 1fr; column-gap: 6px; align-items: baseline; }
   .sub-bar small { grid-column: 1 / -1; }
 }
+
+/* A site opened from the phone's home screen runs under the status bar:
+   keep the header and the first screen below it. */
+body { position: relative; padding-top: env(safe-area-inset-top, 0px); }
+.top { top: env(safe-area-inset-top, 0px); }

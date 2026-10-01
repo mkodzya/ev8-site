@@ -12,14 +12,16 @@ export interface Model {
   weeklyGel: number;
   level: 1 | 2 | 3;
   image: string;
+  /** Square cut for small cards: every moped the same size, wheels on one line. */
+  thumb: string;
 }
 
 export const DEPOSIT_GEL = 180;
 
 export const models: Model[] = [
-  { id: 'xl1200', name: 'XL1200', weeklyGel: 150, level: 1, image: 'img/models/xl1200.webp' },
-  { id: 'eagle', name: 'Eagle', weeklyGel: 160, level: 2, image: 'img/models/eagle.webp' },
-  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 170, level: 3, image: 'img/models/s70-pro.webp' },
+  { id: 'xl1200', name: 'XL1200', weeklyGel: 150, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp' },
+  { id: 'eagle', name: 'Eagle', weeklyGel: 160, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp' },
+  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 170, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp' },
 ];
 
 export const contact = {

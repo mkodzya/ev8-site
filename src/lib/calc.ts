@@ -3,11 +3,10 @@
 // discount and without the buy-out (removed by Mika, 01.10.2026).
 // All money in tetri, integers.
 import { models } from '../data/models';
-import { DEPOSIT, terms, gear, services, calc, type TermId } from '../data/subscription';
+import { DEPOSIT, gear, services, calc } from '../data/subscription';
 
 export interface Selection {
   modelId: string;
-  termId: TermId;
   gear: string[];
   services: string[];
   hours: number;
@@ -16,7 +15,6 @@ export interface Selection {
 export const WEEKS_PER_MONTH = 52 / 12;
 
 export interface Result {
-  weeks: number;
   rent: number;
   /** Weekly instalments for the chosen gear. */
   gear: number;
@@ -43,7 +41,6 @@ export interface Result {
 
 export function compute(sel: Selection): Result {
   const model = models.find((m) => m.id === sel.modelId) ?? models[0];
-  const term = terms.find((t) => t.id === sel.termId) ?? terms[0];
   const rent = model.weeklyGel * 100;
   const gearWeek = gear.filter((g) => sel.gear.includes(g.id)).reduce((s, g) => s + (g.perWeek ?? 0), 0);
   const chosen = services.filter((s) => sel.services.includes(s.id));
@@ -67,7 +64,7 @@ export function compute(sel: Selection): Result {
   const ev8CostMonth = Math.round((rent + energyWeek) * WEEKS_PER_MONTH);
 
   return {
-    weeks: term.weeks, rent, gear: gearWeek, care: careWeek, weekly, once, deposit: DEPOSIT,
+    rent, gear: gearWeek, care: careWeek, weekly, once, deposit: DEPOSIT,
     today: weekly + DEPOSIT + once,
     incomeWeek, energyWeek, taxWeek, netWeek,
     netMonth: Math.round(netWeek * WEEKS_PER_MONTH),
