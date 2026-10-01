@@ -1,0 +1,232 @@
+---
+// The subscription builder and the earnings calculator. Every option is plain
+// HTML (radios, checkboxes, a range), rendered with the default choice already
+// counted, so the page reads without JavaScript; the script recounts on change.
+// Phone: one column and a bar with the weekly price at the bottom.
+// Laptop: options on the left, the summary and the calculator stay on the right.
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import { dict, localePaths, asset, type Locale } from '../../../i18n';
+import { models, contact } from '../../../data/models';
+import { terms, DEFAULT_TERM, buyout, gear, services, calc, DEPOSIT } from '../../../data/subscription';
+import { compute, gel } from '../../../lib/calc';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.sub;
+const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
+
+const initial = compute({ modelId: models[0].id, termId: DEFAULT_TERM, buyout: false, gear: [], services: [], hours: calc.hoursDefault });
+const gearText = t.gear as Record<string, string[]>;
+const serviceText = t.services as Record<string, string[]>;
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="subscription/">
+  <section class="dark sub-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+    </div>
+  </section>
+
+  <form class="wrap sub" data-sub data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-weekly={t.msgWeekly} data-l-today={t.msgToday} data-l-hours={t.msgHours}>
+    <div class="sub-opts">
+      <fieldset>
+        <legend>{t.moped}</legend>
+        <div class="mopeds">
+          {models.map((m, i) => (
+            <label class="moped">
+              <input type="radio" name="model" value={m.id} checked={i === 0} data-label={m.name} />
+              <span class="moped-img" style={`background-image:url(${asset(m.image)})`}></span>
+              <b>{m.name}</b>
+              <small>{m.weeklyGel} {d.garage.perWeekShort}</small>
+            </label>
+          ))}
+        </div>
+        <p class="hint"><Icon name="battery" size={18} /> {t.included}</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.term}</legend>
+        <div class="pills">
+          {terms.map((term, i) => (
+            <label class="pill">
+              <input type="radio" name="term" value={term.id} checked={term.id === DEFAULT_TERM} data-label={t.terms[i]} />
+              <span>{t.terms[i]}</span>
+            </label>
+          ))}
+        </div>
+        <p class="hint">{t.termNote}</p>
+        <label class="row" data-buyout-row>
+          <input type="checkbox" name="buyout" data-label={t.buyoutTitle} disabled={DEFAULT_TERM !== buyout.termId} />
+          <span class="row-ic"><Icon name="coin" label="₾" size={28} /></span>
+          <span class="row-tx"><b>{t.buyoutTitle}</b><small>{t.buyoutText}</small></span>
+          <span class="row-pr" data-buyout-note>{t.buyoutOnly}</span>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.gearTitle}</legend>
+        <p class="hint lead">{t.gearLead}</p>
+        {gear.map((g) => (
+          <label class={`row ${g.perWeek === null ? 'off' : ''}`}>
+            <input type="checkbox" name="gear" value={g.id} disabled={g.perWeek === null} data-label={gearText[g.id][0]} />
+            <span class="row-ic"><Icon name={g.icon} size={28} /></span>
+            <span class="row-tx"><b>{gearText[g.id][0]}</b><small>{gearText[g.id][1]}</small></span>
+            <span class="row-pr">
+              {g.perWeek === null ? t.priceTbc : fill(t.plusWeek, gel(g.perWeek))}
+              {g.perWeek !== null && <small>{g.weeks ? fill(t.yoursAfter, g.weeks) : t.termTbc}</small>}
+            </span>
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.servicesTitle}</legend>
+        {services.map((s) => (
+          <label class={`row ${s.once === null ? 'off' : ''}`}>
+            <input type="checkbox" name="service" value={s.id} disabled={s.once === null} data-label={serviceText[s.id][0]} />
+            <span class="row-ic"><Icon name={s.icon} label={s.label} size={28} /></span>
+            <span class="row-tx"><b>{serviceText[s.id][0]}</b><small>{serviceText[s.id][1]}</small></span>
+            <span class="row-pr">{s.once === null ? t.priceTbc : fill(t.once, gel(s.once))}</span>
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.calcTitle}</legend>
+        <div class="hours">
+          <label for="hours">{t.hours}</label>
+          <output for="hours"><b data-out="hours">{calc.hoursDefault}</b> {t.hoursUnit}</output>
+          <input type="range" id="hours" name="hours" min={calc.hoursMin} max={calc.hoursMax} step="5" value={calc.hoursDefault} />
+        </div>
+        <div class="pills">
+          {calc.presets.map((h, i) => <button type="button" class="pill-btn" data-hours={h}>{t.presets[i]}</button>)}
+        </div>
+      </fieldset>
+    </div>
+
+    <aside class="sub-sum" id="summary">
+      <div class="sum-card">
+        <p class="eyebrow">{t.sumTitle}</p>
+        <p class="big"><b data-out="weekly">{gel(initial.weekly)}</b> ₾ <span>{t.weekly}</span></p>
+        <dl>
+          <div><dt>{t.lineRent}</dt><dd><span data-out="rent">{gel(initial.rent)}</span> ₾</dd></div>
+          <div data-line="gear" hidden><dt>{t.lineGear}</dt><dd><span data-out="gear">0</span> ₾</dd></div>
+          <div data-line="buyout" hidden><dt>{t.lineBuyout}</dt><dd><span data-out="buyout">0</span> ₾</dd></div>
+        </dl>
+        <div class="today">
+          <div><b>{t.today}</b><small>{t.todayHint}</small></div>
+          <b class="num"><span data-out="today">{gel(initial.today)}</span> ₾</b>
+        </div>
+        <dl>
+          <div><dt>{t.deposit}</dt><dd>{gel(DEPOSIT)} ₾</dd></div>
+          <div data-line="once" hidden><dt>{t.lineOnce}</dt><dd><span data-out="once">0</span> ₾</dd></div>
+        </dl>
+      </div>
+
+      <div class="sum-card net">
+        <p class="eyebrow">{t.netTitle}</p>
+        <p class="big lime"><b data-out="netMonth">{gel(initial.netMonth)}</b> ₾</p>
+        <dl>
+          <div><dt>{t.lineIncome}</dt><dd><span data-out="incomeMonth">{gel(initial.incomeWeek * 52 / 12)}</span> ₾</dd></div>
+          <div><dt>{t.lineSub}</dt><dd>−<span data-out="subMonth">{gel(initial.weekly * 52 / 12)}</span> ₾</dd></div>
+          <div><dt>{t.lineEnergy}</dt><dd>−<span data-out="energyMonth">{gel(initial.energyWeek * 52 / 12)}</span> ₾</dd></div>
+          <div><dt>{t.lineTax}</dt><dd>−<span data-out="taxMonth">{gel(initial.taxWeek * 52 / 12)}</span> ₾</dd></div>
+        </dl>
+        <div class="versus">
+          <p>{t.petrol} <b><span data-out="petrolMonth">{gel(initial.petrolNetMonth)}</span> ₾</b></p>
+          <p class="diff" data-diff hidden={initial.diffMonth <= 0}>{t.diff} <b><span data-out="diffMonth">{gel(initial.diffMonth)}</span> ₾ {t.perMonth}</b></p>
+        </div>
+        <p class="fine">{t.disclaimer}</p>
+      </div>
+
+      <button type="submit" class="btn btn-lime btn-block">{t.cta}</button>
+      <p class="fine center">{t.ctaNote}</p>
+    </aside>
+  </form>
+
+  <div class="sub-bar">
+    <div><b><span data-out="weekly">{gel(initial.weekly)}</span> ₾</b> <span>{t.weekly}</span><small>{t.today}: <span data-out="today">{gel(initial.today)}</span> ₾</small></div>
+    <a class="btn btn-lime" href="#summary">{t.bar}</a>
+  </div>
+</Base>
+
+<script>
+  import { compute, gel, WEEKS_PER_MONTH, type Selection } from '../../../lib/calc';
+  import { buyout, type TermId } from '../../../data/subscription';
+
+  const form = document.querySelector<HTMLFormElement>('[data-sub]')!;
+  const KEY = 'ev8-sub';
+  const q = <T extends Element>(s: string) => Array.from(document.querySelectorAll<T>(s));
+  const checked = (name: string) => q<HTMLInputElement>(`input[name="${name}"]:checked`);
+  const hours = form.querySelector<HTMLInputElement>('#hours')!;
+  const buyoutBox = form.querySelector<HTMLInputElement>('input[name="buyout"]')!;
+  const buyoutNote = form.querySelector<HTMLElement>('[data-buyout-note]')!;
+
+  const read = (): Selection => ({
+    modelId: checked('model')[0]?.value ?? '',
+    termId: (checked('term')[0]?.value ?? 'm3') as TermId,
+    buyout: buyoutBox.checked && !buyoutBox.disabled,
+    gear: checked('gear').map((i) => i.value),
+    services: checked('service').map((i) => i.value),
+    hours: Number(hours.value),
+  });
+
+  const set = (name: string, value: string) => q<HTMLElement>(`[data-out="${name}"]`).forEach((el) => (el.textContent = value));
+  const line = (name: string, on: boolean) => q<HTMLElement>(`[data-line="${name}"]`).forEach((el) => (el.hidden = !on));
+
+  function render() {
+    const sel = read();
+    const onBuyoutTerm = sel.termId === buyout.termId;
+    buyoutBox.disabled = !onBuyoutTerm;
+    if (!onBuyoutTerm) buyoutBox.checked = false;
+    buyoutNote.hidden = onBuyoutTerm;
+    buyoutBox.closest('.row')!.classList.toggle('off', !onBuyoutTerm);
+
+    const r = compute(read());
+    const m = (week: number) => gel(week * WEEKS_PER_MONTH);
+    set('weekly', gel(r.weekly)); set('rent', gel(r.rent)); set('gear', gel(r.gear)); set('buyout', gel(r.buyout));
+    set('today', gel(r.today)); set('once', gel(r.once)); set('hours', String(sel.hours));
+    set('netMonth', gel(r.netMonth)); set('incomeMonth', m(r.incomeWeek)); set('subMonth', m(r.weekly));
+    set('energyMonth', m(r.energyWeek)); set('taxMonth', m(r.taxWeek));
+    set('petrolMonth', gel(r.petrolNetMonth)); set('diffMonth', gel(r.diffMonth));
+    line('gear', r.gear > 0); line('buyout', r.buyout > 0); line('once', r.once > 0);
+    const diff = document.querySelector<HTMLElement>('[data-diff]');
+    if (diff) diff.hidden = r.diffMonth <= 0;
+    try { localStorage.setItem(KEY, JSON.stringify(sel)); localStorage.setItem('ev8-model', sel.modelId); } catch {}
+  }
+
+  // Restore: the moped picked in the garage, then the last builder state.
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null') as Partial<Selection> | null;
+    const model = localStorage.getItem('ev8-model') || saved?.modelId;
+    const pick = (name: string, values: string[]) => q<HTMLInputElement>(`input[name="${name}"]`).forEach((i) => { if (!i.disabled) i.checked = values.includes(i.value); });
+    if (model && q(`input[name="model"][value="${CSS.escape(model)}"]`).length) pick('model', [model]);
+    if (saved?.termId && q(`input[name="term"][value="${CSS.escape(saved.termId)}"]`).length) pick('term', [saved.termId]);
+    if (saved?.gear) pick('gear', saved.gear);
+    if (saved?.services) pick('service', saved.services);
+    if (saved?.hours) hours.value = String(saved.hours);
+    if (saved?.buyout && saved.termId === buyout.termId) { buyoutBox.disabled = false; buyoutBox.checked = true; }
+  } catch {}
+
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  q<HTMLButtonElement>('[data-hours]').forEach((b) => b.addEventListener('click', () => { hours.value = b.dataset.hours!; render(); }));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const sel = read();
+    const r = compute(sel);
+    const d = form.dataset;
+    const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
+    const picks = [...checked('model'), ...checked('term'), ...(sel.buyout ? [buyoutBox] : []), ...checked('gear'), ...checked('service')].map(label);
+    const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
+    try {
+      const quiz = JSON.parse(sessionStorage.getItem('ev8-quiz') || 'null');
+      if (quiz?.text) lines.push(quiz.text);
+    } catch {}
+    window.location.href = `https://wa.me/${d.wa}?text=${encodeURIComponent(lines.join('\n'))}`;
+  });
+
+  render();
+</script>
