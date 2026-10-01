@@ -59,7 +59,6 @@ const offers = [
       const text = t.offers[o.key];
       return (
         <div class="qf-main qf-offer" data-offer={o.key} hidden>
-          <span class="badge">{t.quiz.badge}</span>
           <h2 class="qf-q">{text.title}</h2>
           <p class="qf-text">{text.text}</p>
           {o.instead && (
@@ -111,14 +110,12 @@ const offers = [
       offers.forEach((o) => (o.hidden = o.dataset.offer !== seg));
       try {
         if (done) sessionStorage.setItem(KEY, JSON.stringify({ answers, segment: seg, text: labels(answers) }));
-        else sessionStorage.removeItem(KEY);
       } catch {}
     };
 
-    try {
-      const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null');
-      if (saved && Array.isArray(saved.answers) && saved.answers.length === steps.length) answers = saved.answers;
-    } catch {}
+    // Every time the page opens, the quiz starts from the first question
+    // (Mika, 01.10.2026): a finished quiz is not restored. Its answers stay in
+    // sessionStorage until the next finish, for the request message.
 
     root.addEventListener('click', (e) => {
       const el = e.target as HTMLElement;

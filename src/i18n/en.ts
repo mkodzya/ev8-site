@@ -28,7 +28,6 @@ export const en: Dict = {
     q3a: ['No', 'Category AM', 'Category A or B'],
     note: 'Takes ten seconds. We do not ask for your phone number.',
     again: 'Start over',
-    badge: 'This fits you',
   },
   offers: {
     petrol: { title: 'Take fuel off your costs', text: 'You already know the city and the orders. A moped, two batteries and maintenance — one price a week.', cta: 'Pick a moped' },
