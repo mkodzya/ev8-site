@@ -70,7 +70,8 @@ export const calc = {
   // Small-business status, 1 % of turnover — to be checked with the accountant (register item 51).
   taxBp: 100,
   // A rented petrol scooter, with the assumptions of the ev8.ge savings calculator (09.2026).
+  // Kilometres in a working day: 120 (Mika, 01.10.2026; the ev8.ge calculator's default was 80).
   // Oil and the extra repairs a petrol scooter needs: about 100 GEL a month
   // (Mika, 01.10.2026: "ещё лари 100 в месяц точно") — his estimate, not a measurement.
-  petrol: { litresPer100km: 4, perLitre: 305, rentPerWeek: 17000, kmPerDay: 80, upkeepPerMonth: 10000 },
+  petrol: { litresPer100km: 4, perLitre: 305, rentPerWeek: 17000, kmPerDay: 120, upkeepPerMonth: 10000 },
 };
