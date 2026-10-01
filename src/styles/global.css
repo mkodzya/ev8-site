@@ -242,7 +242,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .sub fieldset { border: 0; margin: 0 0 28px; padding: 0; min-width: 0; }
 .sub legend { font: 500 20px/1.2 var(--f); letter-spacing: -0.02em; padding: 0; margin-bottom: 12px; }
 .sub .hint { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--muted); }
-.sub .hint.lead { margin: 0 0 6px; font-size: 14px; }
+.sub .hint.intro { display: block; margin: 0 0 10px; font-size: 14px; }
 .sub .hint .icon { color: var(--accent); flex: none; }
 .sub input[type='radio'], .sub input[type='checkbox'] { position: absolute; opacity: 0; pointer-events: none; }
 .mopeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -334,7 +334,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .sub fieldset { border: 0; margin: 0 0 28px; padding: 0; min-width: 0; }
 .sub legend { font: 500 20px/1.2 var(--f); letter-spacing: -0.02em; padding: 0; margin-bottom: 12px; }
 .sub .hint { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--muted); }
-.sub .hint.lead { margin: 0 0 6px; font-size: 14px; }
+.sub .hint.intro { display: block; margin: 0 0 10px; font-size: 14px; }
 .sub .hint .icon { color: var(--accent); flex: none; }
 .sub input[type='radio'], .sub input[type='checkbox'] { position: absolute; opacity: 0; pointer-events: none; }
 .mopeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -498,4 +498,20 @@ details p { margin-top: 8px; color: var(--muted); }
   .qf-offer .qf-actions .btn { grid-column: 1 / -1; width: 100%; }
   .qf-actions .price { font-size: 13px; color: var(--grey); }
   .qf-actions .again { justify-self: end; }
+}
+
+/* ===== subscription on a phone: one even row of terms, one size in the bar ===== */
+.sub-bar b span { font: inherit; color: inherit; }
+.pill i { font-style: normal; }
+.pill .short { display: none; }
+@media (max-width: 599px) {
+  .pills.terms { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pills.terms .pill span { width: 100%; justify-content: center; padding: 0 4px; font-size: 13px; white-space: nowrap; }
+  .pill .long { display: none; }
+  .pill .short { display: inline; }
+  .mopeds { gap: 8px; }
+  .moped { padding: 8px 8px 12px; }
+  .moped b, .moped small { padding-inline: 4px; }
+  .sub-bar > div { display: grid; grid-template-columns: auto 1fr; column-gap: 6px; align-items: baseline; }
+  .sub-bar small { grid-column: 1 / -1; }
 }

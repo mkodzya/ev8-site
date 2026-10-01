@@ -47,11 +47,11 @@ const serviceText = t.services as Record<string, string[]>;
 
       <fieldset>
         <legend>{t.term}</legend>
-        <div class="pills">
+        <div class="pills terms">
           {terms.map((term, i) => (
             <label class="pill">
               <input type="radio" name="term" value={term.id} checked={term.id === DEFAULT_TERM} data-label={t.terms[i]} />
-              <span>{t.terms[i]}</span>
+              <span><i class="long">{t.terms[i]}</i><i class="short">{t.termsShort[i]}</i></span>
             </label>
           ))}
         </div>
@@ -60,7 +60,7 @@ const serviceText = t.services as Record<string, string[]>;
 
       <fieldset>
         <legend>{t.gearTitle}</legend>
-        <p class="hint lead">{t.gearLead}</p>
+        <p class="hint intro">{t.gearLead}</p>
         {gear.map((g) => (
           <label class={`row ${g.perWeek === null ? 'off' : ''}`}>
             <input type="checkbox" name="gear" value={g.id} disabled={g.perWeek === null} data-label={gearText[g.id][0]} />
