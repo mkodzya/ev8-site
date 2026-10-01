@@ -25,7 +25,10 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; background: var(--ink); scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--f); -webkit-tap-highlight-color: transparent; }
+/* The page itself is dark, the light content sits on <main>: the phone's status
+   bar and the overscroll above the header take the colour of the body. */
+body { margin: 0; background: var(--ink); color: var(--ink); font: 400 16px/1.5 var(--f); -webkit-tap-highlight-color: transparent; }
+main { display: block; background: var(--bg); }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 h1, h2, h3, p { margin: 0; }
@@ -475,4 +478,24 @@ details p { margin-top: 8px; color: var(--muted); }
   .top nav > a { display: none; }
   .cards.n3 .card { flex-direction: row; justify-content: flex-start; text-align: left; min-height: 72px; padding: 0 20px; gap: 16px; }
   .cards.n3 .card .icon { width: 34px; height: 34px; }
+}
+
+/* ===== phone: the answer after the quiz fits one screen (Mika, 01.10.2026) =====
+   The slogan is hidden, the answer starts under the header, the action is
+   pinned to the bottom of the first screen. */
+.qf-actions .again { margin-top: 0; }
+@media (max-width: 899px) {
+  .quizfull.done .qf-side { display: none; }
+  .quizfull.done .qf-main { margin-top: 0; padding-top: 12px; flex: 1; }
+  .qf-offer .qf-q { font-size: 28px; line-height: 1.1; margin-bottom: 10px; }
+  .qf-text { margin-bottom: 20px; font-size: 15px; }
+  .instead { flex-wrap: nowrap; gap: 8px; margin-bottom: 14px; font-size: 14px; }
+  .instead span { padding: 9px 12px; gap: 6px; min-width: 0; }
+  .instead .icon { width: 22px; height: 22px; flex: none; }
+  .tiles { gap: 8px; margin-bottom: 20px; }
+  .tiles li { padding: 11px 14px; }
+  .qf-offer .qf-actions { margin-top: auto; display: grid; grid-template-columns: 1fr auto; gap: 12px 16px; align-items: center; }
+  .qf-offer .qf-actions .btn { grid-column: 1 / -1; width: 100%; }
+  .qf-actions .price { font-size: 13px; color: var(--grey); }
+  .qf-actions .again { justify-self: end; }
 }
