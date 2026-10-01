@@ -73,7 +73,7 @@ export const en: Dict = {
   included: {
     title: 'One price a week. What is in it',
     items: ['The moped', 'Two batteries and two chargers', 'Consumables and fixing malfunctions'],
-    honest: 'Swapping a battery for a charged one costs 3.49 ₾ a swap. No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
+    honest: 'Swapping a battery for a charged one costs 3.49 ₾ a swap, at the stations in Agrohub and at the showroom. No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
   },
   faq: {
     title: 'Common questions',
@@ -82,7 +82,7 @@ export const en: Dict = {
       ['How long can I rent for?', 'From one week. After that, as long as you need.'],
       ['Do I get the deposit back?', 'Yes, if the moped and the kit are in order and nothing is owed. If there is damage or a debt, we keep its cost and tell you what for.'],
       ['Can I return it early?', 'Yes. The last week is paid in full.'],
-      ['Where do I charge the battery?', 'At home from a socket. Or swap it for a charged one — 3.49 ₾ a swap.'],
+      ['Where do I charge the battery?', 'At home from a socket. Or swap it for a charged one at a station in Agrohub or at the showroom — 3.49 ₾ a swap.'],
     ],
   },
   lead: {
@@ -173,7 +173,7 @@ export const en: Dict = {
       ['What to bring', 'An ID document — required. A driving licence — if you have one.'],
       ['First payment', 'One week of subscription and a 180 GEL deposit. The deposit comes back when you return the moped in order and with nothing owed.'],
       ['Payment', 'Once a week, counted from the pick-up day. By transfer to the company account or at the showroom.'],
-      ['Batteries', 'The moped comes with two batteries and two chargers. You charge at home from a regular socket. Flat during a shift — swap it for a charged one, 3.49 ₾ a swap. Take the battery off every night and whenever you leave the moped unattended: the contract requires it.'],
+      ['Batteries', 'The moped comes with two batteries and two chargers. You charge at home from a regular socket. Flat during a shift — swap it for a charged one at a station in Agrohub or at the showroom, 3.49 ₾ a swap. Take the battery off every night and whenever you leave the moped unattended: the contract requires it.'],
       ['Maintenance', 'Consumables and fixing malfunctions are in the subscription. Breakdowns that are not your fault are covered by the insurance — +12 ₾ a week. Damage that is your fault is on you.'],
       ['Gear', 'We do not rent the helmet, holder, lock and thermal box, we sell them by instalments: you pay weekly with the subscription and the item stays yours.'],
       ['Return', 'You can return the moped any time after the first week. The last week is paid in full. Bring the moped, the key, both batteries and both chargers.'],
@@ -208,6 +208,8 @@ export const en: Dict = {
     weekdays: 'Monday — Friday',
     weekend: 'Saturday and Sunday',
     weekendNote: 'call ahead',
+    swap: 'Battery swap',
+    swapWhere: 'here and at the stations in Agrohub',
     phone: 'Phone',
     email: 'Email',
     route: 'Get directions',
