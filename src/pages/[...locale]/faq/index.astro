@@ -1,0 +1,29 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { dict, localePaths, type Locale } from '../../../i18n';
+import { contact } from '../../../data/models';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.faqPage;
+// The five questions of the home page first, then the rest.
+const items = [...d.faq.items, ...t.more];
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/">
+  <section class="dark page-head">
+    <div class="wrap"><h1>{t.title1} <em>{t.title2}</em></h1></div>
+  </section>
+
+  <section class="wrap info">
+    <div class="faq-list">
+      {items.map(([q, a], i) => <details open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}
+    </div>
+    <aside class="info-side">
+      <div class="fuel">
+        <h2 class="h2" style="margin-bottom:14px">{t.ask}</h2>
+        <a class="btn btn-lime btn-block" href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.askBtn}</a>
+      </div>
+    </aside>
+  </section>
+</Base>

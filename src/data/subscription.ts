@@ -61,11 +61,11 @@ export const calc = {
   presets: [25, 50, 60],
   // Both batteries charged at home, 2 × 0.20 GEL a night (ev8.ge calculator; Mika 01.10.2026).
   homeChargePerNight: 40,
-  // 1.2 station swaps a working day at 3.49 GEL (Mika, 01.10.2026). The station
+  // 1.5 station swaps a working day at 3.49 GEL (Mika, 01.10.2026, with 120 km a day; 1.2 before). The station
   // network is not open yet (handbook batteries.md); today the swap is at the
   // showroom and is part of the rent. Counted here as Mika's model counts it,
   // which only lowers the promised figure. Decide before launch (register item 47).
-  swapsPerDay: 1.2,
+  swapsPerDay: 1.5,
   swapPrice: 349,
   // Small-business status, 1 % of turnover — to be checked with the accountant (register item 51).
   taxBp: 100,
