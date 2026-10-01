@@ -425,3 +425,8 @@ details p { margin-top: 8px; color: var(--muted); }
   .info { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 56px; padding-block: 44px 72px; align-items: start; }
   .info-side { position: sticky; top: 16px; }
 }
+.stations-h { margin: 36px 0 6px; }
+.stations-h small { display: block; margin-top: 6px; font: 400 14px/1.3 var(--f); letter-spacing: 0; color: var(--muted); }
+.stations { list-style: none; margin: 0; padding: 0; }
+.stations li { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.stations .btn { min-height: 40px; padding: 0 14px; font-size: 13px; }
