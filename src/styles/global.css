@@ -442,3 +442,36 @@ details p { margin-top: 8px; color: var(--muted); }
 .stations { list-style: none; margin: 0; padding: 0; }
 .stations li { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
 .stations .btn { min-height: 40px; padding: 0 14px; font-size: 13px; }
+
+/* ===== phone: lighter first screen, more air (Mika, 01.10.2026) =====
+   The header keeps only the logo and the language; the slogan sits at the top,
+   the question at the bottom of the screen with free space between; answer
+   cards are outlines of a fixed, modest height instead of filling the screen. */
+@media (max-width: 899px) {
+  :root { --gutter: 20px; }
+  .quizfull { padding-block: 92px 28px; }
+  .qf { display: flex; flex-direction: column; gap: 0; min-height: calc(100svh - 120px); }
+  .qf-side h1 { font-size: clamp(30px, 8.4vw, 44px); line-height: 1.08; }
+  .qf-side .qf-sub { margin-top: 14px; color: var(--grey); font-size: 15px; max-width: 30ch; }
+  .qf-main { margin-top: auto; padding-top: 56px; }
+  .qf-progress { margin-bottom: 20px; font-size: 11px; }
+  .qf-q { font-size: 24px; line-height: 1.15; margin-bottom: 20px; }
+  .qf-step, .cards { flex: none; }
+  .cards { gap: 12px; grid-auto-rows: auto; }
+  .card { min-height: 124px; align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 18px 12px;
+          background: transparent; border-color: var(--line-dark); font-size: 16px; font-weight: 500; }
+  .card .icon { width: 40px; height: 40px; }
+  .qf-note { margin-top: 28px; text-align: center; line-height: 1.5; }
+  .qf-note a { display: block; margin-top: 10px; }
+  .qf-text { margin-bottom: 24px; }
+  .instead { margin-bottom: 18px; }
+  .tiles { gap: 10px; margin-bottom: 28px; }
+  .tiles li { background: transparent; border: 1px solid var(--line-dark); }
+  .qf-offer .qf-actions { margin-top: 0; }
+  .again { margin-top: 22px; }
+}
+@media (max-width: 599px) {
+  .top nav > a { display: none; }
+  .cards.n3 .card { flex-direction: row; justify-content: flex-start; text-align: left; min-height: 72px; padding: 0 20px; gap: 16px; }
+  .cards.n3 .card .icon { width: 34px; height: 34px; }
+}
