@@ -26,6 +26,7 @@ const route = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComp
       <dl class="facts">
         <div><dt>{t.weekdays}</dt><dd>10:00–20:00</dd></div>
         <div><dt>{t.weekend}</dt><dd>{t.weekendNote}</dd></div>
+        <div><dt>{t.swap}</dt><dd>{t.swapWhere}</dd></div>
         <div><dt>{t.phone}</dt><dd><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></dd></div>
         <div><dt>{t.email}</dt><dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd></div>
       </dl>
