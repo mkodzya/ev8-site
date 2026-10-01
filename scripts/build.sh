@@ -3,7 +3,7 @@
 # the build runs with a memory cap and one at a time.
 #
 #   scripts/build.sh            production build -> dist/   (ka, en; base /)
-#   scripts/build.sh preview    preview build    -> dist/   (ka, en, ru; noindex;
+#   scripts/build.sh preview    preview build    -> dist/   (ka, en; noindex;
 #                               served under the folder in PREVIEW_BASE)
 set -eu
 cd "$(dirname "$0")/.."

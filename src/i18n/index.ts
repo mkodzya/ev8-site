@@ -1,16 +1,16 @@
 import { ka } from './ka';
 import { en } from './en';
-import { ru, type Dict } from './ru';
+import type { Dict } from './ru';
 
-export type Locale = 'ka' | 'en' | 'ru';
+export type Locale = 'ka' | 'en';
 
-// The public site is Georgian (no prefix) and English (/en/). Russian is the
-// working text for Mika's review and is built only when PREVIEW=1.
-const preview = process.env.PREVIEW === '1';
-export const locales: Locale[] = preview ? ['ka', 'en', 'ru'] : ['ka', 'en'];
+// The site is Georgian (no prefix) and English (/en/). Russian is not built
+// (Mika, 01.10.2026): ru.ts stays as the master text the other two are checked
+// against and as the type of a dictionary.
+export const locales: Locale[] = ['ka', 'en'];
 export const defaultLocale: Locale = 'ka';
 
-const dicts: Record<Locale, Dict> = { ka, en, ru };
+const dicts: Record<Locale, Dict> = { ka, en };
 export const dict = (l: Locale): Dict => dicts[l];
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');

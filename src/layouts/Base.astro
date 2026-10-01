@@ -1,16 +1,14 @@
 ---
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
 import '@fontsource/noto-sans-georgian/400.css';
 import '@fontsource/noto-sans-georgian/500.css';
 import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
 
-interface Props { locale: Locale; title: string; description: string; path: string; }
-const { locale, title, description, path } = Astro.props;
+interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; }
+const { locale, title, description, path, preloadImage } = Astro.props;
 const t = dict(locale);
 // Previews are never indexed; the production build drops this flag.
 const noindex = process.env.PREVIEW === '1';
@@ -23,6 +21,7 @@ const noindex = process.env.PREVIEW === '1';
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {preloadImage && <link rel="preload" as="image" href={asset(preloadImage)} fetchpriority="high" />}
     <meta name="theme-color" content="#0b0b0b" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -31,7 +30,7 @@ const noindex = process.env.PREVIEW === '1';
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    {locales.filter((l) => l !== 'ru').map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
+    {locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
   </head>
   <body>
     <header class="top">
