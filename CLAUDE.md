@@ -24,8 +24,8 @@ The plan the site is built from, all in the book under `notes/` (01.10.2026): br
 
 ## Languages
 Talk to Mika in Russian; code, comments and commit messages in English. The public site is
-Georgian (no prefix) and English (`/en/`). Russian (`/ru/`) is the working text Mika approves
-the meaning in and is built only into previews (`PREVIEW=1`). `npm run check` is the i18n
+Georgian (no prefix) and English (`/en/`). Russian is not built (Mika, 01.10.2026): `src/i18n/ru.ts`
+stays as the master text the other two are written from. `npm run check` is the i18n
 guard: same keys in all three, nothing empty. Georgian text is a draft until a native
 speaker has read it (book register, item 15). Georgian needs Noto Sans Georgian in the font
 stack; Russian needs Inter.
@@ -40,8 +40,9 @@ no new colours. Phone first: couriers open the site from a phone. The moped pick
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
 
     scripts/build.sh              # production build -> dist/
-    scripts/build.sh preview      # preview build (ka, en, ru; noindex; base /garage/site/)
+    scripts/build.sh preview      # preview build (ka, en; noindex; base /garage/site/)
     scripts/deploy-preview.sh     # build a preview and copy it to https://test.ops.ev8.ge/garage/site/
+    scripts/qa.sh                 # check the deployed preview: 6 pages × 2 languages × 2 widths and the flows
 
 Verify by doing: open the preview at phone width, click through, then report.
 

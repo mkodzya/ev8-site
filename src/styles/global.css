@@ -17,7 +17,7 @@
   --line: #ebebeb;
   --line-dark: #424242;
   --line-control: #7a7a7a;
-  --f: 'Be Vietnam Pro', 'Inter', 'Noto Sans Georgian', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f: 'Be Vietnam Pro', 'Noto Sans Georgian', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease: 0.6s cubic-bezier(0.2, 0, 0, 1);
   --gutter: 16px;
   --page: 1120px;
@@ -67,7 +67,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .qf { display: grid; gap: 24px; grid-template-rows: auto 1fr; min-height: calc(100svh - 112px); }
 .qf-side h1 { font-size: clamp(30px, 7vw, 64px); line-height: 1.04; letter-spacing: -0.03em; }
 .qf-side h1 em { font-style: normal; color: var(--lime); display: block; }
-.qf-side .sub { margin-top: 12px; color: var(--soft); font-size: clamp(15px, 2vw, 18px); max-width: 460px; }
+.qf-side .qf-sub { margin-top: 12px; color: var(--soft); font-size: clamp(15px, 2vw, 18px); max-width: 460px; }
 .qf-main { min-width: 0; display: flex; flex-direction: column; }
 .qf-step { flex: 1; display: flex; flex-direction: column; }
 .qf-offer .qf-actions { margin-top: auto; }
@@ -89,7 +89,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cards.n3 .card { flex-direction: row; align-items: center; justify-content: flex-start; min-height: 84px; }
 .qf-note { margin-top: 16px; font-size: 13px; color: var(--grey); }
 .qf-note a { color: var(--soft); white-space: nowrap; }
-.qf-offer .badge { display: inline-block; background: var(--lime); color: var(--ink); border-radius: 999px; padding: 5px 11px; font: 500 12px/1.2 var(--f); margin-bottom: 12px; }
+.qf-offer .badge { display: inline-block; align-self: flex-start; background: var(--lime); color: var(--ink); border-radius: 999px; padding: 5px 11px; font: 500 12px/1.2 var(--f); margin-bottom: 12px; }
 .qf-text { color: var(--soft); max-width: 520px; margin-bottom: 18px; }
 .instead { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; font: 500 15px/1.2 var(--f); color: var(--grey); }
 .instead span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; }
@@ -98,6 +98,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tiles { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
 .tiles li { min-width: 0; background: var(--ink-2); border-radius: 16px; padding: 14px 12px; display: grid; gap: 10px; align-content: start; font-size: 13px; line-height: 1.3; color: var(--soft); }
 .tiles .icon { color: var(--lime); }
+.tiles li span { overflow-wrap: anywhere; }
+/* phone: the three facts as rows, so a long Georgian word has the whole width */
+@media (max-width: 599px) {
+  .tiles { grid-template-columns: 1fr; }
+  .tiles li { grid-template-columns: 30px 1fr; align-items: center; padding: 12px 14px; font-size: 14px; }
+}
 .qf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
 .qf-actions .price { color: var(--soft); font-size: 15px; }
 .again { display: block; margin-top: 16px; font-size: 13px; color: var(--grey); text-decoration: underline; }
@@ -108,7 +114,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 @media (min-width: 900px) {
   .quizfull { padding-block: 110px 56px; }
-  .qf { grid-template-columns: 5fr 6fr; grid-template-rows: none; min-height: 0; height: 100%; align-items: center; align-content: center; gap: 64px; }
+  .quizfull { align-items: center; }
+  .qf { grid-template-columns: 5fr 6fr; grid-template-rows: none; min-height: 0; align-items: center; gap: 64px; }
   .qf-step, .cards { flex: none; }
   .cards { grid-auto-rows: auto; }
   .qf-offer .qf-actions { margin-top: 0; }
@@ -386,6 +393,12 @@ details p { margin-top: 8px; color: var(--muted); }
 .sub-bar span { font-size: 13px; color: var(--soft); }
 .sub-bar small { display: block; margin-top: 4px; font-size: 12px; color: var(--grey); }
 .sub-bar .btn { min-height: 48px; }
+/* phone: the price goes under the name, so a long Georgian title keeps its width */
+@media (max-width: 599px) {
+  .row { grid-template-columns: 40px 1fr; row-gap: 6px; }
+  .row-pr, .row.off .row-pr { grid-column: 2; text-align: left; white-space: normal; max-width: none; }
+  .row-pr small { display: inline; margin: 0 0 0 6px; max-width: none; }
+}
 @media (min-width: 900px) {
   .sub-head { padding-block: 120px 40px; }
   .sub { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; padding-block: 40px 64px; align-items: start; }

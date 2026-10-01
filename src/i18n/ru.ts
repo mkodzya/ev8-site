@@ -1,6 +1,7 @@
-// Russian is the working master text Mika approves the meaning in. It is built
-// only into previews (PREVIEW=1): the public site is Georgian and English
-// (Mika, 01.10.2026). Source: handbook notes/2026-10-01_site-copy.md.
+// Russian master text: the meaning Mika approved. It is NOT built into the
+// site (Mika, 01.10.2026: the site is Georgian and English). It stays as the
+// source the Georgian and English texts are written from, as the shape
+// `npm run check` compares them with, and as the type of a dictionary.
 
 export const ru = {
   htmlLang: 'ru',
