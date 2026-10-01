@@ -61,7 +61,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .langs a[aria-current='true'] { background: #fff; color: var(--ink); }
 
 /* quiz: fills the first screen; phone = one column, laptop = slogan left, question right */
-.quizfull { min-height: 100svh; display: flex; padding-block: 84px 28px; border-radius: 0 0 28px 28px; }
+/* No rounded bottom: the garage below is as dark as the quiz, and rounded corners let the light page show through. */
+.quizfull { min-height: 100svh; display: flex; padding-block: 84px 28px; }
 .quizfull > .wrap { flex: 1; width: 100%; }
 /* phone: the slogan on top, the question and its cards take all the height that is left */
 .qf { display: grid; gap: 24px; grid-template-rows: auto 1fr; min-height: calc(100svh - 112px); }
