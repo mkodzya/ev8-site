@@ -40,6 +40,9 @@ const noindex = process.env.PREVIEW === '1';
         <nav>
           <a href={href(locale, 'models/')}>{t.nav.garage}</a>
           <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
+          <a class="wide" href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
+          <a class="wide" href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
+          <a class="wide" href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
           <span class="langs">
             {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
           </span>
@@ -50,6 +53,13 @@ const noindex = process.env.PREVIEW === '1';
       <slot />
     </main>
     <footer class="dark">
+      <nav class="wrap foot-nav">
+        <a href={href(locale, 'models/')}>{t.nav.garage}</a>
+        <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
+        <a href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
+        <a href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
+        <a href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
+      </nav>
       <div class="wrap foot">
         <span>{t.footer.address}</span>
         <span>{t.footer.hours}</span>
