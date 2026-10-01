@@ -1,42 +1,87 @@
 ---
-// Three questions, one tap each, then an offer for the segment
-// (handbook notes/2026-10-01_site-flow.html). Without JavaScript the quiz
-// stays on the first question and the page below still works.
-import { dict, href, type Locale } from '../i18n';
+// The quiz fills the first screen: three questions, one tap each, answers as
+// cards with an icon. After the third the same screen turns into the offer
+// for the segment, with a small infographic, and leads on to the garage
+// (handbook notes/2026-10-01_site-flow.html; full-page form: Mika, 01.10.2026).
+// Without JavaScript the first question stays and "straight to the mopeds" works.
+import Icon from './Icon.astro';
+import { dict, type Locale } from '../i18n';
 
 interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const t = dict(locale);
+
 const questions = [
-  { q: t.quiz.q1, a: t.quiz.q1a },
-  { q: t.quiz.q2, a: t.quiz.q2a },
-  { q: t.quiz.q3, a: t.quiz.q3a },
+  { q: t.quiz.q1, a: t.quiz.q1a, icons: [{ name: 'bag' }, { name: 'userplus' }] },
+  { q: t.quiz.q2, a: t.quiz.q2a, icons: [{ name: 'fuel' }, { name: 'car' }, { name: 'bolt' }, { name: 'walk' }] },
+  { q: t.quiz.q3, a: t.quiz.q3a, icons: [{ name: 'nocard' }, { name: 'card', label: 'AM' }, { name: 'card', label: 'A·B' }] },
 ];
-const offers = Object.entries(t.offers);
+
+const includedIcons = ['battery', 'swap', 'wrench'];
+const noviceIcons = ['id', 'bank', 'coin'];
+const offers = [
+  { key: 'petrol', instead: t.info.insteadPetrol, icons: ['fuel', 'plug'], tiles: t.info.included, tileIcons: includedIcons },
+  { key: 'car', instead: t.info.insteadCar, icons: ['car', 'bolt'], tiles: t.info.included, tileIcons: includedIcons },
+  { key: 'electric', instead: null, icons: [], tiles: t.info.included, tileIcons: includedIcons },
+  { key: 'novice', instead: null, icons: [], tiles: t.info.novice, tileIcons: noviceIcons },
+  { key: 'other', instead: null, icons: [], tiles: t.info.included, tileIcons: includedIcons },
+] as const;
 ---
-<div data-quiz>
-  <div class="quiz" data-quiz-box>
-    <div class="dots">{questions.map((_, i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
-    {questions.map((item, i) => (
-      <div data-step={i} hidden={i !== 0}>
-        <p class="q">{item.q}</p>
-        <div class="chips">
-          {item.a.map((a, j) => <button type="button" class="chip" data-answer={j}>{a}</button>)}
-        </div>
-      </div>
-    ))}
-    <p class="note">{t.quiz.note}</p>
-  </div>
-  {offers.map(([key, o]) => (
-    <div class="offer" data-offer={key} hidden>
-      <span class="badge">{t.quiz.badge}</span>
-      <h2>{o.title}</h2>
-      <p>{o.text}</p>
-      <a class="btn btn-ink btn-block" href={key === 'novice' ? `${href(locale)}#steps` : `${href(locale)}#garage`}>{o.cta}</a>
-      <button type="button" class="again" data-again>{t.quiz.again}</button>
+<section class="dark quizfull" data-quiz>
+  <div class="wrap qf">
+    <div class="qf-side">
+      <h1>{t.hero.line1}<em>{t.hero.line2}</em></h1>
+      <p class="sub">{t.hero.sub}</p>
     </div>
-  ))}
-</div>
+
+    <div class="qf-main" data-quiz-box>
+      <div class="qf-progress">
+        <span class="qf-count">{t.quiz.step} <b data-count>1</b> {t.quiz.of} {questions.length}</span>
+        <span class="dots">{questions.map((_, i) => <i class={i === 0 ? 'on' : ''}></i>)}</span>
+      </div>
+      {questions.map((item, i) => (
+        <div class="qf-step" data-step={i} hidden={i !== 0}>
+          <h2 class="qf-q">{item.q}</h2>
+          <div class={`cards n${item.a.length}`}>
+            {item.a.map((a, j) => (
+              <button type="button" class="card" data-answer={j}>
+                <Icon name={item.icons[j].name} label={item.icons[j].label} size={44} />
+                <span>{a}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p class="qf-note">{t.quiz.note} <a href="#garage">{t.quiz.skip} →</a></p>
+    </div>
+
+    {offers.map((o) => {
+      const text = t.offers[o.key];
+      return (
+        <div class="qf-main qf-offer" data-offer={o.key} hidden>
+          <span class="badge">{t.quiz.badge}</span>
+          <h2 class="qf-q">{text.title}</h2>
+          <p class="qf-text">{text.text}</p>
+          {o.instead && (
+            <div class="instead">
+              <span class="was"><Icon name={o.icons[0]} size={30} />{o.instead[0]}</span>
+              <Icon name="arrow" size={22} />
+              <span class="now"><Icon name={o.icons[1]} size={30} />{o.instead[1]}</span>
+            </div>
+          )}
+          <ul class="tiles">
+            {o.tiles.map((x, i) => <li><Icon name={o.tileIcons[i]} size={30} label={o.tileIcons[i] === 'coin' ? '₾' : undefined} /><span>{x}</span></li>)}
+          </ul>
+          <div class="qf-actions">
+            <a class="btn btn-lime" href="#garage">{text.cta} →</a>
+            <span class="price">{t.info.price}</span>
+          </div>
+          <button type="button" class="again" data-again>{t.quiz.again}</button>
+        </div>
+      );
+    })}
+  </div>
+</section>
 
 <script>
   const KEY = 'ev8-quiz';
@@ -44,6 +89,7 @@ const offers = Object.entries(t.offers);
     const box = root.querySelector<HTMLElement>('[data-quiz-box]')!;
     const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
     const dots = Array.from(root.querySelectorAll<HTMLElement>('.dots i'));
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
     const offers = Array.from(root.querySelectorAll<HTMLElement>('[data-offer]'));
     let answers: number[] = [];
 
@@ -52,13 +98,15 @@ const offers = Object.entries(t.offers);
       if (a[0] === 1) return 'novice';
       return ['petrol', 'car', 'electric', 'other'][a[1]] ?? 'other';
     };
-    const labels = (a: number[]) => steps.map((s, i) => s.querySelectorAll('.chip')[a[i]]?.textContent?.trim()).filter(Boolean).join(' · ');
+    const labels = (a: number[]) =>
+      steps.map((s, i) => s.querySelectorAll('.card span')[a[i]]?.textContent?.trim()).filter(Boolean).join(' · ');
 
     const show = () => {
       const done = answers.length >= steps.length;
       box.hidden = done;
       steps.forEach((s, i) => (s.hidden = i !== answers.length));
       dots.forEach((d, i) => d.classList.toggle('on', i <= answers.length));
+      count.textContent = String(Math.min(answers.length + 1, steps.length));
       const seg = done ? segment(answers) : null;
       offers.forEach((o) => (o.hidden = o.dataset.offer !== seg));
       try {
@@ -74,8 +122,8 @@ const offers = Object.entries(t.offers);
 
     root.addEventListener('click', (e) => {
       const el = e.target as HTMLElement;
-      const chip = el.closest<HTMLElement>('[data-answer]');
-      if (chip) { answers.push(Number(chip.dataset.answer)); show(); }
+      const card = el.closest<HTMLElement>('[data-answer]');
+      if (card) { answers.push(Number(card.dataset.answer)); show(); }
       if (el.closest('[data-again]')) { answers = []; show(); }
     });
     show();

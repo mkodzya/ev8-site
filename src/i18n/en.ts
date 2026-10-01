@@ -16,6 +16,9 @@ export const en: Dict = {
     sub: 'An electric moped for couriers — on subscription, from 150 ₾ a week.',
   },
   quiz: {
+    step: 'Question',
+    of: 'of',
+    skip: 'Straight to the mopeds',
     title: 'Three questions, and we show what pays off for you',
     q1: 'Are you already working as a courier?',
     q1a: ['Yes', 'Not yet'],
@@ -33,6 +36,13 @@ export const en: Dict = {
     electric: { title: 'Two batteries, swaps and repairs — in one subscription', text: 'You are already electric. Ours includes two batteries and two chargers, a battery swap at the showroom, and repairs when the breakdown is not your fault.', cta: 'Pick a moped' },
     novice: { title: 'Become a courier from scratch', text: 'You do not need your own vehicle. You need an ID, a bank account and the first payment: one week of subscription and a deposit. The deposit comes back when you return the moped.', cta: 'How to start' },
     other: { title: 'A moped, two batteries and repairs — in one subscription', text: 'One price a week. You charge at home from a regular socket.', cta: 'Pick a moped' },
+  },
+  info: {
+    included: ['2 batteries and 2 chargers', 'Battery swap at the showroom', 'Repairs when it is not your fault'],
+    price: 'from 150 ₾ a week',
+    insteadPetrol: ['Petrol station', 'A socket at home'],
+    insteadCar: ['Traffic and parking', 'A moped gets through'],
+    novice: ['ID document', 'Bank account', 'First payment: one week and the deposit'],
   },
   fuel: {
     title: 'Petrol is your earnings going into the tank',

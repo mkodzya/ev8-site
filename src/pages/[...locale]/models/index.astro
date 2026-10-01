@@ -9,5 +9,7 @@ const t = dict(locale);
 ---
 <Base locale={locale} title={t.meta.modelsTitle} description={t.meta.modelsDesc} path="models/">
   <h1 hidden>{t.meta.modelsTitle}</h1>
-  <Garage locale={locale} variant="page" id="garage" />
+  <section class="dark garage-screen first">
+    <Garage locale={locale} variant="page" id="garage" />
+  </section>
 </Base>
