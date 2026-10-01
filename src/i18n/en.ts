@@ -152,7 +152,7 @@ export const en: Dict = {
     vsPetrol: 'Petrol scooter: rent, fuel, oil and repairs',
     vsEv8: 'EV8: moped, charging and battery swaps',
     vsSave: 'You save a month',
-    vsNote: 'Same hours, 80 km a day. Petrol at 3.05 ₾ a litre, a rented petrol scooter at 170 ₾ a week, oil and repairs about 100 ₾ a month.',
+    vsNote: 'Same hours, 120 km a day. Petrol at 3.05 ₾ a litre, a rented petrol scooter at 170 ₾ a week, oil and repairs about 100 ₾ a month.',
     disclaimer: 'An estimate, not a promise: earnings depend on orders and hours. We count 15.38 ₾ an hour — from EV8 couriers: 6 days × 10 hours earn 4,000 ₾ or more a month.',
     cta: 'Send the request on WhatsApp',
     ctaNote: 'WhatsApp opens with your subscription — send the message to us.',
