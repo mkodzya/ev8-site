@@ -5,7 +5,7 @@ export const en: Dict = {
   langName: 'EN',
   meta: {
     homeTitle: 'EV8 — electric moped subscription for couriers in Tbilisi',
-    homeDesc: 'A moped, two batteries and repairs for one weekly price. Pick your moped and send a request.',
+    homeDesc: 'A moped, two batteries and maintenance for one weekly price. Pick your moped and send a request.',
     modelsTitle: 'EV8 electric mopeds for couriers',
     modelsDesc: 'Three mopeds with a removable battery, on a weekly subscription.',
   },
@@ -31,14 +31,14 @@ export const en: Dict = {
     badge: 'This fits you',
   },
   offers: {
-    petrol: { title: 'Take fuel off your costs', text: 'You already know the city and the orders. A moped, two batteries and repairs — one price a week.', cta: 'Pick a moped' },
+    petrol: { title: 'Take fuel off your costs', text: 'You already know the city and the orders. A moped, two batteries and maintenance — one price a week.', cta: 'Pick a moped' },
     car: { title: 'The same order — without traffic, parking and petrol', text: 'A moped gets through where a car stands still. The subscription is one weekly price instead of fuel and parking.', cta: 'Pick a moped' },
-    electric: { title: 'Two batteries, swaps and repairs — in one subscription', text: 'You are already electric. Ours includes two batteries and two chargers, a battery swap at the showroom, and repairs when the breakdown is not your fault.', cta: 'Pick a moped' },
+    electric: { title: 'Two batteries, swaps and maintenance — in one subscription', text: 'You are already electric. Ours includes two batteries and two chargers, a battery swap at the showroom, consumables and fixing malfunctions.', cta: 'Pick a moped' },
     novice: { title: 'Become a courier from scratch', text: 'You do not need your own vehicle. You need an ID, a bank account and the first payment: one week of subscription and a deposit. The deposit comes back when you return the moped.', cta: 'How to start' },
-    other: { title: 'A moped, two batteries and repairs — in one subscription', text: 'One price a week. You charge at home from a regular socket.', cta: 'Pick a moped' },
+    other: { title: 'A moped, two batteries and maintenance — in one subscription', text: 'One price a week. You charge at home from a regular socket.', cta: 'Pick a moped' },
   },
   info: {
-    included: ['2 batteries and 2 chargers', 'Battery swap at the showroom', 'Repairs when it is not your fault'],
+    included: ['2 batteries and 2 chargers', 'Battery swap at the showroom', 'Consumables and malfunctions'],
     price: 'from 150 ₾ a week',
     insteadPetrol: ['Petrol station', 'A socket at home'],
     insteadCar: ['Traffic and parking', 'A moped gets through'],
@@ -72,7 +72,7 @@ export const en: Dict = {
   },
   included: {
     title: 'One price a week. What is in it',
-    items: ['The moped', 'Two batteries and two chargers', 'Battery swap at the showroom', 'Repairs when the breakdown is not your fault'],
+    items: ['The moped', 'Two batteries and two chargers', 'Battery swap at the showroom', 'Consumables and fixing malfunctions'],
     honest: 'No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
   },
   faq: {
