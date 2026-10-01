@@ -8,7 +8,7 @@ import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { dict, localePaths, asset, type Locale } from '../../../i18n';
 import { models, contact } from '../../../data/models';
-import { terms, DEFAULT_TERM, buyout, gear, services, calc, DEPOSIT } from '../../../data/subscription';
+import { terms, DEFAULT_TERM, gear, services, calc, DEPOSIT } from '../../../data/subscription';
 import { compute, gel } from '../../../lib/calc';
 
 export const getStaticPaths = localePaths;
@@ -17,7 +17,7 @@ const d = dict(locale);
 const t = d.sub;
 const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
 
-const initial = compute({ modelId: models[0].id, termId: DEFAULT_TERM, buyout: false, gear: [], services: [], hours: calc.hoursDefault });
+const initial = compute({ modelId: models[0].id, termId: DEFAULT_TERM, gear: [], services: [], hours: calc.hoursDefault });
 const gearText = t.gear as Record<string, string[]>;
 const serviceText = t.services as Record<string, string[]>;
 ---
@@ -56,12 +56,6 @@ const serviceText = t.services as Record<string, string[]>;
           ))}
         </div>
         <p class="hint">{t.termNote}</p>
-        <label class="row" data-buyout-row>
-          <input type="checkbox" name="buyout" data-label={t.buyoutTitle} disabled={DEFAULT_TERM !== buyout.termId} />
-          <span class="row-ic"><Icon name="coin" label="₾" size={28} /></span>
-          <span class="row-tx"><b>{t.buyoutTitle}</b><small>{t.buyoutText}</small></span>
-          <span class="row-pr" data-buyout-note>{t.buyoutOnly}</span>
-        </label>
       </fieldset>
 
       <fieldset>
@@ -74,7 +68,7 @@ const serviceText = t.services as Record<string, string[]>;
             <span class="row-tx"><b>{gearText[g.id][0]}</b><small>{gearText[g.id][1]}</small></span>
             <span class="row-pr">
               {g.perWeek === null ? t.priceTbc : fill(t.plusWeek, gel(g.perWeek))}
-              {g.perWeek !== null && <small>{g.weeks ? fill(t.yoursAfter, g.weeks) : t.termTbc}</small>}
+              {g.perWeek !== null && <small>{g.season ? t.yoursSeason : fill(t.yoursAfter, g.weeks ?? 0)}</small>}
             </span>
           </label>
         ))}
@@ -83,11 +77,11 @@ const serviceText = t.services as Record<string, string[]>;
       <fieldset>
         <legend>{t.servicesTitle}</legend>
         {services.map((s) => (
-          <label class={`row ${s.once === null ? 'off' : ''}`}>
-            <input type="checkbox" name="service" value={s.id} disabled={s.once === null} data-label={serviceText[s.id][0]} />
+          <label class="row">
+            <input type="checkbox" name="service" value={s.id} data-label={serviceText[s.id][0]} />
             <span class="row-ic"><Icon name={s.icon} label={s.label} size={28} /></span>
             <span class="row-tx"><b>{serviceText[s.id][0]}</b><small>{serviceText[s.id][1]}</small></span>
-            <span class="row-pr">{s.once === null ? t.priceTbc : fill(t.once, gel(s.once))}</span>
+            <span class="row-pr">{s.perWeek ? fill(t.plusWeek, gel(s.perWeek)) : fill(t.once, gel(s.once ?? 0))}</span>
           </label>
         ))}
       </fieldset>
@@ -112,7 +106,7 @@ const serviceText = t.services as Record<string, string[]>;
         <dl>
           <div><dt>{t.lineRent}</dt><dd><span data-out="rent">{gel(initial.rent)}</span> ₾</dd></div>
           <div data-line="gear" hidden><dt>{t.lineGear}</dt><dd><span data-out="gear">0</span> ₾</dd></div>
-          <div data-line="buyout" hidden><dt>{t.lineBuyout}</dt><dd><span data-out="buyout">0</span> ₾</dd></div>
+          <div data-line="care" hidden><dt>{t.lineCare}</dt><dd><span data-out="care">0</span> ₾</dd></div>
         </dl>
         <div class="today">
           <div><b>{t.today}</b><small>{t.todayHint}</small></div>
@@ -133,11 +127,21 @@ const serviceText = t.services as Record<string, string[]>;
           <div><dt>{t.lineEnergy}</dt><dd>−<span data-out="energyMonth">{gel(initial.energyWeek * 52 / 12)}</span> ₾</dd></div>
           <div><dt>{t.lineTax}</dt><dd>−<span data-out="taxMonth">{gel(initial.taxWeek * 52 / 12)}</span> ₾</dd></div>
         </dl>
-        <div class="versus">
-          <p>{t.petrol} <b><span data-out="petrolMonth">{gel(initial.petrolNetMonth)}</span> ₾</b></p>
-          <p class="diff" data-diff hidden={initial.diffMonth <= 0}>{t.diff} <b><span data-out="diffMonth">{gel(initial.diffMonth)}</span> ₾ {t.perMonth}</b></p>
-        </div>
         <p class="fine">{t.disclaimer}</p>
+      </div>
+
+      <div class="sum-card vs">
+        <p class="eyebrow">{t.vsTitle}</p>
+        <div class="vs-row">
+          <span><Icon name="fuel" size={22} /> {t.vsPetrol}</span><b><span data-out="petrolCost">{gel(initial.petrolCostMonth)}</span> ₾</b>
+          <i class="vs-bar petrol" data-bar="petrol"></i>
+        </div>
+        <div class="vs-row">
+          <span><Icon name="bolt" size={22} /> {t.vsEv8}</span><b><span data-out="ev8Cost">{gel(initial.ev8CostMonth)}</span> ₾</b>
+          <i class="vs-bar ev8" data-bar="ev8" style={`width:${Math.round((initial.ev8CostMonth / initial.petrolCostMonth) * 100)}%`}></i>
+        </div>
+        <p class="vs-save" data-save hidden={initial.saveMonth <= 0}>{t.vsSave} <b><span data-out="save">{gel(initial.saveMonth)}</span> ₾</b></p>
+        <p class="fine">{t.vsNote}</p>
       </div>
 
       <button type="submit" class="btn btn-lime btn-block">{t.cta}</button>
@@ -153,20 +157,17 @@ const serviceText = t.services as Record<string, string[]>;
 
 <script>
   import { compute, gel, WEEKS_PER_MONTH, type Selection } from '../../../lib/calc';
-  import { buyout, type TermId } from '../../../data/subscription';
+  import type { TermId } from '../../../data/subscription';
 
   const form = document.querySelector<HTMLFormElement>('[data-sub]')!;
   const KEY = 'ev8-sub';
   const q = <T extends Element>(s: string) => Array.from(document.querySelectorAll<T>(s));
   const checked = (name: string) => q<HTMLInputElement>(`input[name="${name}"]:checked`);
   const hours = form.querySelector<HTMLInputElement>('#hours')!;
-  const buyoutBox = form.querySelector<HTMLInputElement>('input[name="buyout"]')!;
-  const buyoutNote = form.querySelector<HTMLElement>('[data-buyout-note]')!;
 
   const read = (): Selection => ({
     modelId: checked('model')[0]?.value ?? '',
     termId: (checked('term')[0]?.value ?? 'm3') as TermId,
-    buyout: buyoutBox.checked && !buyoutBox.disabled,
     gear: checked('gear').map((i) => i.value),
     services: checked('service').map((i) => i.value),
     hours: Number(hours.value),
@@ -177,22 +178,20 @@ const serviceText = t.services as Record<string, string[]>;
 
   function render() {
     const sel = read();
-    const onBuyoutTerm = sel.termId === buyout.termId;
-    buyoutBox.disabled = !onBuyoutTerm;
-    if (!onBuyoutTerm) buyoutBox.checked = false;
-    buyoutNote.hidden = onBuyoutTerm;
-    buyoutBox.closest('.row')!.classList.toggle('off', !onBuyoutTerm);
-
     const r = compute(read());
     const m = (week: number) => gel(week * WEEKS_PER_MONTH);
-    set('weekly', gel(r.weekly)); set('rent', gel(r.rent)); set('gear', gel(r.gear)); set('buyout', gel(r.buyout));
+    set('weekly', gel(r.weekly)); set('rent', gel(r.rent)); set('gear', gel(r.gear)); set('care', gel(r.care));
     set('today', gel(r.today)); set('once', gel(r.once)); set('hours', String(sel.hours));
     set('netMonth', gel(r.netMonth)); set('incomeMonth', m(r.incomeWeek)); set('subMonth', m(r.weekly));
     set('energyMonth', m(r.energyWeek)); set('taxMonth', m(r.taxWeek));
-    set('petrolMonth', gel(r.petrolNetMonth)); set('diffMonth', gel(r.diffMonth));
-    line('gear', r.gear > 0); line('buyout', r.buyout > 0); line('once', r.once > 0);
-    const diff = document.querySelector<HTMLElement>('[data-diff]');
-    if (diff) diff.hidden = r.diffMonth <= 0;
+    set('petrolCost', gel(r.petrolCostMonth)); set('ev8Cost', gel(r.ev8CostMonth)); set('save', gel(r.saveMonth));
+    line('gear', r.gear > 0); line('care', r.care > 0); line('once', r.once > 0);
+    // Two bars to one scale: the longer cost is the full width.
+    const top = Math.max(r.petrolCostMonth, r.ev8CostMonth, 1);
+    const bar = (name: string, v: number) => q<HTMLElement>(`[data-bar="${name}"]`).forEach((el) => (el.style.width = `${Math.round((v / top) * 100)}%`));
+    bar('petrol', r.petrolCostMonth); bar('ev8', r.ev8CostMonth);
+    const save = document.querySelector<HTMLElement>('[data-save]');
+    if (save) save.hidden = r.saveMonth <= 0;
     try { localStorage.setItem(KEY, JSON.stringify(sel)); localStorage.setItem('ev8-model', sel.modelId); } catch {}
   }
 
@@ -206,7 +205,6 @@ const serviceText = t.services as Record<string, string[]>;
     if (saved?.gear) pick('gear', saved.gear);
     if (saved?.services) pick('service', saved.services);
     if (saved?.hours) hours.value = String(saved.hours);
-    if (saved?.buyout && saved.termId === buyout.termId) { buyoutBox.disabled = false; buyoutBox.checked = true; }
   } catch {}
 
   form.addEventListener('input', render);
@@ -219,7 +217,7 @@ const serviceText = t.services as Record<string, string[]>;
     const r = compute(sel);
     const d = form.dataset;
     const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
-    const picks = [...checked('model'), ...checked('term'), ...(sel.buyout ? [buyoutBox] : []), ...checked('gear'), ...checked('service')].map(label);
+    const picks = [...checked('model'), ...checked('term'), ...checked('gear'), ...checked('service')].map(label);
     const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
     try {
       const quiz = JSON.parse(sessionStorage.getItem('ev8-quiz') || 'null');

@@ -5,7 +5,7 @@
 // (handbook knowledge.md). Everything else here is a DRAFT taken from the
 // courier-store demo (src/config.ts there, with each source) — Mika's working
 // numbers of 29.09–01.10.2026, not yet confirmed: handbook register items
-// 41 (buy-out), 43 (gear prices), 45 (hour rate, tax), 47 (swap stations).
+// 43 (gear prices), 45 (hour rate, tax), 47 (swap stations).
 // Nothing is added that the book does not have: an item without a price is
 // shown as "to be confirmed", cannot be chosen and never enters a sum.
 
@@ -22,34 +22,32 @@ export const terms: { id: TermId; weeks: number }[] = [
 ];
 export const DEFAULT_TERM: TermId = 'm3';
 
-// Buy-out only on 52 weeks, +40 GEL a week (Mika, 29.09.2026; draft, register item 41).
-export const buyout = { termId: 'm12' as TermId, perWeek: 4000 };
-
 // Gear is sold, never rented, and only by instalments paid weekly with the
-// subscription (Mika, 01.10.2026). `perWeek` is the weekly instalment — the
-// demo's draft; `weeks` is how long it runs: 6 for the helmet and 12 for the
-// protection are the idea from the call of 01.10.2026; null = not decided.
+// subscription (Mika, 01.10.2026). `perWeek` is the weekly instalment — still
+// the demo's draft of 29.09.2026 (register item 43); `weeks` is how long it
+// runs — Mika, 01.10.2026: helmet 12, phone holder 5, chain lock 5, thermal
+// box 6; the winter kit is paid over the season ("yours for the winter").
 // `perWeek: null` = no price in the book: shown, but cannot be chosen.
-export interface GearItem { id: string; icon: string; perWeek: number | null; weeks: number | null; }
+export interface GearItem { id: string; icon: string; perWeek: number | null; weeks: number | null; season?: boolean; }
 export const gear: GearItem[] = [
-  { id: 'helmet', icon: 'helmet', perWeek: 500, weeks: 6 },
-  { id: 'protection', icon: 'shield', perWeek: null, weeks: 12 },
-  { id: 'phoneHolder', icon: 'phone', perWeek: 400, weeks: null },
-  { id: 'chainLock', icon: 'lock', perWeek: 300, weeks: null },
-  { id: 'thermoBox', icon: 'box', perWeek: 800, weeks: null },
-  // Season kits: draft prices exist (10 / 18 / 24 a week) but what is inside a
-  // kit is not defined, so the kit is not offered yet.
-  { id: 'seasonKit', icon: 'sun', perWeek: null, weeks: null },
+  { id: 'helmet', icon: 'helmet', perWeek: 500, weeks: 12 },
+  { id: 'protection', icon: 'shield', perWeek: null, weeks: null },
+  { id: 'phoneHolder', icon: 'phone', perWeek: 400, weeks: 5 },
+  { id: 'chainLock', icon: 'lock', perWeek: 300, weeks: 5 },
+  { id: 'thermoBox', icon: 'box', perWeek: 800, weeks: 6 },
+  // Only the winter kit is offered (Mika, 01.10.2026). 18 GEL a week is the
+  // demo's draft for the winter kit; what is inside it is not defined yet.
+  { id: 'winterKit', icon: 'sun', perWeek: 1800, weeks: null, season: true },
 ];
 
-// One-time services (demo drafts). The demo made registration free from a
-// 3-month term; with "no discounts" it is one price for every term.
-export const services: { id: string; icon: string; label?: string; once: number | null }[] = [
-  { id: 'licence', icon: 'card', label: 'AM', once: 15000 },
-  { id: 'registration', icon: 'bag', once: 4000 },
-  // Insurance "EV8 Care": Mika wants it in the subscription, but what it covers
-  // is not defined and today there is no insurance (knowledge.md) — not offered yet.
-  { id: 'care', icon: 'shield', once: null },
+// Services — Mika, 01.10.2026: help with the licence 100 GEL; help with
+// registration and tax optimisation 100 GEL; insurance +12 GEL a week,
+// "covers every breakdown that is not your fault".
+export interface Service { id: string; icon: string; label?: string; once?: number; perWeek?: number; }
+export const services: Service[] = [
+  { id: 'licence', icon: 'card', label: 'AM', once: 10000 },
+  { id: 'registration', icon: 'bag', once: 10000 },
+  { id: 'care', icon: 'shield', perWeek: 1200 },
 ];
 
 export const calc = {
