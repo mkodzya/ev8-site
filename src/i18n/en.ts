@@ -33,12 +33,12 @@ export const en: Dict = {
   offers: {
     petrol: { title: 'Take fuel off your costs', text: 'You already know the city and the orders. A moped, two batteries and maintenance — one price a week.', cta: 'Pick a moped' },
     car: { title: 'The same order — without traffic, parking and petrol', text: 'A moped gets through where a car stands still. The subscription is one weekly price instead of fuel and parking.', cta: 'Pick a moped' },
-    electric: { title: 'Two batteries, swaps and maintenance — in one subscription', text: 'You are already electric. Ours includes two batteries and two chargers, a battery swap at the showroom, consumables and fixing malfunctions.', cta: 'Pick a moped' },
+    electric: { title: 'Two batteries and maintenance — in one subscription', text: 'You are already electric. Ours includes two batteries and two chargers, consumables and fixing malfunctions. Swapping a battery for a charged one costs 3.49 ₾.', cta: 'Pick a moped' },
     novice: { title: 'Become a courier from scratch', text: 'You do not need your own vehicle. You need an ID, a bank account and the first payment: one week of subscription and a deposit. The deposit comes back when you return the moped.', cta: 'How to start' },
     other: { title: 'A moped, two batteries and maintenance — in one subscription', text: 'One price a week. You charge at home from a regular socket.', cta: 'Pick a moped' },
   },
   info: {
-    included: ['2 batteries and 2 chargers', 'Battery swap at the showroom', 'Consumables and malfunctions'],
+    included: ['2 batteries and 2 chargers', 'Battery swap — 3.49 ₾', 'Consumables and malfunctions'],
     price: 'from 150 ₾ a week',
     insteadPetrol: ['Petrol station', 'A socket at home'],
     insteadCar: ['Traffic and parking', 'A moped gets through'],
@@ -72,8 +72,8 @@ export const en: Dict = {
   },
   included: {
     title: 'One price a week. What is in it',
-    items: ['The moped', 'Two batteries and two chargers', 'Battery swap at the showroom', 'Consumables and fixing malfunctions'],
-    honest: 'No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
+    items: ['The moped', 'Two batteries and two chargers', 'Consumables and fixing malfunctions'],
+    honest: 'Swapping a battery for a charged one costs 3.49 ₾ a swap. No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
   },
   faq: {
     title: 'Common questions',
@@ -82,7 +82,7 @@ export const en: Dict = {
       ['How long can I rent for?', 'From one week. After that, as long as you need.'],
       ['Do I get the deposit back?', 'Yes, if the moped and the kit are in order and nothing is owed. If there is damage or a debt, we keep its cost and tell you what for.'],
       ['Can I return it early?', 'Yes. The last week is paid in full.'],
-      ['Where do I charge the battery?', 'At home from a socket. Or swap it for a charged one at the showroom — that is included.'],
+      ['Where do I charge the battery?', 'At home from a socket. Or swap it for a charged one — 3.49 ₾ a swap.'],
     ],
   },
   lead: {
@@ -173,7 +173,7 @@ export const en: Dict = {
       ['What to bring', 'An ID document — required. A driving licence — if you have one.'],
       ['First payment', 'One week of subscription and a 180 GEL deposit. The deposit comes back when you return the moped in order and with nothing owed.'],
       ['Payment', 'Once a week, counted from the pick-up day. By transfer to the company account or at the showroom.'],
-      ['Batteries', 'The moped comes with two batteries and two chargers. You charge at home from a regular socket. Flat during a shift — swap it for a charged one. Take the battery off every night and whenever you leave the moped unattended: the contract requires it.'],
+      ['Batteries', 'The moped comes with two batteries and two chargers. You charge at home from a regular socket. Flat during a shift — swap it for a charged one, 3.49 ₾ a swap. Take the battery off every night and whenever you leave the moped unattended: the contract requires it.'],
       ['Maintenance', 'Consumables and fixing malfunctions are in the subscription. Breakdowns that are not your fault are covered by the insurance — +12 ₾ a week. Damage that is your fault is on you.'],
       ['Gear', 'We do not rent the helmet, holder, lock and thermal box, we sell them by instalments: you pay weekly with the subscription and the item stays yours.'],
       ['Return', 'You can return the moped any time after the first week. The last week is paid in full. Bring the moped, the key, both batteries and both chargers.'],
