@@ -1,0 +1,91 @@
+---
+// The moped picker: three mopeds on a lit podium, switched by arrows, cards,
+// swipe or arrow keys, looping. Works without JavaScript (radio inputs and
+// labels); the script only adds swipe, keys and remembering the choice.
+import { dict, href, asset, type Locale } from '../i18n';
+import { models } from '../data/models';
+
+interface Props { locale: Locale; variant?: 'page' | 'inset'; id?: string; }
+const { locale, variant = 'inset', id = 'garage' } = Astro.props;
+const t = dict(locale).garage;
+const n = models.length;
+const pad = (i: number) => String(i).padStart(2, '0');
+---
+<div class={`garage ${variant}`} data-garage id={id}>
+  {models.map((m, i) => (
+    <input type="radio" name={`${id}-g`} id={`${id}-${i + 1}`} class={`g${i + 1}`} value={m.id} checked={i === 0} aria-label={m.name} />
+  ))}
+  {variant === 'page' && <p class="eyebrow">{t.eyebrow}</p>}
+  <div class="stage">
+    <div class="beam"></div>
+    <div class="ring"></div>
+    {models.map((m, i) => (
+      <div class={`car c${i + 1}`} role="img" aria-label={m.name} style={`background-image:url(${asset(m.image)})`}></div>
+    ))}
+    {models.map((_, i) => (
+      <>
+        <label class={`arrow prev a${i + 1}`} for={`${id}-${((i + n - 1) % n) + 1}`} aria-label={t.prev}>‹</label>
+        <label class={`arrow next a${i + 1}`} for={`${id}-${((i + 1) % n) + 1}`} aria-label={t.next}>›</label>
+      </>
+    ))}
+  </div>
+  <div class="g-body">
+    <div class="names">
+      {models.map((m, i) => (
+        <div class={`name n${i + 1}`}>
+          <i>{pad(i + 1)} / {pad(n)} · {t.levels[m.level - 1]}</i>
+          <b>{m.name}</b>
+          <span>{m.weeklyGel} {t.perWeek}</span>
+        </div>
+      ))}
+    </div>
+    <div class="stats">
+      {t.stats.map((s) => (
+        <div class="stat">{s}<u></u><em>{t.barLevels.map((l, i) => <span class={`l${i + 1}`}>{l}</span>)}</em></div>
+      ))}
+    </div>
+    <div class="thumbs">
+      {models.map((m, i) => (
+        <label class={`thumb t${i + 1}`} for={`${id}-${i + 1}`}>{m.name}<small>{m.weeklyGel} {t.perWeekShort}</small></label>
+      ))}
+    </div>
+    <div class="g-cta">
+      <a class="btn btn-lime btn-block" data-take href={`${href(locale)}#lead`}>{t.take} →</a>
+      <p class="fine">{t.included}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'ev8-model';
+  document.querySelectorAll<HTMLElement>('[data-garage]').forEach((g) => {
+    const radios = Array.from(g.querySelectorAll<HTMLInputElement>(':scope > input[type=radio]'));
+    const stage = g.querySelector<HTMLElement>('.stage')!;
+    const save = () => { try { localStorage.setItem(KEY, radios.find((r) => r.checked)!.value); } catch {} };
+    const go = (step: number) => {
+      const i = radios.findIndex((r) => r.checked);
+      radios[(i + step + radios.length) % radios.length].checked = true;
+      save();
+    };
+    try {
+      const saved = localStorage.getItem(KEY);
+      const r = radios.find((x) => x.value === saved);
+      if (r) r.checked = true;
+    } catch {}
+    radios.forEach((r) => r.addEventListener('change', save));
+    g.querySelector('[data-take]')?.addEventListener('click', save);
+
+    let x0: number | null = null, y0 = 0;
+    stage.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+      x0 = null;
+    }, { passive: true });
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { go(-1); e.preventDefault(); }
+    });
+  });
+</script>

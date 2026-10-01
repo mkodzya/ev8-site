@@ -1,0 +1,13 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Garage from '../../../components/Garage.astro';
+import { dict, localePaths, type Locale } from '../../../i18n';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const t = dict(locale);
+---
+<Base locale={locale} title={t.meta.modelsTitle} description={t.meta.modelsDesc} path="models/">
+  <h1 hidden>{t.meta.modelsTitle}</h1>
+  <Garage locale={locale} variant="page" id="garage" />
+</Base>

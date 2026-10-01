@@ -1,0 +1,52 @@
+# CLAUDE.md — EV8 site
+
+## What this is
+The public site of EV8 (E-Motion Motors LLC, Tbilisi): an electric moped subscription for
+couriers. It replaces the WordPress site at ev8.ge. Owner: Mika. Director on site: Kardu.
+Business rules, decisions and open questions live in the project book
+(`~/Developer/ev8/handbook`, GitHub `mkodzya/ev8-handbook`):
+@~/Developer/ev8/handbook/CLAUDE.md
+
+The plan the site is built from, all in the book under `notes/` (01.10.2026): brief
+(`site-brief.md`), map (`site-map.html`), flow and quiz (`site-flow.html`), master text
+(`site-copy.md`), page design (`site-design-pages.html`).
+
+## Non-negotiable rules (from the owner)
+1. **Never invent data.** A price, a figure or a claim appears on the site only if the book
+   has it with a source. No data — the block stays closed and the open item is in the
+   book's `register.md`. Prices and model order live in `src/data/models.ts`, with the source.
+2. **Production moves only on Mika's word.** `scripts/deploy-preview.sh` copies a preview to
+   the test host and restarts nothing; there is no production deploy yet. The edge on the
+   server (Caddy, in `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
+3. **No secrets in the repository.** The Kommo key and anything like it are registered and
+   stored by Mika; code reads them from the server.
+4. **No customer data in the repository.**
+
+## Languages
+Talk to Mika in Russian; code, comments and commit messages in English. The public site is
+Georgian (no prefix) and English (`/en/`). Russian (`/ru/`) is the working text Mika approves
+the meaning in and is built only into previews (`PREVIEW=1`). `npm run check` is the i18n
+guard: same keys in all three, nothing empty. Georgian text is a draft until a native
+speaker has read it (book register, item 15). Georgian needs Noto Sans Georgian in the font
+stack; Russian needs Inter.
+
+## Design
+Direction "Black and lime" (Mika, 01.10.2026): black top, lime accent, light body. Colours,
+type and button shape come from the EV8 brand (`docs/design/brand.md` in `mkodzya/ev8-ops`);
+no new colours. Phone first: couriers open the site from a phone. The moped picker is the
+"garage": dark stage, podium, three mopeds in a loop — `src/components/Garage.astro`.
+
+## How to build
+This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
+
+    scripts/build.sh              # production build -> dist/
+    scripts/build.sh preview      # preview build (ka, en, ru; noindex; base /garage/site/)
+    scripts/deploy-preview.sh     # build a preview and copy it to https://test.ops.ev8.ge/garage/site/
+
+Verify by doing: open the preview at phone width, click through, then report.
+
+## Branches
+GitFlow as in EV8 Ops: `develop` is the default and the working branch, `main` holds
+releases tagged with bare semver. `feature/<topic>` from develop. Commit and push as you go;
+commit titles are a verdict sentence. End commit messages with
+`Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.

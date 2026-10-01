@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Quiz from '../../components/Quiz.astro';
+import Garage from '../../components/Garage.astro';
+import Lead from '../../components/Lead.astro';
+import { dict, localePaths, type Locale } from '../../i18n';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const t = dict(locale);
+---
+<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="">
+  <section class="dark hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>{t.hero.line1}<em>{t.hero.line2}</em></h1>
+        <p class="sub">{t.hero.sub}</p>
+      </div>
+      <Quiz locale={locale} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <div class="fuel">
+        <h2 class="h2" style="margin-bottom:0">{t.fuel.title}</h2>
+        <p>{t.fuel.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <h2 class="h2">{t.garage.homeTitle}</h2>
+      <Garage locale={locale} variant="inset" id="garage" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div id="steps">
+        <h2 class="h2">{t.steps.title}</h2>
+        <ol class="steps">
+          {t.steps.items.map(([b, s]) => <li><div><b>{b}</b><span>{s}</span></div></li>)}
+        </ol>
+      </div>
+      <div class="section" style="padding-top:0">
+        <h2 class="h2" style="margin-top:40px">{t.included.title}</h2>
+        <ul class="ticks">{t.included.items.map((x) => <li>{x}</li>)}</ul>
+        <p class="honest">{t.included.honest}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <h2 class="h2">{t.faq.title}</h2>
+      {t.faq.items.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+    </div>
+  </section>
+
+  <Lead locale={locale} />
+</Base>

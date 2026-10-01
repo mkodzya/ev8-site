@@ -1,0 +1,60 @@
+---
+import '@fontsource/be-vietnam-pro/400.css';
+import '@fontsource/be-vietnam-pro/500.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/noto-sans-georgian/400.css';
+import '@fontsource/noto-sans-georgian/500.css';
+import '../styles/global.css';
+import { dict, href, asset, locales, type Locale } from '../i18n';
+import { contact } from '../data/models';
+
+interface Props { locale: Locale; title: string; description: string; path: string; }
+const { locale, title, description, path } = Astro.props;
+const t = dict(locale);
+// Previews are never indexed; the production build drops this flag.
+const noindex = process.env.PREVIEW === '1';
+---
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0b0b0b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EV8" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {locales.filter((l) => l !== 'ru').map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap">
+        <a class="logo" href={href(locale)} aria-label={t.nav.home}><img src={asset('img/brand/logo-light.svg')} alt="EV8" width="109" height="28" /></a>
+        <nav>
+          <a href={href(locale, 'models/')}>{t.nav.garage}</a>
+          <span class="langs">
+            {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
+          </span>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="dark">
+      <div class="wrap foot">
+        <span>{t.footer.address}</span>
+        <span>{t.footer.hours}</span>
+        <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </div>
+    </footer>
+  </body>
+</html>
