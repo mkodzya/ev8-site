@@ -33,7 +33,7 @@ export interface Result {
   taxWeek: number;
   netWeek: number;
   netMonth: number;
-  /** A rented petrol scooter a month: its rent and fuel, same hours. */
+  /** A rented petrol scooter a month: its rent, fuel, oil and extra repairs; same hours. */
   petrolCostMonth: number;
   /** The EV8 moped a month: its rent, home charging and swaps. */
   ev8CostMonth: number;
@@ -63,7 +63,7 @@ export function compute(sel: Selection): Result {
   // on either scooter and are left out of the comparison.
   const p = calc.petrol;
   const fuelWeek = Math.round((p.kmPerDay * days * p.litresPer100km * p.perLitre) / 100);
-  const petrolCostMonth = Math.round((fuelWeek + p.rentPerWeek) * WEEKS_PER_MONTH);
+  const petrolCostMonth = Math.round((fuelWeek + p.rentPerWeek) * WEEKS_PER_MONTH) + p.upkeepPerMonth;
   const ev8CostMonth = Math.round((rent + energyWeek) * WEEKS_PER_MONTH);
 
   return {
