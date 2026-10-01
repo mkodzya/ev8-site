@@ -8,7 +8,7 @@ import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { dict, localePaths, asset, type Locale } from '../../../i18n';
 import { models, contact } from '../../../data/models';
-import { terms, DEFAULT_TERM, gear, services, calc, DEPOSIT } from '../../../data/subscription';
+import { gear, services, calc, DEPOSIT } from '../../../data/subscription';
 import { compute, gel } from '../../../lib/calc';
 
 export const getStaticPaths = localePaths;
@@ -17,7 +17,7 @@ const d = dict(locale);
 const t = d.sub;
 const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
 
-const initial = compute({ modelId: models[0].id, termId: DEFAULT_TERM, gear: [], services: [], hours: calc.hoursDefault });
+const initial = compute({ modelId: models[0].id, gear: [], services: [], hours: calc.hoursDefault });
 const gearText = t.gear as Record<string, string[]>;
 const serviceText = t.services as Record<string, string[]>;
 ---
@@ -36,26 +36,13 @@ const serviceText = t.services as Record<string, string[]>;
           {models.map((m, i) => (
             <label class="moped">
               <input type="radio" name="model" value={m.id} checked={i === 0} data-label={m.name} />
-              <span class="moped-img" style={`background-image:url(${asset(m.image)})`}></span>
+              <span class="moped-img" style={`background-image:url(${asset(m.thumb)})`}></span>
               <b>{m.name}</b>
               <small>{m.weeklyGel} {d.garage.perWeekShort}</small>
             </label>
           ))}
         </div>
         <p class="hint"><Icon name="battery" size={18} /> {t.included}</p>
-      </fieldset>
-
-      <fieldset>
-        <legend>{t.term}</legend>
-        <div class="pills terms">
-          {terms.map((term, i) => (
-            <label class="pill">
-              <input type="radio" name="term" value={term.id} checked={term.id === DEFAULT_TERM} data-label={t.terms[i]} />
-              <span><i class="long">{t.terms[i]}</i><i class="short">{t.termsShort[i]}</i></span>
-            </label>
-          ))}
-        </div>
-        <p class="hint">{t.termNote}</p>
       </fieldset>
 
       <fieldset>
@@ -157,7 +144,6 @@ const serviceText = t.services as Record<string, string[]>;
 
 <script>
   import { compute, gel, WEEKS_PER_MONTH, type Selection } from '../../../lib/calc';
-  import type { TermId } from '../../../data/subscription';
 
   const form = document.querySelector<HTMLFormElement>('[data-sub]')!;
   const KEY = 'ev8-sub';
@@ -167,7 +153,6 @@ const serviceText = t.services as Record<string, string[]>;
 
   const read = (): Selection => ({
     modelId: checked('model')[0]?.value ?? '',
-    termId: (checked('term')[0]?.value ?? 'm3') as TermId,
     gear: checked('gear').map((i) => i.value),
     services: checked('service').map((i) => i.value),
     hours: Number(hours.value),
@@ -201,7 +186,6 @@ const serviceText = t.services as Record<string, string[]>;
     const model = localStorage.getItem('ev8-model') || saved?.modelId;
     const pick = (name: string, values: string[]) => q<HTMLInputElement>(`input[name="${name}"]`).forEach((i) => { if (!i.disabled) i.checked = values.includes(i.value); });
     if (model && q(`input[name="model"][value="${CSS.escape(model)}"]`).length) pick('model', [model]);
-    if (saved?.termId && q(`input[name="term"][value="${CSS.escape(saved.termId)}"]`).length) pick('term', [saved.termId]);
     if (saved?.gear) pick('gear', saved.gear);
     if (saved?.services) pick('service', saved.services);
     if (saved?.hours) hours.value = String(saved.hours);
@@ -217,7 +201,7 @@ const serviceText = t.services as Record<string, string[]>;
     const r = compute(sel);
     const d = form.dataset;
     const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
-    const picks = [...checked('model'), ...checked('term'), ...checked('gear'), ...checked('service')].map(label);
+    const picks = [...checked('model'), ...checked('gear'), ...checked('service')].map(label);
     const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
     try {
       const quiz = JSON.parse(sessionStorage.getItem('ev8-quiz') || 'null');

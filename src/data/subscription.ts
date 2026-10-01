@@ -11,16 +11,8 @@
 
 export const DEPOSIT = 18000; // handbook business/pricing.md, Mika 21.09.2026
 
-export type TermId = 'w1' | 'm1' | 'm3' | 'm6' | 'm12';
-// No discounts for a longer term (Mika, call recorded 01.10.2026).
-export const terms: { id: TermId; weeks: number }[] = [
-  { id: 'w1', weeks: 1 },
-  { id: 'm1', weeks: 4 },
-  { id: 'm3', weeks: 13 },
-  { id: 'm6', weeks: 26 },
-  { id: 'm12', weeks: 52 },
-];
-export const DEFAULT_TERM: TermId = 'm3';
+// There is no term to choose: the weekly price does not depend on it
+// (no discounts — Mika, 01.10.2026), so the builder does not ask.
 
 // Gear is sold, never rented, and only by instalments paid weekly with the
 // subscription (Mika, 01.10.2026). `perWeek` is the weekly instalment — still

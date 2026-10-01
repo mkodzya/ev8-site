@@ -104,10 +104,6 @@ export const en: Dict = {
     title1: 'Build your subscription',
     title2: 'and count your earnings',
     moped: 'Moped',
-    term: 'Term',
-    termNote: 'The weekly price is the same for any term.',
-    terms: ['1 week', '1 month', '3 months', '6 months', '12 months'],
-    termsShort: ['1 wk', '1 mo', '3 mo', '6 mo', '12 mo'],
     gearTitle: 'Gear — by instalments',
     gearLead: 'We do not rent gear, we sell it — by instalments only: you pay weekly with the subscription and the item stays yours.',
     gear: {
