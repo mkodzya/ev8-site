@@ -573,6 +573,12 @@ body { position: relative; padding-top: env(safe-area-inset-top, 0px); }
 .fact-tile:first-child span { color: var(--ink); }
 @media (min-width: 600px) { .fact-tiles { grid-template-columns: repeat(3, 1fr); } }
 .more { display: inline-block; margin-top: 12px; font: 500 14px/1.3 var(--f); color: var(--accent); text-underline-offset: 4px; }
+.stations .hours { color: var(--accent); }
+/* phone: the name and the address take the whole width, the directions button goes under them */
+@media (max-width: 599px) {
+  .stations li { grid-template-columns: 40px 1fr; align-items: start; }
+  .stations .btn { grid-column: 2; justify-self: start; }
+}
 .step-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
 .step-links a { color: var(--accent); text-underline-offset: 3px; }
 .facts dd { max-width: 62%; }
