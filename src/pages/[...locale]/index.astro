@@ -1,22 +1,81 @@
 ---
-// The home page is the funnel: the quiz fills the first screen, its answer
-// turns into an offer, the garage is the second screen, then how it works
-// and the request.
+// The home page sells (Mika, 03.10.2026): a carousel of the main benefits,
+// the garage, the queue for new mopeds with the way into the request builder,
+// then the papers a courier needs — licence, registration, tax — and the
+// questions. The quiz is no longer a gate: it lives in the "Write to us"
+// widget (components/Ask.astro), on every page.
 import Base from '../../layouts/Base.astro';
-import Quiz from '../../components/Quiz.astro';
+import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
-import Lead from '../../components/Lead.astro';
-import { dict, localePaths, type Locale } from '../../i18n';
+import Icon from '../../components/Icon.astro';
+import { dict, href, localePaths, type Locale } from '../../i18n';
+import { models, contact } from '../../data/models';
+import { services } from '../../data/subscription';
+import { gel } from '../../lib/calc';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const t = dict(locale);
+const sub = href(locale, 'subscription/');
+const wa = `https://wa.me/${contact.whatsapp}`;
+
+// Papers: the two paid services with their prices from the data file, and what
+// to bring. Which licence category a model needs is not in the book yet
+// (register, item 59), so the card sends the question to WhatsApp.
+const once = (id: string) => {
+  const s = services.find((x) => x.id === id);
+  return s?.once ? t.sub.once.replace('{n}', gel(s.once)) : null;
+};
+const papers = [
+  { icon: 'card', label: 'AM', price: once('licence') },
+  { icon: 'bag', label: undefined, price: once('registration') },
+  { icon: 'id', label: undefined, price: null },
+];
 ---
-<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="">
-  <Quiz locale={locale} />
+<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="" preloadImage={models[models.length - 1].image}>
+  <Promo locale={locale} />
 
   <section class="dark garage-screen">
     <Garage locale={locale} variant="page" id="garage" />
+  </section>
+
+  <section class="queue" id="queue">
+    <div class="wrap">
+      <div class="queue-card">
+        <div>
+          <p class="tag">{t.queue.tag}</p>
+          <h2>{t.queue.title}</h2>
+          <p class="queue-p">{t.queue.text}</p>
+          <a class="btn btn-ink" href={sub}>{t.queue.cta} →</a>
+        </div>
+        <ol class="queue-steps">
+          {t.queue.steps.map(([b, s]) => <li><div><b>{b}</b><span>{s}</span></div></li>)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="papers">
+    <div class="wrap">
+      <h2 class="h2">{t.papers.title}</h2>
+      <p class="lede">{t.papers.intro}</p>
+      <div class="papers">
+        {t.papers.items.map(([title, text], i) => (
+          <div class="paper">
+            <span class="row-ic"><Icon name={papers[i].icon} label={papers[i].label} size={28} /></span>
+            <div>
+              <h3>{title}</h3>
+              <p>{text}</p>
+              {papers[i].price && <span class="paper-price">{papers[i].price}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="papers-cta">
+        <a class="btn btn-ink" href={sub}>{t.papers.add} →</a>
+        <a class="btn btn-line" data-ask href={wa} rel="noopener">{t.papers.ask}</a>
+      </div>
+    </div>
   </section>
 
   <section class="section">
@@ -42,5 +101,13 @@ const t = dict(locale);
     </div>
   </section>
 
-  <Lead locale={locale} />
+  <section class="dark lead" id="lead">
+    <div class="wrap narrow">
+      <h2 class="h2">{t.closing.title1} <em>{t.closing.title2}</em></h2>
+      <div class="lead-cta">
+        <a class="btn btn-lime" data-ask href={wa} rel="noopener">{t.closing.wa}</a>
+        <a class="btn btn-line" href={sub}>{t.closing.queue} →</a>
+      </div>
+    </div>
+  </section>
 </Base>

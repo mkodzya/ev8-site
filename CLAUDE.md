@@ -36,6 +36,13 @@ type and button shape come from the EV8 brand (`docs/design/brand.md` in `mkodzy
 no new colours. Phone first: couriers open the site from a phone. The moped picker is the
 "garage": dark stage, podium, three mopeds in a loop — `src/components/Garage.astro`.
 
+Structure of the home page (Mika, 03.10.2026): it sells first. A carousel of the main
+benefits (`Promo.astro`), the garage, the queue for new mopeds with the way into the request
+builder, then the papers (licence, registration, tax) and the questions. The quiz is not a
+gate any more: its three questions live in the "Write to us" widget (`Ask.astro`), on every
+page; every WhatsApp link carries `data-ask` and opens it, and the builder sends its request
+through it, so each message says who is writing. The queue is shown without numbers.
+
 ## How to build
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
 

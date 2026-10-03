@@ -1,0 +1,221 @@
+---
+// "Write to us": the button at the bottom right of every page and the panel it
+// opens. The three quiz questions live here now (Mika, 03.10.2026): they are
+// asked at the moment a visitor wants to write, and the answers travel in the
+// WhatsApp message, so the manager sees who is writing. On a phone the panel is
+// a sheet from the bottom, on a laptop a card in the corner.
+//
+// Every "write on WhatsApp" link on the site carries data-ask and opens this
+// panel. The subscription builder hands its request over with the event
+// `ev8:request`; the answers are asked once per visit.
+// Without JavaScript the button is a plain link to WhatsApp.
+import Icon from './Icon.astro';
+import { dict, href, type Locale } from '../i18n';
+import { models, contact } from '../data/models';
+
+interface Props { locale: Locale; path: string; }
+const { locale, path } = Astro.props;
+const d = dict(locale);
+const t = d.ask;
+
+const questions = [
+  { q: d.quiz.q1, a: d.quiz.q1a, icons: [{ name: 'bag' }, { name: 'userplus' }] },
+  { q: d.quiz.q2, a: d.quiz.q2a, icons: [{ name: 'fuel' }, { name: 'car' }, { name: 'bolt' }, { name: 'walk' }] },
+  { q: d.quiz.q3, a: d.quiz.q3a, icons: [{ name: 'nocard' }, { name: 'card', label: 'AM' }, { name: 'card', label: 'A·B' }] },
+];
+const includedIcons = ['battery', 'swap', 'wrench'];
+const noviceIcons = ['id', 'bank', 'coin'];
+const offers = [
+  { key: 'petrol', tiles: d.info.included, icons: includedIcons },
+  { key: 'car', tiles: d.info.included, icons: includedIcons },
+  { key: 'electric', tiles: d.info.included, icons: includedIcons },
+  { key: 'novice', tiles: d.info.novice, icons: noviceIcons },
+  { key: 'other', tiles: d.info.included, icons: includedIcons },
+] as const;
+const names = Object.fromEntries(models.map((m) => [m.id, m.name]));
+const onBuilder = path === 'subscription/';
+---
+<div class="ask" data-ask-root data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-about={t.msgAbout} data-l-model={t.msgModel}
+     data-t-wa={t.wa} data-t-send={t.send} data-models={JSON.stringify(names)}>
+  <p class="ask-hint" data-ask-hint hidden>
+    <button type="button" data-ask>{t.hint}</button>
+    <button type="button" class="ask-x" data-ask-hint-close aria-label={t.hintClose}>×</button>
+  </p>
+  <a class="ask-fab" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener"><Icon name="chat" size={24} /><span>{t.fab}</span></a>
+
+  <div class="ask-veil" data-ask-close hidden></div>
+  <div class="ask-panel" role="dialog" aria-labelledby="ask-title" hidden>
+    <div class="ask-head">
+      <b id="ask-title">{t.title}</b>
+      <button type="button" class="ask-x" data-ask-close aria-label={t.close}>×</button>
+    </div>
+
+    <div data-ask-box>
+      <div class="qf-progress">
+        <span class="qf-count">{d.quiz.step} <b data-count>1</b> {d.quiz.of} {questions.length}</span>
+        <span class="dots">{questions.map((_, i) => <i class={i === 0 ? 'on' : ''}></i>)}</span>
+      </div>
+      {questions.map((item, i) => (
+        <div data-step={i} hidden={i !== 0}>
+          <h2 class="ask-q">{item.q}</h2>
+          <div class="ask-opts">
+            {item.a.map((a, j) => (
+              <button type="button" class="ask-opt" data-answer={j}>
+                <Icon name={item.icons[j].name} label={item.icons[j].label} size={30} />
+                <span>{a}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {offers.map((o) => (
+      <div class="ask-offer" data-offer={o.key} hidden>
+        <h2 class="ask-q">{d.offers[o.key].title}</h2>
+        <p class="ask-text">{d.offers[o.key].text}</p>
+        <ul class="ask-tiles">
+          {o.tiles.map((x, i) => <li><Icon name={o.icons[i]} size={24} label={o.icons[i] === 'coin' ? '₾' : undefined} /><span>{x}</span></li>)}
+        </ul>
+      </div>
+    ))}
+    <div class="ask-offer" data-ask-ready hidden>
+      <h2 class="ask-q">{t.ready}</h2>
+      <p class="ask-text">{t.readyText}</p>
+    </div>
+
+    <div class="ask-actions" data-ask-actions hidden>
+      <a class="btn btn-lime btn-block" data-ask-send href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.wa}</a>
+      {!onBuilder && <a class="btn btn-line btn-block" data-ask-build href={href(locale, 'subscription/')}>{t.build} →</a>}
+      <p class="ask-note">{t.note}</p>
+      <button type="button" class="again" data-again>{d.quiz.again}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'ev8-quiz';
+  const HINT = 'ev8-ask-hint';
+  const root = document.querySelector<HTMLElement>('[data-ask-root]');
+  if (root) {
+    const d = root.dataset;
+    const panel = root.querySelector<HTMLElement>('.ask-panel')!;
+    const veil = root.querySelector<HTMLElement>('.ask-veil')!;
+    const fab = root.querySelector<HTMLElement>('.ask-fab')!;
+    const hint = root.querySelector<HTMLElement>('[data-ask-hint]')!;
+    const box = root.querySelector<HTMLElement>('[data-ask-box]')!;
+    const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('.dots i'));
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const offers = Array.from(root.querySelectorAll<HTMLElement>('[data-offer]'));
+    const ready = root.querySelector<HTMLElement>('[data-ask-ready]')!;
+    const actions = root.querySelector<HTMLElement>('[data-ask-actions]')!;
+    const send = root.querySelector<HTMLAnchorElement>('[data-ask-send]')!;
+    const build = root.querySelector<HTMLElement>('[data-ask-build]');
+    const names = JSON.parse(d.models || '{}') as Record<string, string>;
+
+    let answers: number[] = [];
+    // Lines of a request from the subscription builder that waits for the answers.
+    let request: string[] | null = null;
+
+    // Who is this: q1 = works as a courier (0 yes, 1 not yet), q2 = vehicle.
+    const segment = (a: number[]) => (a[0] === 1 ? 'novice' : ['petrol', 'car', 'electric', 'other'][a[1]] ?? 'other');
+    const labels = (a: number[]) =>
+      steps.map((s, i) => s.querySelectorAll('.ask-opt span')[a[i]]?.textContent?.trim()).filter(Boolean).join(' · ');
+    const stored = (): { answers?: number[]; text?: string } | null => {
+      try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; }
+    };
+    const complete = (a: unknown): a is number[] => Array.isArray(a) && a.length === steps.length;
+
+    const link = (about: string, lines: string[] | null) => {
+      const out = lines ? [...lines] : [d.hello!];
+      out.push(`${d.lAbout}: ${about}`);
+      if (!lines) {
+        try { const m = localStorage.getItem('ev8-model'); if (m && names[m]) out.push(`${d.lModel}: ${names[m]}`); } catch {}
+      }
+      return `https://wa.me/${d.wa}?text=${encodeURIComponent(out.join('\n'))}`;
+    };
+
+    const show = () => {
+      const done = answers.length >= steps.length;
+      box.hidden = done;
+      steps.forEach((s, i) => (s.hidden = i !== answers.length));
+      dots.forEach((dot, i) => dot.classList.toggle('on', i <= answers.length));
+      count.textContent = String(Math.min(answers.length + 1, steps.length));
+      const seg = done ? segment(answers) : null;
+      offers.forEach((o) => (o.hidden = !!request || o.dataset.offer !== seg));
+      ready.hidden = !(done && request);
+      actions.hidden = !done;
+      if (!done) return;
+      const about = labels(answers);
+      try { sessionStorage.setItem(KEY, JSON.stringify({ answers, segment: seg, text: about })); } catch {}
+      send.href = link(about, request);
+      send.textContent = (request ? d.tSend : d.tWa) ?? '';
+      if (build) build.hidden = !!request;
+    };
+
+    const hideHint = () => { hint.hidden = true; };
+    const open = (lines: string[] | null = null) => {
+      request = lines;
+      const s = stored();
+      answers = complete(s?.answers) ? s!.answers! : [];
+      show();
+      panel.hidden = false; veil.hidden = false; fab.hidden = true; hideHint();
+      document.documentElement.classList.add('ask-open');
+      panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-actions]:not([hidden]) [data-ask-send]')?.focus();
+    };
+    const close = () => {
+      if (panel.hidden) return;
+      panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null;
+      document.documentElement.classList.remove('ask-open');
+      fab.focus();
+    };
+
+    document.addEventListener('click', (e) => {
+      const el = e.target as HTMLElement;
+      if (el.closest('[data-ask-hint-close]')) { hideHint(); return; }
+      if (el.closest('[data-ask-close]')) { close(); return; }
+      if (el.closest('[data-ask]')) { e.preventDefault(); open(); return; }
+      const opt = el.closest<HTMLElement>('[data-answer]');
+      if (opt && panel.contains(opt)) {
+        answers.push(Number(opt.dataset.answer));
+        show();
+        // A builder request goes out with the last answer: the tap is the send.
+        if (request && answers.length >= steps.length) window.location.href = send.href;
+        else panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-send]')?.focus();
+        return;
+      }
+      if (el.closest('[data-again]')) {
+        answers = [];
+        try { sessionStorage.removeItem(KEY); } catch {}
+        show();
+      }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    // The subscription builder sends its request through here, so every
+    // request carries the three answers. Asked once per visit.
+    document.addEventListener('ev8:request', (e) => {
+      const lines = (e as CustomEvent<{ lines: string[] }>).detail.lines;
+      const s = stored();
+      if (complete(s?.answers) && s?.text) window.location.href = link(s.text, lines);
+      else open(lines);
+    });
+
+    // One nudge per visit, once the visitor is half way down the page and
+    // has neither opened the panel nor answered before.
+    let seen = true;
+    try { seen = sessionStorage.getItem(HINT) === '1' || !!sessionStorage.getItem(KEY); } catch {}
+    if (!seen) {
+      const onScroll = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        if (max < 400 || window.scrollY < max / 2 || !panel.hidden) return;
+        window.removeEventListener('scroll', onScroll);
+        hint.hidden = false;
+        try { sessionStorage.setItem(HINT, '1'); } catch {}
+        window.setTimeout(hideHint, 12000);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+  }
+</script>
