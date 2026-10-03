@@ -28,6 +28,7 @@ const light = process.env.THEME !== 'dark';
 // 03.10.2026 — 60 px in English, 100 px in Georgian). The logo is inlined for
 // the same reason: nothing in the header arrives after the first paint.
 const preloadFonts = [latin500, latin400, ...(locale === 'ka' ? [georgian500, georgian400] : [])];
+const warmFonts = locale === 'ka' ? [] : [georgian500, georgian400];
 const cur = (p: string) => (path === p ? 'page' : undefined);
 ---
 <!doctype html>
@@ -50,7 +51,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     <meta property="og:type" content="website" />
     {locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
   </head>
-  <body>
+  <body data-warm-fonts={JSON.stringify(warmFonts)}>
     <header class="top">
       <div class="wrap">
         <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={light ? logoOnLight : logoOnDark} /></a>
@@ -90,16 +91,32 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     </footer>
     <Ask locale={locale} path={path} />
     <script>
-      // Page transitions hold the header in place (view-transition-name "top" in
-      // the styles). When the visitor leaves from further down the page — a button
-      // in the middle, a link in the footer — the old header is off screen, and the
-      // transition would fly it in from above. Then it is left out of the
-      // transition, and the header of the new page simply fades in where it stands.
+      // Page transitions hold the logo, the menu and the language switch in
+      // place (view-transition-name in the styles, block "motion"). Two cases
+      // where holding would look wrong:
+      // — the visitor leaves from further down the page (a button in the middle,
+      //   a footer link): the old header is off screen and would fly in from
+      //   above, so it is left out and the new one fades in where it stands;
+      // — the language changes: the two menus have different words in different
+      //   places and would show through each other, so the old menu leaves with
+      //   its page and the new one fades in. The logo and the switch stay put.
       const header = document.querySelector<HTMLElement>('.top');
       if (header) {
-        window.addEventListener('pageswap', () => { if (window.scrollY > header.offsetHeight) header.style.viewTransitionName = 'none'; });
-        window.addEventListener('pageshow', () => { header.style.viewTransitionName = ''; });
+        const parts = Array.from(header.querySelectorAll<HTMLElement>('.logo, nav, .langs'));
+        const drop = (els: HTMLElement[]) => els.forEach((el) => (el.style.viewTransitionName = 'none'));
+        window.addEventListener('pageswap', () => { if (window.scrollY > header.offsetHeight) drop(parts); });
+        header.querySelectorAll('.langs a').forEach((a) => a.addEventListener('click', () => drop(parts.filter((el) => el.matches('nav')))));
+        window.addEventListener('pageshow', () => parts.forEach((el) => (el.style.viewTransitionName = '')));
       }
+      // The fonts of the other language are fetched as soon as the page has
+      // loaded, so the first switch of the language does not redraw the text.
+      const warm = () => (JSON.parse(document.body.dataset.warmFonts || '[]') as string[]).forEach((href) => {
+        const link = document.createElement('link');
+        link.rel = 'preload'; link.as = 'font'; link.type = 'font/woff2'; link.crossOrigin = ''; link.href = href;
+        document.head.append(link);
+      });
+      if (document.readyState === 'complete') warm();
+      else window.addEventListener('load', warm);
     </script>
   </body>
 </html>

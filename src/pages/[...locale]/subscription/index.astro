@@ -1,7 +1,8 @@
 ---
 // The subscription builder and the earnings calculator. Every option is plain
 // HTML (radios, checkboxes, a range), rendered with the default choice already
-// counted, so the page reads without JavaScript; the script recounts on change.
+// counted, so the page reads without JavaScript; the script (src/scripts/
+// subscription.client.ts, inlined at the end) recounts on change.
 // Phone: one column and a bar with the weekly price at the bottom.
 // Laptop: options on the left, the summary and the calculator stay on the right.
 import Base from '../../../layouts/Base.astro';
@@ -10,6 +11,7 @@ import { dict, localePaths, asset, type Locale } from '../../../i18n';
 import { models, contact } from '../../../data/models';
 import { gear, services, calc, DEPOSIT } from '../../../data/subscription';
 import { compute, gel } from '../../../lib/calc';
+import { buildSync } from 'esbuild';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -20,6 +22,13 @@ const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
 const initial = compute({ modelId: models[0].id, gear: [], services: [], hours: calc.hoursDefault });
 const gearText = t.gear as Record<string, string[]>;
 const serviceText = t.services as Record<string, string[]>;
+
+// The page's script is bundled here and inlined below as a plain script, so it
+// runs while the page is being parsed — before the first paint. Why: see the
+// head of src/scripts/subscription.client.ts.
+const client = buildSync({
+  entryPoints: ['src/scripts/subscription.client.ts'], bundle: true, minify: true, format: 'iife', target: 'es2019', write: false,
+}).outputFiles[0].text;
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="subscription/">
   <section class="dark sub-head">
@@ -28,7 +37,7 @@ const serviceText = t.services as Record<string, string[]>;
     </div>
   </section>
 
-  <form class="wrap sub" data-sub data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-weekly={t.msgWeekly} data-l-today={t.msgToday} data-l-hours={t.msgHours}>
+  <form class="wrap sub init" data-sub data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-weekly={t.msgWeekly} data-l-today={t.msgToday} data-l-hours={t.msgHours}>
     <div class="sub-opts">
       <fieldset>
         <legend>{t.moped}</legend>
@@ -136,88 +145,9 @@ const serviceText = t.services as Record<string, string[]>;
     </aside>
   </form>
 
-  <div class="sub-bar">
+  <div class="sub-bar init">
     <div><b><span data-out="weekly">{gel(initial.weekly)}</span> ₾</b> <span>{t.weekly}</span><small>{t.today}: <span data-out="today">{gel(initial.today)}</span> ₾</small></div>
     <a class="btn btn-lime" href="#summary">{t.bar}</a>
   </div>
+  <script is:inline set:html={client}></script>
 </Base>
-
-<script>
-  import { compute, gel, WEEKS_PER_MONTH, type Selection } from '../../../lib/calc';
-
-  const form = document.querySelector<HTMLFormElement>('[data-sub]')!;
-  const KEY = 'ev8-sub';
-  const q = <T extends Element>(s: string) => Array.from(document.querySelectorAll<T>(s));
-  const checked = (name: string) => q<HTMLInputElement>(`input[name="${name}"]:checked`);
-  const hours = form.querySelector<HTMLInputElement>('#hours')!;
-
-  const read = (): Selection => ({
-    modelId: checked('model')[0]?.value ?? '',
-    gear: checked('gear').map((i) => i.value),
-    services: checked('service').map((i) => i.value),
-    hours: Number(hours.value),
-  });
-
-  // A number that changed ticks: it dips and settles (styles: "motion"). Not while
-  // the hours slider is being dragged — there every number changes at once.
-  let tick = false;
-  const set = (name: string, value: string) => q<HTMLElement>(`[data-out="${name}"]`).forEach((el) => {
-    if (el.textContent === value) return;
-    el.textContent = value;
-    if (!tick) return;
-    el.classList.remove('tick');
-    void el.offsetWidth;
-    el.classList.add('tick');
-  });
-  const line = (name: string, on: boolean) => q<HTMLElement>(`[data-line="${name}"]`).forEach((el) => (el.hidden = !on));
-
-  function render() {
-    const sel = read();
-    const r = compute(read());
-    const m = (week: number) => gel(week * WEEKS_PER_MONTH);
-    set('weekly', gel(r.weekly)); set('rent', gel(r.rent)); set('gear', gel(r.gear)); set('care', gel(r.care));
-    set('today', gel(r.today)); set('once', gel(r.once)); set('hours', String(sel.hours));
-    set('netMonth', gel(r.netMonth)); set('incomeMonth', m(r.incomeWeek)); set('subMonth', m(r.weekly));
-    set('energyMonth', m(r.energyWeek)); set('taxMonth', m(r.taxWeek));
-    set('petrolCost', gel(r.petrolCostMonth)); set('ev8Cost', gel(r.ev8CostMonth)); set('save', gel(r.saveMonth));
-    line('gear', r.gear > 0); line('care', r.care > 0); line('once', r.once > 0);
-    // Two bars to one scale: the longer cost is the full width.
-    const top = Math.max(r.petrolCostMonth, r.ev8CostMonth, 1);
-    const bar = (name: string, v: number) => q<HTMLElement>(`[data-bar="${name}"]`).forEach((el) => (el.style.width = `${Math.round((v / top) * 100)}%`));
-    bar('petrol', r.petrolCostMonth); bar('ev8', r.ev8CostMonth);
-    const save = document.querySelector<HTMLElement>('[data-save]');
-    if (save) save.hidden = r.saveMonth <= 0;
-    try { localStorage.setItem(KEY, JSON.stringify(sel)); localStorage.setItem('ev8-model', sel.modelId); } catch {}
-  }
-
-  // Restore: the moped picked in the garage, then the last builder state.
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY) || 'null') as Partial<Selection> | null;
-    const model = localStorage.getItem('ev8-model') || saved?.modelId;
-    const pick = (name: string, values: string[]) => q<HTMLInputElement>(`input[name="${name}"]`).forEach((i) => { if (!i.disabled) i.checked = values.includes(i.value); });
-    if (model && q(`input[name="model"][value="${CSS.escape(model)}"]`).length) pick('model', [model]);
-    if (saved?.gear) pick('gear', saved.gear);
-    if (saved?.services) pick('service', saved.services);
-    if (saved?.hours) hours.value = String(saved.hours);
-  } catch {}
-
-  const onChange = (e: Event) => { tick = (e.target as HTMLInputElement).type !== 'range'; render(); tick = false; };
-  form.addEventListener('input', onChange);
-  form.addEventListener('change', onChange);
-  q<HTMLButtonElement>('[data-hours]').forEach((b) => b.addEventListener('click', () => { hours.value = b.dataset.hours!; tick = true; render(); tick = false; }));
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const sel = read();
-    const r = compute(sel);
-    const d = form.dataset;
-    const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
-    const picks = [...checked('model'), ...checked('gear'), ...checked('service')].map(label);
-    const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
-    // The "Write to us" widget adds the three answers and opens WhatsApp
-    // (components/Ask.astro): every request says who is writing.
-    document.dispatchEvent(new CustomEvent('ev8:request', { detail: { lines } }));
-  });
-
-  render();
-</script>

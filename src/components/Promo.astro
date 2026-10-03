@@ -26,7 +26,7 @@ const hero = models[models.length - 1];
 <section class="dark promo" data-promo>
   <div class="promo-track" tabindex="0">
     {t.slides.map((s, i) => (
-      <article class="slide">
+      <article class={`slide ${i === 0 ? 'on' : ''}`}>
         <div class="wrap slide-in">
           <div class="slide-tx">
             <p class="tag">{s.tag}</p>
@@ -125,8 +125,8 @@ const hero = models[models.length - 1];
 
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) play(); else pause(); }, { threshold: 0.4 }).observe(root);
     document.addEventListener('visibilitychange', () => (document.hidden ? pause() : play()));
-    // "live" dims the slides, the next frame lights the first one: the first screen rises in on load.
+    // The first slide is lit in the markup: the first screen does not change after it is drawn.
     root.classList.add('live');
-    requestAnimationFrame(() => requestAnimationFrame(mark));
+    mark();
   });
 </script>
