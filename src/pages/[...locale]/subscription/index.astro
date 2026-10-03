@@ -203,11 +203,9 @@ const serviceText = t.services as Record<string, string[]>;
     const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
     const picks = [...checked('model'), ...checked('gear'), ...checked('service')].map(label);
     const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
-    try {
-      const quiz = JSON.parse(sessionStorage.getItem('ev8-quiz') || 'null');
-      if (quiz?.text) lines.push(quiz.text);
-    } catch {}
-    window.location.href = `https://wa.me/${d.wa}?text=${encodeURIComponent(lines.join('\n'))}`;
+    // The "Write to us" widget adds the three answers and opens WhatsApp
+    // (components/Ask.astro): every request says who is writing.
+    document.dispatchEvent(new CustomEvent('ev8:request', { detail: { lines } }));
   });
 
   render();

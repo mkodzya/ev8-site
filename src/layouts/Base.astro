@@ -6,6 +6,7 @@ import '@fontsource/noto-sans-georgian/500.css';
 import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
+import Ask from '../components/Ask.astro';
 
 interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; }
 const { locale, title, description, path, preloadImage } = Astro.props;
@@ -66,5 +67,6 @@ const noindex = process.env.PREVIEW === '1';
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
       </div>
     </footer>
+    <Ask locale={locale} path={path} />
   </body>
 </html>

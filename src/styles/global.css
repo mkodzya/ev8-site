@@ -63,69 +63,157 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .langs a { padding: 6px 9px; border-radius: 999px; font-size: 12px; }
 .langs a[aria-current='true'] { background: #fff; color: var(--ink); }
 
-/* quiz: fills the first screen; phone = one column, laptop = slogan left, question right */
-/* No rounded bottom: the garage below is as dark as the quiz, and rounded corners let the light page show through. */
-.quizfull { min-height: 100svh; display: flex; padding-block: 84px 28px; }
-.quizfull > .wrap { flex: 1; width: 100%; }
-/* phone: the slogan on top, the question and its cards take all the height that is left */
-.qf { display: grid; gap: 24px; grid-template-rows: auto 1fr; min-height: calc(100svh - 112px); }
-.qf-side h1 { font-size: clamp(30px, 7vw, 64px); line-height: 1.04; letter-spacing: -0.03em; }
-.qf-side h1 em { font-style: normal; color: var(--lime); display: block; }
-.qf-side .qf-sub { margin-top: 12px; color: var(--soft); font-size: clamp(15px, 2vw, 18px); max-width: 460px; }
-.qf-main { min-width: 0; display: flex; flex-direction: column; }
-.qf-step { flex: 1; display: flex; flex-direction: column; }
-.qf-offer .qf-actions { margin-top: auto; }
-.qf-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey); white-space: nowrap; }
+[hidden] { display: none !important; }
+.tag { font: 500 12px/1.2 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
+
+/* ===== home: the carousel of benefits fills the first screen (Mika, 03.10.2026) =====
+   A scroll-snap row: it swipes on its own; the script adds dots, arrows and autoplay.
+   Phone: text on top, the figure panel takes the height that is left.
+   Laptop: text on the left, the figure on the right. */
+.promo { min-height: 100svh; display: flex; flex-direction: column; padding-top: 72px; }
+.promo-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
+.promo-track::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; min-width: 0; display: flex; scroll-snap-align: start; scroll-snap-stop: always; }
+.slide-in { width: 100%; display: flex; flex-direction: column; gap: 20px; padding-block: 16px 4px; }
+.slide h1, .slide h2 { margin-top: 12px; font-size: clamp(30px, 8.4vw, 44px); line-height: 1.06; letter-spacing: -0.03em; }
+.slide h1 em, .slide h2 em { font-style: normal; color: var(--lime); display: block; }
+.slide-p { margin-top: 12px; color: var(--soft); font-size: 15px; max-width: 44ch; }
+.slide-fig { position: relative; overflow: hidden; flex: 1; min-height: 132px; max-height: 300px; margin-top: auto; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
+             padding: 18px; border-radius: 24px; border: 1px solid var(--line-dark); background: var(--ink-2); }
+.slide-fig .icon { position: absolute; top: 16px; right: 16px; color: var(--lime); }
+.slide-fig b { position: relative; font: 500 clamp(44px, 14vw, 72px)/0.95 var(--f); letter-spacing: -0.05em; color: var(--lime); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.slide-fig span { position: relative; color: var(--soft); font-size: 14px; line-height: 1.3; max-width: 30ch; }
+/* first slide: the moped itself, the price above it */
+.slide-fig.pic { min-height: 230px; justify-content: flex-start; background: radial-gradient(ellipse 70% 55% at 60% 86%, #1f241d, transparent 72%), var(--ink-2); }
+.slide-fig.pic img { position: absolute; right: -2%; bottom: -3%; height: 82%; width: auto; max-width: none; mix-blend-mode: screen;
+                     -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 55%, transparent 100%);
+                     mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 55%, transparent 100%); }
+.slide-fig.pic b { font-size: clamp(30px, 9vw, 44px); letter-spacing: -0.04em; }
+/* width: a .wrap inside a flex column would shrink to its content */
+.promo-foot { width: 100%; display: grid; gap: 12px; padding-block: 10px 24px; }
+.promo-nav { display: flex; align-items: center; gap: 8px; }
+.promo:not(.live) .promo-nav { visibility: hidden; }
+.promo-dots { display: flex; flex: 1; }
+.promo-dots button { width: 22px; height: 28px; display: grid; place-items: center; transition: width 0.3s ease; }
+.promo-dots button::before { content: ''; width: 8px; height: 8px; border-radius: 8px; background: var(--line-dark); transition: width 0.3s ease, background 0.3s ease; }
+.promo-dots button[aria-current='true'] { width: 42px; }
+.promo-dots button[aria-current='true']::before { width: 28px; background: var(--lime); }
+.promo-arrow { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--muted); font: 500 20px/1 var(--f); color: #fff; }
+.promo-cta { display: grid; gap: 10px; }
+.promo-cta .btn-line { min-height: 52px; font-size: 16px; }
+/* phone: the second action is a plain link on the left — the "Write to us" button sits on the right of the same line */
+@media (max-width: 599px) {
+  .promo-cta .btn-line { justify-self: start; min-height: 56px; padding: 0 2px; border: 0; text-decoration: underline; text-underline-offset: 5px; }
+}
+@media (min-width: 600px) {
+  .promo-cta { display: flex; }
+  .promo-arrow { display: grid; place-items: center; }
+  .promo-dots { flex: none; margin-right: 8px; }
+}
+@media (min-width: 900px) {
+  .promo { padding-top: 96px; }
+  .slide-in { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 64px; padding-block: 24px; }
+  .slide h1, .slide h2 { font-size: clamp(44px, 5vw, 68px); margin-top: 18px; }
+  .slide-p { font-size: 18px; margin-top: 18px; }
+  .slide-fig { flex: none; height: min(52vh, 440px); max-height: none; margin-top: 0; padding: 32px; }
+  .slide-fig b { font-size: clamp(72px, 9vw, 128px); }
+  .slide-fig span { font-size: 16px; }
+  .slide-fig .icon { width: 56px; height: 56px; top: 28px; right: 28px; }
+  .slide-fig.pic b { font-size: clamp(44px, 5vw, 64px); }
+  /* dots and arrows right after the buttons: the corner on the right belongs to the "Write to us" button */
+  .promo-foot { grid-template-columns: auto 1fr; align-items: center; gap: 28px; padding-block: 8px 44px; }
+  .promo-cta { order: 1; }
+  .promo-nav { order: 2; }
+}
+
+/* ===== home: the queue for new mopeds ===== */
+.queue { padding-top: 40px; }
+.queue-card { display: grid; gap: 22px; padding: 24px 20px; border-radius: 28px; background: var(--lime); }
+.queue-card .tag { color: var(--ink); }
+.queue-card h2 { margin-top: 10px; font-size: clamp(26px, 4.6vw, 42px); line-height: 1.08; }
+.queue-p { margin: 10px 0 18px; font-size: 17px; max-width: 36ch; }
+.queue-steps { list-style: none; margin: 0; padding: 0; counter-reset: q; }
+.queue-steps li { counter-increment: q; display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 13px 0; border-top: 1px solid var(--ink); }
+.queue-steps li::before { content: counter(q); width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--lime); font: 500 14px/30px var(--f); text-align: center; }
+.queue-steps b { display: block; font-weight: 500; }
+.queue-steps span { font-size: 14px; }
+@media (min-width: 900px) {
+  .queue { padding-top: 64px; }
+  .queue-card { grid-template-columns: 1.1fr 1fr; align-items: center; gap: 56px; padding: 44px; }
+}
+
+/* ===== home: licence, registration, tax ===== */
+.papers { display: grid; gap: 10px; }
+.paper { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.paper h3 { font-size: 17px; line-height: 1.25; }
+.paper p { margin-top: 4px; color: var(--muted); font-size: 14px; }
+.paper-price { display: inline-block; margin-top: 12px; padding: 8px 12px; border-radius: 999px; background: var(--lime); font: 500 14px/1 var(--f); font-variant-numeric: tabular-nums; }
+.papers-cta, .lead-cta { display: grid; gap: 10px; margin-top: 16px; }
+.papers-cta .btn-line, .lead-cta .btn-line { min-height: 56px; font-size: 17px; }
+@media (min-width: 600px) { .papers-cta, .lead-cta { display: flex; flex-wrap: wrap; } }
+@media (min-width: 900px) {
+  .papers { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .paper { grid-template-columns: 1fr; padding: 22px; }
+}
+
+/* ===== "Write to us": the button, the nudge and the panel with three questions =====
+   Phone: a sheet from the bottom over a veil. Laptop: a card in the corner. */
+.ask-fab { position: fixed; z-index: 20; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px;
+           height: 56px; padding: 0 20px 0 16px; border-radius: 999px; background: var(--lime); color: var(--ink); border: 1px solid var(--ink);
+           box-shadow: 0 8px 28px rgba(11, 11, 11, 0.35); font: 500 15px/1 var(--f); text-decoration: none; transition: transform 0.2s ease; }
+.ask-fab:active { transform: scale(0.97); }
+.ask-hint { position: fixed; z-index: 20; right: 16px; bottom: calc(82px + env(safe-area-inset-bottom, 0px)); margin: 0; display: flex; align-items: center; gap: 2px;
+            max-width: min(290px, calc(100vw - 32px)); padding: 4px 4px 4px 14px; border-radius: 18px 18px 4px 18px; background: var(--surface); color: var(--ink);
+            border: 1px solid var(--ink); box-shadow: 0 8px 28px rgba(11, 11, 11, 0.25); font-size: 14px; line-height: 1.3; animation: ask-in 0.4s ease both; }
+.ask-hint button[data-ask] { text-align: left; padding: 8px 0; }
+.ask-x { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; font-size: 22px; line-height: 1; }
+.ask-veil { position: fixed; inset: 0; z-index: 21; background: rgba(11, 11, 11, 0.6); }
+.ask-panel { position: fixed; z-index: 22; inset: auto 0 0 0; max-height: 92svh; overflow-y: auto; overscroll-behavior: contain;
+             padding: 14px 20px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 24px 24px 0 0; background: var(--ink); color: #fff;
+             border-top: 1px solid var(--line-dark); animation: ask-in 0.35s ease both; }
+@keyframes ask-in { from { opacity: 0; transform: translateY(16px); } }
+.ask-panel :focus-visible { outline-color: var(--lime); }
+.ask-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--grey); font: 500 12px/1.2 var(--f); letter-spacing: 0.14em; text-transform: uppercase; }
+.ask-head b { font-weight: 500; }
+.ask-head .ask-x { color: #fff; border: 1px solid var(--line-dark); }
+.qf-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; font: 500 11px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey); white-space: nowrap; }
 .qf-progress b { color: var(--lime); font-weight: 500; }
 .dots { display: flex; gap: 5px; flex: 1; }
 .dots i { height: 4px; flex: 1; border-radius: 4px; background: var(--lime); opacity: 0.2; transition: opacity 0.3s ease; }
 .dots i.on { opacity: 1; }
-.qf-q { font-size: clamp(26px, 4.6vw, 44px); line-height: 1.08; margin-bottom: 18px; }
-.cards { flex: 1; display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; }
-.card { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 18px; min-height: 132px; min-width: 0; padding: 16px;
-        border-radius: 20px; border: 1px solid var(--line-dark); background: var(--ink-2); color: #fff; font: 500 17px/1.2 var(--f); text-align: left;
-        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
-.card .icon { color: var(--lime); flex: none; width: 56px; height: 56px; transition: color 0.2s ease; }
-.card:hover, .card:focus-visible { background: var(--lime); border-color: var(--lime); color: var(--ink); }
-.card:hover .icon, .card:focus-visible .icon { color: var(--ink); }
-.card:active { transform: scale(0.98); }
-.cards.n3 { grid-template-columns: 1fr; }
-.cards.n3 .card { flex-direction: row; align-items: center; justify-content: flex-start; min-height: 84px; }
-.qf-note { margin-top: 16px; font-size: 13px; color: var(--grey); }
-.qf-note a { color: var(--soft); white-space: nowrap; }
-.qf-text { color: var(--soft); max-width: 520px; margin-bottom: 18px; }
-.instead { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; font: 500 15px/1.2 var(--f); color: var(--grey); }
-.instead span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; }
-.instead .was { border: 1px solid var(--line-dark); text-decoration: line-through; }
-.instead .now { background: var(--lime); color: var(--ink); }
-.tiles { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
-.tiles li { min-width: 0; background: var(--ink-2); border-radius: 16px; padding: 14px 12px; display: grid; gap: 10px; align-content: start; font-size: 13px; line-height: 1.3; color: var(--soft); }
-.tiles .icon { color: var(--lime); }
-.tiles li span { overflow-wrap: anywhere; }
-/* phone: the three facts as rows, so a long Georgian word has the whole width */
-@media (max-width: 599px) {
-  .tiles { grid-template-columns: 1fr; }
-  .tiles li { grid-template-columns: 30px 1fr; align-items: center; padding: 12px 14px; font-size: 14px; }
+.ask-q { font-size: 24px; line-height: 1.15; margin-bottom: 16px; }
+.ask-opts { display: grid; gap: 8px; }
+.ask-opt { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 18px; border-radius: 16px; border: 1px solid var(--line-dark); color: #fff;
+           font: 500 16px/1.2 var(--f); text-align: left; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+.ask-opt .icon { flex: none; color: var(--lime); transition: color 0.2s ease; }
+.ask-opt:active { transform: scale(0.98); }
+.ask-opt:focus-visible { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.ask-opt:focus-visible .icon { color: var(--ink); }
+@media (hover: hover) {
+  .ask-opt:hover { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+  .ask-opt:hover .icon { color: var(--ink); }
 }
-.qf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
-.qf-actions .price { color: var(--soft); font-size: 15px; }
-.again { display: block; margin-top: 16px; font-size: 13px; color: var(--grey); text-decoration: underline; }
-[hidden] { display: none !important; }
+.ask-text { margin: -6px 0 16px; color: var(--soft); font-size: 15px; }
+.ask-tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ask-tiles li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: center; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--line-dark); font-size: 14px; line-height: 1.3; color: var(--soft); }
+.ask-tiles .icon { color: var(--lime); }
+.ask-actions { display: grid; gap: 10px; margin-top: 16px; }
+.ask-actions .btn-line { min-height: 52px; font-size: 16px; }
+.ask-note { font-size: 12px; line-height: 1.4; color: var(--grey); text-align: center; }
+.again { display: block; margin: 2px auto 0; font-size: 13px; color: var(--grey); text-decoration: underline; }
+@media (max-width: 599px) { html.ask-open { overflow: hidden; } }
 @media (min-width: 600px) {
-  .cards.n3 { grid-template-columns: repeat(3, 1fr); }
-  .cards.n3 .card { flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 132px; }
+  .ask-fab { right: 20px; bottom: 20px; }
+  .ask-hint { right: 20px; bottom: 88px; }
+  .ask-veil { display: none !important; }
+  .ask-panel { inset: auto 20px 20px auto; width: 400px; max-height: min(700px, calc(100vh - 40px)); padding-bottom: 20px; border-radius: 24px;
+               border: 1px solid var(--line-dark); box-shadow: 0 24px 64px rgba(11, 11, 11, 0.5); }
 }
-@media (min-width: 900px) {
-  .quizfull { padding-block: 110px 56px; }
-  .quizfull { align-items: center; }
-  .qf { grid-template-columns: 5fr 6fr; grid-template-rows: none; min-height: 0; align-items: center; gap: 64px; }
-  .qf-step, .cards { flex: none; }
-  .cards { grid-auto-rows: auto; }
-  .qf-offer .qf-actions { margin-top: 0; }
-  .card .icon { width: 64px; height: 64px; }
-  .card { min-height: 164px; padding: 20px; font-size: 19px; }
-  .cards.n3 .card { min-height: 164px; }
-  .tiles li { font-size: 14px; padding: 16px 14px; }
+/* The subscription page has its own bar at the bottom of a phone: the button sits above it. */
+@media (max-width: 899px) {
+  body:has(.sub-bar) .ask-fab { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
+  body:has(.sub-bar) .ask-hint { bottom: calc(152px + env(safe-area-inset-bottom, 0px)); }
+  .foot { padding-bottom: 92px; }
 }
 
 /* blocks */
@@ -150,12 +238,8 @@ details p { margin-top: 8px; color: var(--muted); }
 @media (min-width: 900px) { .two { grid-template-columns: 1fr 1fr; } }
 
 /* lead */
-.lead { margin-top: 48px; border-radius: 28px 28px 0 0; padding-block: 32px 0; }
+.lead { margin-top: 48px; border-radius: 28px 28px 0 0; padding-block: 32px 36px; }
 .lead h2 em { font-style: normal; color: var(--lime); }
-.lead form { display: grid; gap: 10px; margin-top: 18px; }
-.field { display: grid; gap: 6px; font-size: 13px; color: var(--grey); }
-.field input, .field select { min-height: 52px; border-radius: 14px; border: 1px solid var(--muted); background: var(--ink-2); color: #fff; padding: 0 14px; font: 400 16px/1 var(--f); width: 100%; }
-.lead .note { font-size: 13px; color: var(--grey); margin-top: 4px; }
 .foot { margin-top: 0; padding-block: 20px 28px; border-top: 1px solid var(--line-dark); font-size: 13px; color: var(--grey); display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .foot a { text-decoration: none; }
 
@@ -231,7 +315,9 @@ details p { margin-top: 8px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .ring { animation: none; }
-  .car, .name, .stat u::after, .btn, .card { transition: none; }
+  .car, .name, .stat u::after, .btn, .ask-opt { transition: none; }
+  .ask-panel, .ask-hint { animation: none; }
+  .promo-track { scroll-behavior: auto; }
 }
 
 /* ===== subscription builder ===== */
@@ -323,7 +409,7 @@ details p { margin-top: 8px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .ring { animation: none; }
-  .car, .name, .stat u::after, .btn, .card { transition: none; }
+  .car, .name, .stat u::after, .btn { transition: none; }
 }
 
 /* ===== subscription builder ===== */
@@ -447,58 +533,9 @@ details p { margin-top: 8px; color: var(--muted); }
 .stations li { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
 .stations .btn { min-height: 40px; padding: 0 14px; font-size: 13px; }
 
-/* ===== phone: lighter first screen, more air (Mika, 01.10.2026) =====
-   The header keeps only the logo and the language; the slogan sits at the top,
-   the question at the bottom of the screen with free space between; answer
-   cards are outlines of a fixed, modest height instead of filling the screen. */
-@media (max-width: 899px) {
-  :root { --gutter: 20px; }
-  .quizfull { padding-block: 92px 28px; }
-  .qf { display: flex; flex-direction: column; gap: 0; min-height: calc(100svh - 120px); }
-  .qf-side h1 { font-size: clamp(30px, 8.4vw, 44px); line-height: 1.08; }
-  .qf-side .qf-sub { margin-top: 14px; color: var(--grey); font-size: 15px; max-width: 30ch; }
-  .qf-main { margin-top: auto; padding-top: 56px; }
-  .qf-progress { margin-bottom: 20px; font-size: 11px; }
-  .qf-q { font-size: 24px; line-height: 1.15; margin-bottom: 20px; }
-  .qf-step, .cards { flex: none; }
-  .cards { gap: 12px; grid-auto-rows: auto; }
-  .card { min-height: 124px; align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 18px 12px;
-          background: transparent; border-color: var(--line-dark); font-size: 16px; font-weight: 500; }
-  .card .icon { width: 40px; height: 40px; }
-  .qf-note { margin-top: 28px; text-align: center; line-height: 1.5; }
-  .qf-note a { display: block; margin-top: 10px; }
-  .qf-text { margin-bottom: 24px; }
-  .instead { margin-bottom: 18px; }
-  .tiles { gap: 10px; margin-bottom: 28px; }
-  .tiles li { background: transparent; border: 1px solid var(--line-dark); }
-  .qf-offer .qf-actions { margin-top: 0; }
-  .again { margin-top: 22px; }
-}
-@media (max-width: 599px) {
-  .top nav > a { display: none; }
-  .cards.n3 .card { flex-direction: row; justify-content: flex-start; text-align: left; min-height: 72px; padding: 0 20px; gap: 16px; }
-  .cards.n3 .card .icon { width: 34px; height: 34px; }
-}
-
-/* ===== phone: the answer after the quiz fits one screen (Mika, 01.10.2026) =====
-   The slogan is hidden, the answer starts under the header, the action is
-   pinned to the bottom of the first screen. */
-.qf-actions .again { margin-top: 0; }
-@media (max-width: 899px) {
-  .quizfull.done .qf-side { display: none; }
-  .quizfull.done .qf-main { margin-top: 0; padding-top: 12px; flex: 1; }
-  .qf-offer .qf-q { font-size: 28px; line-height: 1.1; margin-bottom: 10px; }
-  .qf-text { margin-bottom: 20px; font-size: 15px; }
-  .instead { flex-wrap: nowrap; gap: 8px; margin-bottom: 14px; font-size: 14px; }
-  .instead span { padding: 9px 12px; gap: 6px; min-width: 0; }
-  .instead .icon { width: 22px; height: 22px; flex: none; }
-  .tiles { gap: 8px; margin-bottom: 20px; }
-  .tiles li { padding: 11px 14px; }
-  .qf-offer .qf-actions { margin-top: auto; display: grid; grid-template-columns: 1fr auto; gap: 12px 16px; align-items: center; }
-  .qf-offer .qf-actions .btn { grid-column: 1 / -1; width: 100%; }
-  .qf-actions .price { font-size: 13px; color: var(--grey); }
-  .qf-actions .again { justify-self: end; }
-}
+/* ===== phone: more air (Mika, 01.10.2026); the header keeps the logo and the language ===== */
+@media (max-width: 899px) { :root { --gutter: 20px; } }
+@media (max-width: 599px) { .top nav > a { display: none; } }
 
 /* ===== subscription on a phone: one even row of terms, one size in the bar ===== */
 .sub-bar b span { font: inherit; color: inherit; }
