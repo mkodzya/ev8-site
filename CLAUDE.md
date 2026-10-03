@@ -38,6 +38,12 @@ type and button shape come from the EV8 brand (`docs/design/brand.md` in `mkodzy
 no new colours. Phone first: couriers open the site from a phone. The moped picker is the
 "garage": dark stage, podium, three mopeds in a loop — `src/components/Garage.astro`.
 
+Motion (Mika, 03.10.2026): every change on the site is smooth, small and unhurried — pages
+fade into each other, the carousel glides, choices in the request form and answers of the
+quiz change softly. One curve and three durations, all in the "motion" block at the end of
+`src/styles/global.css`; a new component takes its transitions from there. Reduced motion
+switches all of it off.
+
 Structure of the home page (Mika, 03.10.2026): it sells first. A carousel of the main
 benefits (`Promo.astro`), the garage, the queue for new mopeds with the way into the request
 builder, then the papers (licence, registration, tax) and the questions. The quiz is not a

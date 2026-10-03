@@ -114,7 +114,10 @@ const onBuilder = path === 'subscription/';
     const build = root.querySelector<HTMLElement>('[data-ask-build]');
     const names = JSON.parse(d.models || '{}') as Record<string, string>;
 
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let answers: number[] = [];
+    let busy = false;
+    let closing = 0;
     // Lines of a request from the subscription builder that waits for the answers.
     let request: string[] | null = null;
 
@@ -154,8 +157,19 @@ const onBuilder = path === 'subscription/';
       if (build) build.hidden = !!request;
     };
 
+    // The panel changes its height smoothly when a question gives way to the next one.
+    const morph = (change: () => void) => {
+      if (panel.hidden || reduce || !panel.animate) { change(); return; }
+      const before = panel.offsetHeight;
+      change();
+      const after = panel.offsetHeight;
+      if (before !== after) panel.animate([{ height: `${before}px`, overflow: 'hidden' }, { height: `${after}px`, overflow: 'hidden' }], { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+    };
+
     const hideHint = () => { hint.hidden = true; };
     const open = (lines: string[] | null = null) => {
+      window.clearTimeout(closing); closing = 0;
+      panel.classList.remove('out'); veil.classList.remove('out');
       request = lines;
       const s = stored();
       answers = complete(s?.answers) ? s!.answers! : [];
@@ -165,10 +179,18 @@ const onBuilder = path === 'subscription/';
       panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-actions]:not([hidden]) [data-ask-send]')?.focus();
     };
     const close = () => {
-      if (panel.hidden) return;
-      panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null;
-      document.documentElement.classList.remove('ask-open');
-      fab.focus();
+      if (panel.hidden || closing) return;
+      const done = () => {
+        closing = 0;
+        panel.classList.remove('out'); veil.classList.remove('out');
+        panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null;
+        document.documentElement.classList.remove('ask-open');
+        fab.focus();
+      };
+      if (reduce) { done(); return; }
+      // the panel sinks and the veil fades before they go
+      panel.classList.add('out'); veil.classList.add('out');
+      closing = window.setTimeout(done, 280);
     };
 
     document.addEventListener('click', (e) => {
@@ -178,17 +200,27 @@ const onBuilder = path === 'subscription/';
       if (el.closest('[data-ask]')) { e.preventDefault(); open(); return; }
       const opt = el.closest<HTMLElement>('[data-answer]');
       if (opt && panel.contains(opt)) {
-        answers.push(Number(opt.dataset.answer));
-        show();
-        // A builder request goes out with the last answer: the tap is the send.
-        if (request && answers.length >= steps.length) window.location.href = send.href;
-        else panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-send]')?.focus();
+        if (busy) return;
+        busy = true;
+        // The chosen answer lights up for a moment, then the next question comes.
+        opt.classList.add('picked');
+        window.setTimeout(() => {
+          busy = false;
+          opt.classList.remove('picked');
+          answers.push(Number(opt.dataset.answer));
+          morph(show);
+          // A builder request goes out with the last answer: the tap is the send.
+          if (request && answers.length >= steps.length) window.location.href = send.href;
+          else panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-send]')?.focus({ preventScroll: true });
+        }, reduce ? 0 : 280);
         return;
       }
       if (el.closest('[data-again]')) {
-        answers = [];
-        try { sessionStorage.removeItem(KEY); } catch {}
-        show();
+        morph(() => {
+          answers = [];
+          try { sessionStorage.removeItem(KEY); } catch {}
+          show();
+        });
       }
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
