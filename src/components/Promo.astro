@@ -3,8 +3,8 @@
 // (Mika, 03.10.2026: the home page sells first, the quiz moved into the
 // "Write to us" widget). Every figure comes from the data files, none is typed
 // here. The track is a scroll-snap row, so it swipes without JavaScript; the
-// script adds the dots, the arrows and a slow autoplay that stops for good the
-// moment the visitor touches the carousel.
+// script adds the dots, the arrows and the autoplay: it turns by itself every
+// five seconds, waits while the visitor handles it, and goes on (Mika, 03.10.2026).
 import Icon from './Icon.astro';
 import { dict, href, asset, type Locale } from '../i18n';
 import { models } from '../data/models';
@@ -66,16 +66,21 @@ const hero = models[models.length - 1];
     const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('.promo-dots button'));
     const index = () => Math.round(track.scrollLeft / Math.max(track.clientWidth, 1));
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const go = (i: number) => track.scrollTo({ left: ((i + count) % count) * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+    // From the last slide back to the first it jumps: a rewind through all five reads as a glitch.
+    const go = (i: number) => {
+      const wrap = i < 0 || i >= count;
+      track.scrollTo({ left: ((i + count) % count) * track.clientWidth, behavior: reduce || wrap ? 'auto' : 'smooth' });
+    };
     const mark = () => { const now = index(); dots.forEach((d, i) => d.setAttribute('aria-current', String(i === now))); };
     track.addEventListener('scroll', mark, { passive: true });
 
-    // Autoplay: only while the carousel is on screen, never with reduced
-    // motion, and never again after the visitor has moved it himself.
-    let timer = 0, touched = false;
+    // Autoplay: while the carousel is on screen. A touch, a key or a click
+    // holds it; eight quiet seconds later it turns again. With reduced motion
+    // the slides change without the slide animation.
+    let timer = 0, wait = 0, visible = false;
     const pause = () => { window.clearInterval(timer); timer = 0; };
-    const play = () => { if (!timer && !touched && !reduce) timer = window.setInterval(() => go(index() + 1), 6000); };
-    const stop = () => { touched = true; pause(); };
+    const play = () => { if (!timer && visible && !document.hidden) timer = window.setInterval(() => go(index() + 1), 5000); };
+    const stop = () => { pause(); window.clearTimeout(wait); wait = window.setTimeout(play, 8000); };
     ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((ev) => track.addEventListener(ev, stop, { passive: true }));
 
     dots.forEach((d, i) => d.addEventListener('click', () => { stop(); go(i); }));
@@ -86,7 +91,7 @@ const hero = models[models.length - 1];
       if (e.key === 'ArrowLeft') { go(index() - 1); e.preventDefault(); }
     });
 
-    new IntersectionObserver(([e]) => (e.isIntersecting ? play() : pause()), { threshold: 0.5 }).observe(root);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) play(); else pause(); }, { threshold: 0.4 }).observe(root);
     document.addEventListener('visibilitychange', () => (document.hidden ? pause() : play()));
     root.classList.add('live');
   });

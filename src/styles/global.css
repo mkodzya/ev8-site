@@ -21,6 +21,9 @@
   --ease: 0.6s cubic-bezier(0.2, 0, 0, 1);
   --gutter: 16px;
   --page: 1120px;
+  /* highlight text and the active dot on the top surface: lime on black, see the light theme at the end */
+  --hi: var(--lime);
+  --dot: var(--lime);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -64,7 +67,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .langs a[aria-current='true'] { background: #fff; color: var(--ink); }
 
 [hidden] { display: none !important; }
-.tag { font: 500 12px/1.2 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
+.tag { font: 500 12px/1.2 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--hi); }
 
 /* ===== home: the carousel of benefits fills the first screen (Mika, 03.10.2026) =====
    A scroll-snap row: it swipes on its own; the script adds dots, arrows and autoplay.
@@ -76,12 +79,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .slide { flex: 0 0 100%; min-width: 0; display: flex; scroll-snap-align: start; scroll-snap-stop: always; }
 .slide-in { width: 100%; display: flex; flex-direction: column; gap: 20px; padding-block: 16px 4px; }
 .slide h1, .slide h2 { margin-top: 12px; font-size: clamp(30px, 8.4vw, 44px); line-height: 1.06; letter-spacing: -0.03em; }
-.slide h1 em, .slide h2 em { font-style: normal; color: var(--lime); display: block; }
+.slide h1 em, .slide h2 em { font-style: normal; color: var(--hi); display: block; }
 .slide-p { margin-top: 12px; color: var(--soft); font-size: 15px; max-width: 44ch; }
 .slide-fig { position: relative; overflow: hidden; flex: 1; min-height: 132px; max-height: 300px; margin-top: auto; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
              padding: 18px; border-radius: 24px; border: 1px solid var(--line-dark); background: var(--ink-2); }
-.slide-fig .icon { position: absolute; top: 16px; right: 16px; color: var(--lime); }
-.slide-fig b { position: relative; font: 500 clamp(44px, 14vw, 72px)/0.95 var(--f); letter-spacing: -0.05em; color: var(--lime); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.slide-fig .icon { position: absolute; top: 16px; right: 16px; color: var(--hi); }
+.slide-fig b { position: relative; font: 500 clamp(44px, 14vw, 72px)/0.95 var(--f); letter-spacing: -0.05em; color: var(--hi); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .slide-fig span { position: relative; color: var(--soft); font-size: 14px; line-height: 1.3; max-width: 30ch; }
 /* first slide: the moped itself, the price above it */
 .slide-fig.pic { min-height: 230px; justify-content: flex-start; background: radial-gradient(ellipse 70% 55% at 60% 86%, #1f241d, transparent 72%), var(--ink-2); }
@@ -97,8 +100,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .promo-dots button { width: 22px; height: 28px; display: grid; place-items: center; transition: width 0.3s ease; }
 .promo-dots button::before { content: ''; width: 8px; height: 8px; border-radius: 8px; background: var(--line-dark); transition: width 0.3s ease, background 0.3s ease; }
 .promo-dots button[aria-current='true'] { width: 42px; }
-.promo-dots button[aria-current='true']::before { width: 28px; background: var(--lime); }
-.promo-arrow { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--muted); font: 500 20px/1 var(--f); color: #fff; }
+.promo-dots button[aria-current='true']::before { width: 28px; background: var(--dot); }
+.promo-arrow { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--muted); font: 500 20px/1 var(--f); color: inherit; }
 .promo-cta { display: grid; gap: 10px; }
 .promo-cta .btn-line { min-height: 52px; font-size: 16px; }
 /* phone: the second action is a plain link on the left — the "Write to us" button sits on the right of the same line */
@@ -172,20 +175,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
              padding: 14px 20px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 24px 24px 0 0; background: var(--ink); color: #fff;
              border-top: 1px solid var(--line-dark); animation: ask-in 0.35s ease both; }
 @keyframes ask-in { from { opacity: 0; transform: translateY(16px); } }
-.ask-panel :focus-visible { outline-color: var(--lime); }
+.ask-panel :focus-visible { outline-color: var(--hi); }
 .ask-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--grey); font: 500 12px/1.2 var(--f); letter-spacing: 0.14em; text-transform: uppercase; }
 .ask-head b { font-weight: 500; }
-.ask-head .ask-x { color: #fff; border: 1px solid var(--line-dark); }
+.ask-head .ask-x { color: inherit; border: 1px solid var(--line-dark); }
 .qf-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; font: 500 11px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey); white-space: nowrap; }
-.qf-progress b { color: var(--lime); font-weight: 500; }
+.qf-progress b { color: var(--hi); font-weight: 500; }
 .dots { display: flex; gap: 5px; flex: 1; }
-.dots i { height: 4px; flex: 1; border-radius: 4px; background: var(--lime); opacity: 0.2; transition: opacity 0.3s ease; }
+.dots i { height: 4px; flex: 1; border-radius: 4px; background: var(--dot); opacity: 0.2; transition: opacity 0.3s ease; }
 .dots i.on { opacity: 1; }
 .ask-q { font-size: 24px; line-height: 1.15; margin-bottom: 16px; }
 .ask-opts { display: grid; gap: 8px; }
-.ask-opt { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 18px; border-radius: 16px; border: 1px solid var(--line-dark); color: #fff;
+.ask-opt { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 18px; border-radius: 16px; border: 1px solid var(--line-dark); color: inherit;
            font: 500 16px/1.2 var(--f); text-align: left; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
-.ask-opt .icon { flex: none; color: var(--lime); transition: color 0.2s ease; }
+.ask-opt .icon { flex: none; color: var(--hi); transition: color 0.2s ease; }
 .ask-opt:active { transform: scale(0.98); }
 .ask-opt:focus-visible { background: var(--lime); border-color: var(--lime); color: var(--ink); }
 .ask-opt:focus-visible .icon { color: var(--ink); }
@@ -196,7 +199,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .ask-text { margin: -6px 0 16px; color: var(--soft); font-size: 15px; }
 .ask-tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .ask-tiles li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: center; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--line-dark); font-size: 14px; line-height: 1.3; color: var(--soft); }
-.ask-tiles .icon { color: var(--lime); }
+.ask-tiles .icon { color: var(--hi); }
 .ask-actions { display: grid; gap: 10px; margin-top: 16px; }
 .ask-actions .btn-line { min-height: 52px; font-size: 16px; }
 .ask-note { font-size: 12px; line-height: 1.4; color: var(--grey); text-align: center; }
@@ -323,7 +326,7 @@ details p { margin-top: 8px; color: var(--muted); }
 /* ===== subscription builder ===== */
 .sub-head { padding-block: 88px 28px; border-radius: 0 0 28px 28px; }
 .sub-head h1 { font-size: clamp(28px, 5.4vw, 48px); line-height: 1.06; letter-spacing: -0.03em; }
-.sub-head h1 em { font-style: normal; color: var(--lime); }
+.sub-head h1 em { font-style: normal; color: var(--hi); }
 .sub { display: grid; gap: 28px; padding-block: 24px 120px; }
 .sub fieldset { border: 0; margin: 0 0 28px; padding: 0; min-width: 0; }
 .sub legend { font: 500 20px/1.2 var(--f); letter-spacing: -0.02em; padding: 0; margin-bottom: 12px; }
@@ -415,7 +418,7 @@ details p { margin-top: 8px; color: var(--muted); }
 /* ===== subscription builder ===== */
 .sub-head { padding-block: 88px 28px; border-radius: 0 0 28px 28px; }
 .sub-head h1 { font-size: clamp(28px, 5.4vw, 48px); line-height: 1.06; letter-spacing: -0.03em; }
-.sub-head h1 em { font-style: normal; color: var(--lime); }
+.sub-head h1 em { font-style: normal; color: var(--hi); }
 .sub { display: grid; gap: 28px; padding-block: 24px 120px; }
 .sub fieldset { border: 0; margin: 0 0 28px; padding: 0; min-width: 0; }
 .sub legend { font: 500 20px/1.2 var(--f); letter-spacing: -0.02em; padding: 0; margin-bottom: 12px; }
@@ -501,7 +504,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .foot-nav a { text-decoration: none; color: var(--soft); }
 .page-head { padding-block: 88px 28px; border-radius: 0 0 28px 28px; }
 .page-head h1 { font-size: clamp(28px, 5.4vw, 48px); line-height: 1.06; letter-spacing: -0.03em; }
-.page-head h1 em { font-style: normal; color: var(--lime); }
+.page-head h1 em { font-style: normal; color: var(--hi); }
 .page-head .head-sub { margin-top: 10px; color: var(--soft); }
 .info-side .offer { background: var(--lime); color: var(--ink); border-radius: 22px; padding: 18px; }
 .info-side .offer h2 { font-size: 24px; line-height: 1.12; margin-bottom: 6px; }
@@ -557,3 +560,31 @@ details p { margin-top: 8px; color: var(--muted); }
    keep the header and the first screen below it. */
 body { position: relative; padding-top: env(safe-area-inset-top, 0px); }
 .top { top: env(safe-area-inset-top, 0px); }
+
+/* ===== light theme — a trial (Mika, 03.10.2026) =====
+   Built with THEME=light (layouts/Base.astro puts data-theme on <html>).
+   The top surface — header, carousel, page titles, the "Write to us" panel —
+   turns light: ink text, green highlights, black buttons with lime text.
+   What stays black on purpose: the garage and the first slide's picture (the
+   moped renders are shot on black), the earnings card, the closing block and
+   the footer. No new colours: the values are the brand's own tokens. */
+html[data-theme='light'], html[data-theme='light'] body { background: var(--bg); }
+html[data-theme='light'] :is(.top, .promo, .page-head, .sub-head, .ask-panel) {
+  --hi: var(--accent); --dot: var(--ink);
+  --soft: #5d5d5d; --grey: #5d5d5d; --line-dark: #dddddd; --ink-2: #ffffff;
+  color: var(--ink);
+}
+html[data-theme='light'] :is(.promo, .page-head, .sub-head) { background: var(--bg); }
+html[data-theme='light'] .ask-panel { background: var(--surface); }
+html[data-theme='light'] :is(.promo, .page-head, .sub-head, .ask-panel) :focus-visible { outline-color: var(--accent); }
+html[data-theme='light'] .langs a[aria-current='true'] { background: var(--ink); color: #fff; }
+html[data-theme='light'] :is(.promo, .ask-panel) .btn-lime { background: var(--ink); color: var(--lime); }
+html[data-theme='light'] .promo-dots button::before { background: var(--line-control); }
+html[data-theme='light'] .promo-dots button[aria-current='true']::before { background: var(--ink); }
+/* the picture of the first slide keeps its black studio */
+html[data-theme='light'] .slide-fig.pic { --hi: var(--lime); --soft: #dddddd; --ink-2: #1b1b1b; --line-dark: #1b1b1b; }
+/* the garage is a black showcase on a light page */
+html[data-theme='light'] .garage-screen { background: var(--bg); padding: 12px 12px 0; }
+html[data-theme='light'] .garage-screen.first { padding-top: 68px; }
+html[data-theme='light'] .garage-screen .garage { border-radius: 28px; }
+html[data-theme='light'] .page-head, html[data-theme='light'] .sub-head { padding-bottom: 8px; }

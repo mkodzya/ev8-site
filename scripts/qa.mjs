@@ -98,7 +98,10 @@ for (const loc of LOCALES) {
   const page = await ctx.newPage();
   await page.goto(BASE + loc, { waitUntil: 'networkidle' });
 
-  // carousel: five slides, the third dot brings the third slide
+  // carousel: turns by itself, five slides, the third dot brings the third slide
+  await page.waitForTimeout(5900);
+  const auto = await page.evaluate(() => { const t = document.querySelector('.promo-track'); return Math.round(t.scrollLeft / t.clientWidth); });
+  if (auto !== 1) note(where, `carousel did not turn by itself: after 6 s it shows slide ${auto + 1}`);
   const slides = await page.locator('.promo .slide').count();
   if (slides !== 5) note(where, `carousel has ${slides} slides, expected 5`);
   await page.locator('.promo-dots button').nth(2).click();
