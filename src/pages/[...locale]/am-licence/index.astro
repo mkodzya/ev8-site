@@ -1,0 +1,69 @@
+---
+// The AM licence and EV8's help with it — its own page (Mika, 03.10.2026).
+// Every fact about the licence is the text of the live ev8.ge page
+// /am-kategoriis-migheba/ (changed 21.09.2026): what AM covers, the exam, the
+// age, the documents, the steps and the fees. Kardu has not confirmed it yet
+// (handbook register, item 59). Not carried over: "first week free with a new
+// licence" — there are no discounts (Mika, 01.10.2026). The price of the help
+// comes from data/subscription.ts; what the help consists of is not in the
+// book (register, item 66), so the page does not describe it.
+import Base from '../../../layouts/Base.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { contact } from '../../../data/models';
+import { services } from '../../../data/subscription';
+import { gel } from '../../../lib/calc';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.licence;
+const help = services.find((s) => s.id === 'licence');
+const price = help?.once ? d.sub.once.replace('{n}', gel(help.once)) : null;
+// Where the exam questions are open, as listed on ev8.ge.
+const study = [
+  ['sa.gov.ge', 'https://sa.gov.ge/p/gamocdiskitxvebi'],
+  ['teoria.on.ge', 'https://teoria.on.ge/tickets/10'],
+  ['martiviteoria.ge', 'https://martiviteoria.ge'],
+];
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="am-licence/">
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{t.intro}</p>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <h2 class="h2">{t.whatTitle}</h2>
+      <dl class="facts">
+        {t.what.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+
+      <h2 class="h2 stations-h">{t.docsTitle}</h2>
+      <ul class="ticks">{t.docs.map((x) => <li>{x}</li>)}</ul>
+      <p class="honest">{t.docsNote}</p>
+
+      <h2 class="h2 stations-h">{t.stepsTitle}</h2>
+      <ol class="steps">
+        {t.steps.map(([b, s], i) => (
+          <li><div>
+            <b>{b}</b><span>{s}</span>
+            {i === 1 && <span class="step-links">{study.map(([name, url]) => <a href={url} rel="noopener nofollow">{name}</a>)}</span>}
+          </div></li>
+        ))}
+      </ol>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.helpTitle}</h2>
+        <p>{t.helpText}</p>
+        {price && <span class="paper-price">{price}</span>}
+        <a class="btn btn-ink btn-block" href={href(locale, 'subscription/')}>{t.add} →</a>
+      </div>
+      <a class="btn btn-line btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.ask}</a>
+      <p class="honest">{t.modelNote}</p>
+    </aside>
+  </section>
+</Base>

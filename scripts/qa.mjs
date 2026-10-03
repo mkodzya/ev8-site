@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
 const BASE = process.env.QA_BASE || 'https://test.ops.ev8.ge/garage/site/';
-const PAGES = ['', 'models/', 'subscription/', 'how-it-works/', 'faq/', 'contacts/'];
+const PAGES = ['', 'models/', 'subscription/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/'];
 const LOCALES = ['', 'en/'];
 const VIEWS = [{ name: 'phone', width: 375, height: 812 }, { name: 'laptop', width: 1366, height: 800 }];
 const OUT = 'qa-shots';
@@ -49,7 +49,7 @@ for (const view of VIEWS) {
           }
         }
         // a text block squeezed so narrow that it breaks a word or two per line
-        for (const el of document.querySelectorAll('.row-tx, .ask-opt span, .ask-tiles li span, .paper h3, .queue-steps b, .moped b, h1, h2, .btn')) {
+        for (const el of document.querySelectorAll('.row-tx, .ask-opt span, .ask-tiles li span, .paper h3, .queue-steps b, .moped b, .fact-tile span, h1, h2, .btn')) {
           if (!visible(el)) continue;
           const text = (el.textContent || '').trim();
           const lines = Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight || '20'));

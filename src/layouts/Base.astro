@@ -13,9 +13,9 @@ const { locale, title, description, path, preloadImage } = Astro.props;
 const t = dict(locale);
 // Previews are never indexed; the production build drops this flag.
 const noindex = process.env.PREVIEW === '1';
-// The light theme is a trial (Mika, 03.10.2026): built with THEME=light into its
-// own preview folder, next to the black one. The styles are at the end of global.css.
-const light = process.env.THEME === 'light';
+// The site is light (Mika, 03.10.2026, after a trial next to the black one).
+// THEME=dark still builds the black version; the styles are at the end of global.css.
+const light = process.env.THEME !== 'dark';
 ---
 <!doctype html>
 <html lang={t.htmlLang} data-theme={light ? 'light' : undefined}>
@@ -43,9 +43,11 @@ const light = process.env.THEME === 'light';
         <nav>
           <a href={href(locale, 'models/')}>{t.nav.garage}</a>
           <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
+          <a class="wide" href={href(locale, 'stations/')}>{t.stationsPage.nav}</a>
+          <a class="wide" href={href(locale, 'am-licence/')}>{t.licence.nav}</a>
           <a class="wide" href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
-          <a class="wide" href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
-          <a class="wide" href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
+          <a class="wider" href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
+          <a class="wider" href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
           <span class="langs">
             {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
           </span>
@@ -59,6 +61,8 @@ const light = process.env.THEME === 'light';
       <nav class="wrap foot-nav">
         <a href={href(locale, 'models/')}>{t.nav.garage}</a>
         <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
+        <a href={href(locale, 'stations/')}>{t.stationsPage.nav}</a>
+        <a href={href(locale, 'am-licence/')}>{t.licence.nav}</a>
         <a href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
         <a href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
         <a href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
