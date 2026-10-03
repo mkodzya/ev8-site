@@ -29,7 +29,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; background: var(--ink); scroll-behavior: smooth; }
+/* scrollbar-gutter: a short page without a scrollbar must not sit wider than a long one */
+html { -webkit-text-size-adjust: 100%; background: var(--ink); scroll-behavior: smooth; scrollbar-gutter: stable; }
 /* The page itself is dark, the light content sits on <main>: the phone's status
    bar and the overscroll above the header take the colour of the body. */
 body { margin: 0; background: var(--ink); color: var(--ink); font: 400 16px/1.5 var(--f); -webkit-tap-highlight-color: transparent; }
@@ -59,7 +60,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* header */
 .top { position: absolute; inset: 0 0 auto 0; z-index: 5; }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 14px; }
-.logo img { height: 28px; width: auto; }
+.logo { display: block; }
+.logo svg { display: block; height: 28px; width: auto; }
 .top nav { display: flex; align-items: center; gap: 14px; font: 500 14px/1 var(--f); }
 .top nav a { text-decoration: none; color: var(--soft); }
 .top nav a.wide, .top nav a.wider { display: none; }
@@ -626,11 +628,15 @@ html[data-theme='light'] .page-head, html[data-theme='light'] .sub-head { paddin
 /* pages: the old one fades, the new one rises in; the header and the button stay where they are */
 @view-transition { navigation: auto; }
 ::view-transition-old(root) { animation: page-out 0.3s ease both; }
-::view-transition-new(root) { animation: page-in 0.6s var(--out) both; }
+/* the new page starts a moment after the old one began to fade: the two never show through each other */
+::view-transition-new(root) { animation: page-in 0.6s var(--out) 0.12s both; }
 @keyframes page-out { to { opacity: 0; } }
 @keyframes page-in { from { opacity: 0; transform: translateY(12px); } }
 @keyframes fade-in { from { opacity: 0; } }
 .top { view-transition-name: top; }
+/* the header keeps its place; when it has to move or appear (see the script in layouts/Base.astro) it does so slowly */
+::view-transition-group(top) { animation-duration: 0.5s; animation-timing-function: var(--out); }
+::view-transition-new(top):only-child { animation: fade-in 0.5s ease both; }
 .ask-fab { view-transition-name: ask-fab; }
 /* browsers without page transitions: the page fades in (no transform — the bar fixed to the bottom lives inside main) */
 @supports not (view-transition-name: none) { main { animation: fade-in 0.6s ease backwards; } }
@@ -643,11 +649,11 @@ html[data-theme='light'] .page-head, html[data-theme='light'] .sub-head { paddin
 .top nav > a[aria-current='page']::after { transform: scaleX(1); }
 html[data-theme='light'] .top { --top-fg: var(--ink); }
 .langs a { transition: background-color var(--t1) ease, color var(--t1) ease; }
-.logo img, .foot-nav a, .foot a, .more, .step-links a, summary { transition: color var(--t1) ease, opacity var(--t1) ease; }
+.logo svg, .foot-nav a, .foot a, .more, .step-links a, summary { transition: color var(--t1) ease, opacity var(--t1) ease; }
 @media (hover: hover) {
   .top nav > a:hover { color: var(--top-fg, #fff); }
   .top nav > a:hover::after { transform: scaleX(1); }
-  .logo:hover img { opacity: 0.75; }
+  .logo:hover svg { opacity: 0.75; }
   .foot-nav a:hover, .foot a:hover { color: #fff; }
   .more:hover, .step-links a:hover, summary:hover { color: var(--ink); }
 }
