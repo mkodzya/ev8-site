@@ -1,7 +1,9 @@
 ---
 // The moped picker: three mopeds on a lit podium, switched by arrows, cards,
 // swipe or arrow keys, looping. Works without JavaScript (radio inputs and
-// labels); the script only adds swipe, keys and remembering the choice.
+// labels); the script adds swipe, keys, remembering the choice and the
+// entrance: the lamp comes on, the moped appears out of the dark, the figures
+// follow (Mika, 03.10.2026: "as if you really walk into a garage").
 import { dict, href, asset, type Locale } from '../i18n';
 import { models } from '../data/models';
 
@@ -17,7 +19,9 @@ const pad = (i: number) => String(i).padStart(2, '0');
   ))}
   {variant === 'page' && <p class="eyebrow">{t.eyebrow}</p>}
   <div class="stage">
+    <div class="lamp"></div>
     <div class="beam"></div>
+    {models.map((m, i) => <span class={`ghost h${i + 1}`} aria-hidden="true">{m.name}</span>)}
     <div class="ring"></div>
     {models.map((m, i) => (
       <div class={`car c${i + 1}`} role="img" aria-label={m.name} style={`background-image:url(${asset(m.image)})`}></div>
@@ -87,5 +91,21 @@ const pad = (i: number) => String(i).padStart(2, '0');
       if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
       if (e.key === 'ArrowLeft') { go(-1); e.preventDefault(); }
     });
+
+    // The entrance plays once, when the garage comes on screen. "js" puts the
+    // stage in the dark, "in" switches the light on, "entering" keeps the slow
+    // timings until everything has arrived; after that the mopeds change at
+    // their usual pace.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      g.classList.add('js');
+      const seen = new IntersectionObserver((entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        seen.disconnect();
+        g.classList.add('entering');
+        requestAnimationFrame(() => requestAnimationFrame(() => g.classList.add('in')));
+        window.setTimeout(() => g.classList.remove('entering'), 2800);
+      }, { threshold: 0.3 });
+      seen.observe(g);
+    }
   });
 </script>

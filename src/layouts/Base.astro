@@ -22,6 +22,9 @@ const noindex = process.env.PREVIEW === '1';
 // The site is light (Mika, 03.10.2026, after a trial next to the black one).
 // THEME=dark still builds the black version; the styles are at the end of global.css.
 const light = process.env.THEME !== 'dark';
+// The garage page is dark whatever the theme: you walk into a garage (Mika, 03.10.2026).
+const garagePage = path === 'models/';
+const lightTop = light && !garagePage;
 // The fonts every page draws its text with are fetched with the page itself.
 // Without this Safari drew the page in a fallback font first and redrew it a
 // moment later: the menu jumped sideways on every page change (measured
@@ -32,7 +35,7 @@ const warmFonts = locale === 'ka' ? [] : [georgian500, georgian400];
 const cur = (p: string) => (path === p ? 'page' : undefined);
 ---
 <!doctype html>
-<html lang={t.htmlLang} data-theme={light ? 'light' : undefined}>
+<html lang={t.htmlLang} data-theme={light ? 'light' : undefined} data-page={garagePage ? 'garage' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -41,10 +44,10 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {preloadFonts.map((f) => <link rel="preload" as="font" type="font/woff2" href={f} crossorigin />)}
     {preloadImage && <link rel="preload" as="image" href={asset(preloadImage)} fetchpriority="high" />}
-    <meta name="theme-color" content={light ? '#fbfbfb' : '#0b0b0b'} />
+    <meta name="theme-color" content={lightTop ? '#fbfbfb' : '#0b0b0b'} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content={light ? 'default' : 'black-translucent'} />
+    <meta name="apple-mobile-web-app-status-bar-style" content={lightTop ? 'default' : 'black-translucent'} />
     <meta name="apple-mobile-web-app-title" content="EV8" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -52,9 +55,9 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     {locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
   </head>
   <body data-warm-fonts={JSON.stringify(warmFonts)}>
-    <header class="top">
+    <header class="top" data-tone={lightTop ? 'light' : 'dark'}>
       <div class="wrap">
-        <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={light ? logoOnLight : logoOnDark} /></a>
+        <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={lightTop ? logoOnLight : logoOnDark} /></a>
         <nav>
           <a href={href(locale, 'models/')} aria-current={cur('models/')}>{t.nav.garage}</a>
           <a href={href(locale, 'subscription/')} aria-current={cur('subscription/')}>{t.sub.nav}</a>

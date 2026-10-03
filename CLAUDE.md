@@ -33,7 +33,9 @@ stack; Russian needs Inter.
 ## Design
 The site is light (Mika, 03.10.2026, chosen after a trial against "Black and lime"): light top,
 green and lime accents; the garage, the earnings card and the footer stay black, because the
-moped renders are shot on black. `THEME=dark` still builds the black version. Colours,
+moped renders are shot on black. `THEME=dark` still builds the black version. The garage page
+(`/models/`) is dark from edge to edge with a light-on-dark header: you walk into a garage — the
+page dims, the lamp flickers on, the moped comes out of the dark (Mika, 03.10.2026). Colours,
 type and button shape come from the EV8 brand (`docs/design/brand.md` in `mkodzya/ev8-ops`);
 no new colours. Phone first: couriers open the site from a phone. The moped picker is the
 "garage": dark stage, podium, three mopeds in a loop — `src/components/Garage.astro`.
