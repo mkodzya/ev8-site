@@ -166,6 +166,17 @@ for (const loc of LOCALES) {
   if (weekly !== rent + 5 + 12) note(where, `weekly ${weekly} != rent ${rent} + 5 + 12`);
   if (today !== weekly + 180) note(where, `first payment ${today} != weekly ${weekly} + 180`);
   await page.screenshot({ path: `${OUT}/flow-${lang}-subscription.png`, fullPage: true });
+  // a returning visitor: the saved choice is in place when the page is drawn, nothing animates into it
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const back = await page.evaluate(() => ({
+    moving: document.getAnimations().filter((x) => x.effect && x.effect.target && x.effect.target.closest && x.effect.target.closest('[data-sub], .sub-bar')).length,
+    model: document.querySelector('input[name="model"]:checked').value,
+    helmet: document.querySelector('input[value="helmet"]').checked,
+    weekly: Number(document.querySelector('[data-out="weekly"]').textContent.replace(/[^\d-]/g, '')),
+  }));
+  if (back.moving) note(where, `the request page animates ${back.moving} things into the saved choice on load`);
+  if (back.model !== picked || !back.helmet || back.weekly !== weekly) note(where, `the saved choice did not come back: ${JSON.stringify(back)}`);
+  await page.waitForLoadState('networkidle');
   // the answers are known already: the request goes straight to WhatsApp with them
   await page.locator('[data-sub] button[type="submit"]').click();
   await page.waitForTimeout(600);

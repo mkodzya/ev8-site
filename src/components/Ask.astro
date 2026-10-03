@@ -184,6 +184,7 @@ const onBuilder = path === 'subscription/';
         closing = 0;
         panel.classList.remove('out'); veil.classList.remove('out');
         panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null;
+        fab.classList.add('back');
         document.documentElement.classList.remove('ask-open');
         fab.focus();
       };
