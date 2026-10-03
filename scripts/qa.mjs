@@ -19,7 +19,8 @@ const browser = await chromium.launch();
 let checked = 0;
 
 for (const view of VIEWS) {
-  const ctx = await browser.newContext({ viewport: { width: view.width, height: view.height }, deviceScaleFactor: 1 });
+  // reduced motion: the page checks look at the settled page, not at an entrance half way through; the flows below run with motion
+  const ctx = await browser.newContext({ viewport: { width: view.width, height: view.height }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
   for (const loc of LOCALES) {
     for (const path of PAGES) {
       const url = BASE + loc + path;
