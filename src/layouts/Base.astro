@@ -7,6 +7,12 @@ import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
 import Ask from '../components/Ask.astro';
+import latin400 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff2?url';
+import latin500 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-500-normal.woff2?url';
+import georgian400 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-400-normal.woff2?url';
+import georgian500 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-500-normal.woff2?url';
+import logoOnLight from '../../public/img/brand/logo.svg?raw';
+import logoOnDark from '../../public/img/brand/logo-light.svg?raw';
 
 interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; }
 const { locale, title, description, path, preloadImage } = Astro.props;
@@ -16,6 +22,12 @@ const noindex = process.env.PREVIEW === '1';
 // The site is light (Mika, 03.10.2026, after a trial next to the black one).
 // THEME=dark still builds the black version; the styles are at the end of global.css.
 const light = process.env.THEME !== 'dark';
+// The fonts every page draws its text with are fetched with the page itself.
+// Without this Safari drew the page in a fallback font first and redrew it a
+// moment later: the menu jumped sideways on every page change (measured
+// 03.10.2026 — 60 px in English, 100 px in Georgian). The logo is inlined for
+// the same reason: nothing in the header arrives after the first paint.
+const preloadFonts = [latin500, latin400, ...(locale === 'ka' ? [georgian500, georgian400] : [])];
 const cur = (p: string) => (path === p ? 'page' : undefined);
 ---
 <!doctype html>
@@ -26,6 +38,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {preloadFonts.map((f) => <link rel="preload" as="font" type="font/woff2" href={f} crossorigin />)}
     {preloadImage && <link rel="preload" as="image" href={asset(preloadImage)} fetchpriority="high" />}
     <meta name="theme-color" content={light ? '#fbfbfb' : '#0b0b0b'} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,7 +53,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
   <body>
     <header class="top">
       <div class="wrap">
-        <a class="logo" href={href(locale)} aria-label={t.nav.home}><img src={asset(light ? 'img/brand/logo.svg' : 'img/brand/logo-light.svg')} alt="EV8" width="109" height="28" /></a>
+        <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={light ? logoOnLight : logoOnDark} /></a>
         <nav>
           <a href={href(locale, 'models/')} aria-current={cur('models/')}>{t.nav.garage}</a>
           <a href={href(locale, 'subscription/')} aria-current={cur('subscription/')}>{t.sub.nav}</a>
@@ -76,5 +89,17 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
       </div>
     </footer>
     <Ask locale={locale} path={path} />
+    <script>
+      // Page transitions hold the header in place (view-transition-name "top" in
+      // the styles). When the visitor leaves from further down the page — a button
+      // in the middle, a link in the footer — the old header is off screen, and the
+      // transition would fly it in from above. Then it is left out of the
+      // transition, and the header of the new page simply fades in where it stands.
+      const header = document.querySelector<HTMLElement>('.top');
+      if (header) {
+        window.addEventListener('pageswap', () => { if (window.scrollY > header.offsetHeight) header.style.viewTransitionName = 'none'; });
+        window.addEventListener('pageshow', () => { header.style.viewTransitionName = ''; });
+      }
+    </script>
   </body>
 </html>
