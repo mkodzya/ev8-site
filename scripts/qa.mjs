@@ -99,13 +99,13 @@ for (const loc of LOCALES) {
   await page.goto(BASE + loc, { waitUntil: 'networkidle' });
 
   // carousel: turns by itself, five slides, the third dot brings the third slide
-  await page.waitForTimeout(5900);
+  await page.waitForTimeout(6600);
   const auto = await page.evaluate(() => { const t = document.querySelector('.promo-track'); return Math.round(t.scrollLeft / t.clientWidth); });
   if (auto !== 1) note(where, `carousel did not turn by itself: after 6 s it shows slide ${auto + 1}`);
   const slides = await page.locator('.promo .slide').count();
   if (slides !== 5) note(where, `carousel has ${slides} slides, expected 5`);
   await page.locator('.promo-dots button').nth(2).click();
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1600);
   const at = await page.evaluate(() => { const t = document.querySelector('.promo-track'); return Math.round(t.scrollLeft / t.clientWidth); });
   if (at !== 2) note(where, `carousel dot 3 shows slide ${at + 1}`);
   await page.screenshot({ path: `${OUT}/flow-${lang}-promo.png` });
@@ -125,17 +125,20 @@ for (const loc of LOCALES) {
     const opt = page.locator('.ask-panel [data-step]:not([hidden]) .ask-opt').nth(j);
     picked3.push((await opt.locator('span').textContent()).trim());
     await opt.click();
+    await page.waitForTimeout(800);
   }
   const offer = await page.locator('.ask-panel [data-offer]:not([hidden])').getAttribute('data-offer');
   if (offer !== 'petrol') note(where, `widget gave "${offer}", expected petrol`);
   const waHref = await page.locator('[data-ask-send]').getAttribute('href');
   if (!waHref.startsWith('https://wa.me/995595165588?text=')) note(where, `widget link goes to ${waHref.slice(0, 60)}`);
   if (!picked3.every((p) => text(waHref).includes(p))) note(where, `widget message lacks the answers: ${text(waHref).slice(0, 120)}`);
+  await page.waitForTimeout(600);
   const fits = await page.evaluate(() => { const p = document.querySelector('.ask-panel'); return p.scrollHeight <= p.clientHeight + 1; });
   if (!fits) note(where, 'the answer in the widget does not fit one screen');
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${OUT}/flow-${lang}-offer.png` });
   await page.locator('.ask-panel [data-ask-close]').click();
+  await page.waitForTimeout(500);
   if (await page.locator('.ask-panel').isVisible()) note(where, 'the widget did not close');
 
   // garage: three steps forward come back to the first
@@ -183,8 +186,7 @@ for (const loc of LOCALES) {
   if (!(await page2.locator('.ask-panel').isVisible())) note(where, 'the request did not open the three questions');
   await page2.waitForTimeout(500);
   await page2.screenshot({ path: `${OUT}/flow-${lang}-request-ask.png` });
-  for (const j of [1, 3, 0]) await page2.locator('.ask-panel [data-step]:not([hidden]) .ask-opt').nth(j).click();
-  await page2.waitForTimeout(600);
+  for (const j of [1, 3, 0]) { await page2.locator('.ask-panel [data-step]:not([hidden]) .ask-opt').nth(j).click(); await page2.waitForTimeout(800); }
   if (!sent2) note(where, 'the request did not go to WhatsApp after the three answers');
   else if (text(sent2).split('\n').length < 5) note(where, `the request after the questions is short: ${text(sent2).slice(0, 200)}`);
   await ctx2.close();

@@ -158,7 +158,17 @@ const serviceText = t.services as Record<string, string[]>;
     hours: Number(hours.value),
   });
 
-  const set = (name: string, value: string) => q<HTMLElement>(`[data-out="${name}"]`).forEach((el) => (el.textContent = value));
+  // A number that changed ticks: it dips and settles (styles: "motion"). Not while
+  // the hours slider is being dragged — there every number changes at once.
+  let tick = false;
+  const set = (name: string, value: string) => q<HTMLElement>(`[data-out="${name}"]`).forEach((el) => {
+    if (el.textContent === value) return;
+    el.textContent = value;
+    if (!tick) return;
+    el.classList.remove('tick');
+    void el.offsetWidth;
+    el.classList.add('tick');
+  });
   const line = (name: string, on: boolean) => q<HTMLElement>(`[data-line="${name}"]`).forEach((el) => (el.hidden = !on));
 
   function render() {
@@ -191,9 +201,10 @@ const serviceText = t.services as Record<string, string[]>;
     if (saved?.hours) hours.value = String(saved.hours);
   } catch {}
 
-  form.addEventListener('input', render);
-  form.addEventListener('change', render);
-  q<HTMLButtonElement>('[data-hours]').forEach((b) => b.addEventListener('click', () => { hours.value = b.dataset.hours!; render(); }));
+  const onChange = (e: Event) => { tick = (e.target as HTMLInputElement).type !== 'range'; render(); tick = false; };
+  form.addEventListener('input', onChange);
+  form.addEventListener('change', onChange);
+  q<HTMLButtonElement>('[data-hours]').forEach((b) => b.addEventListener('click', () => { hours.value = b.dataset.hours!; tick = true; render(); tick = false; }));
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();

@@ -612,3 +612,115 @@ html[data-theme='light'] .garage-screen { background: var(--bg); padding: 12px 1
 html[data-theme='light'] .garage-screen.first { padding-top: 68px; }
 html[data-theme='light'] .garage-screen .garage { border-radius: 28px; }
 html[data-theme='light'] .page-head, html[data-theme='light'] .sub-head { padding-bottom: 8px; }
+
+/* ===== motion (Mika, 03.10.2026): every change is smooth, small and unhurried =====
+   One curve and three durations for the whole site. Pages fade into each other;
+   the menu marks the page with a line that draws itself; the carousel glides
+   and its text rises in; choices in the request form and answers of the quiz
+   change colour softly, numbers tick, questions slide in; lists of questions
+   open by unfolding. All of it is switched off for a visitor whose device asks
+   for less motion (the last rule). This block comes last and overrides the
+   shorter transitions written with the components above. */
+:root { --out: cubic-bezier(0.22, 1, 0.36, 1); --t1: 0.3s; --t2: 0.5s; --t3: 0.8s; interpolate-size: allow-keywords; }
+
+/* pages: the old one fades, the new one rises in; the header and the button stay where they are */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: page-out 0.3s ease both; }
+::view-transition-new(root) { animation: page-in 0.6s var(--out) both; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; transform: translateY(12px); } }
+@keyframes fade-in { from { opacity: 0; } }
+.top { view-transition-name: top; }
+.ask-fab { view-transition-name: ask-fab; }
+/* browsers without page transitions: the page fades in (no transform — the bar fixed to the bottom lives inside main) */
+@supports not (view-transition-name: none) { main { animation: fade-in 0.6s ease backwards; } }
+
+/* menu */
+.top nav > a { position: relative; padding-block: 6px; transition: color var(--t1) ease; }
+.top nav > a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; border-radius: 2px; background: currentColor;
+                      transform: scaleX(0); transform-origin: left center; transition: transform var(--t2) var(--out); }
+.top nav > a[aria-current='page'] { color: var(--top-fg, #fff); }
+.top nav > a[aria-current='page']::after { transform: scaleX(1); }
+html[data-theme='light'] .top { --top-fg: var(--ink); }
+.langs a { transition: background-color var(--t1) ease, color var(--t1) ease; }
+.logo img, .foot-nav a, .foot a, .more, .step-links a, summary { transition: color var(--t1) ease, opacity var(--t1) ease; }
+@media (hover: hover) {
+  .top nav > a:hover { color: var(--top-fg, #fff); }
+  .top nav > a:hover::after { transform: scaleX(1); }
+  .logo:hover img { opacity: 0.75; }
+  .foot-nav a:hover, .foot a:hover { color: #fff; }
+  .more:hover, .step-links a:hover, summary:hover { color: var(--ink); }
+}
+
+/* buttons */
+.btn, .ask-fab, .promo-arrow, .arrow { transition: transform var(--t1) var(--out), background-color var(--t1) ease, color var(--t1) ease, border-color var(--t1) ease, box-shadow var(--t2) ease; }
+.btn:active, .ask-fab:active, .promo-arrow:active { transform: scale(0.98); transition-duration: 0.12s; }
+@media (hover: hover) {
+  .btn-lime:hover, .btn-ink:hover, .ask-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(11, 11, 11, 0.16); }
+  .btn-line:hover, .promo-arrow:hover { background-color: color-mix(in srgb, currentColor 8%, transparent); }
+}
+
+/* carousel: the slide on screen is lit, the others wait dimmed and a little lower */
+.promo-track { transition: opacity 0.4s ease; }
+.promo-track.swap { opacity: 0; }
+.promo.live .slide-tx > *, .promo.live .slide-fig { opacity: 0.12; transform: translateY(14px); transition: opacity var(--t3) ease, transform var(--t3) var(--out); }
+.promo.live .slide.on .slide-tx > *, .promo.live .slide.on .slide-fig { opacity: 1; transform: none; }
+.promo.live .slide.on .slide-tx > :nth-child(2) { transition-delay: 0.08s; }
+.promo.live .slide.on .slide-tx > :nth-child(3) { transition-delay: 0.16s; }
+.promo.live .slide.on .slide-fig { transition-delay: 0.24s; }
+.promo-dots button { transition: width var(--t2) var(--out); }
+.promo-dots button::before { transition: width var(--t2) var(--out), background-color var(--t2) ease; }
+
+/* request form: every choice changes softly and settles under the finger */
+.moped, .row, .pill-btn, .thumb { transition: border-color var(--t1) ease, background-color var(--t1) ease, color var(--t1) ease, transform var(--t1) var(--out), box-shadow var(--t2) ease; }
+.moped small, .row small, .row-ic, .row-pr, .thumb small { transition: color var(--t1) ease, background-color var(--t1) ease; }
+.moped:active, .row:not(.off):active, .pill-btn:active, .thumb:active { transform: scale(0.985); transition-duration: 0.12s; }
+@media (hover: hover) {
+  .moped:hover, .row:not(.off):hover { border-color: var(--line-control); }
+  .moped:has(input:checked):hover, .row:has(input:checked):hover { border-color: var(--ink); }
+  .pill-btn:hover { transform: translateY(-1px); }
+}
+/* a line of the sum appears and leaves instead of blinking */
+[data-line], [data-save] { transition: opacity var(--t2) ease, transform var(--t2) var(--out), display var(--t2) allow-discrete; }
+[data-line][hidden], [data-save][hidden] { opacity: 0; transform: translateY(-6px); }
+@starting-style { [data-line], [data-save] { opacity: 0; transform: translateY(-6px); } }
+/* a number that changed dips and settles */
+[data-out] { display: inline-block; }
+.tick { animation: tick var(--t2) var(--out); }
+@keyframes tick { from { opacity: 0.25; transform: translateY(5px); } }
+
+/* quiz: the panel rises, a question slides in, its answers follow one by one, the picked one lights up */
+@keyframes step-in { from { opacity: 0; transform: translateX(16px); } }
+@keyframes opt-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes veil-in { from { opacity: 0; } }
+@keyframes ask-out { to { opacity: 0; transform: translateY(20px); } }
+@keyframes veil-out { to { opacity: 0; } }
+.ask-panel { animation: ask-in var(--t2) var(--out) both; }
+.ask-veil { animation: veil-in var(--t1) ease both; }
+.ask-panel.out { animation: ask-out 0.28s ease both; }
+.ask-veil.out { animation: veil-out 0.28s ease both; }
+.ask-fab, .ask-hint { animation: ask-in var(--t2) var(--out) backwards; }
+.ask-panel [data-step] > .ask-q, .ask-offer > .ask-q, .ask-offer > .ask-text { animation: step-in var(--t2) var(--out) backwards; }
+.ask-panel [data-step] .ask-opt, .ask-tiles li, .ask-actions > * { animation: opt-in var(--t2) var(--out) backwards; }
+.ask-opt:nth-child(1), .ask-tiles li:nth-child(1) { animation-delay: 0.06s; }
+.ask-opt:nth-child(2), .ask-tiles li:nth-child(2) { animation-delay: 0.12s; }
+.ask-opt:nth-child(3), .ask-tiles li:nth-child(3) { animation-delay: 0.18s; }
+.ask-opt:nth-child(4) { animation-delay: 0.24s; }
+.ask-actions > * { animation-delay: 0.26s; }
+.ask-opt { transition: background-color var(--t1) ease, color var(--t1) ease, border-color var(--t1) ease, transform var(--t1) var(--out); }
+.ask-opt .icon { transition: color var(--t1) ease; }
+.ask-opt.picked { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.ask-opt.picked .icon { color: var(--ink); }
+.dots i { transition: opacity var(--t2) ease; }
+
+/* questions and answers unfold; the plus turns into a cross */
+summary::after { display: inline-block; transition: transform var(--t2) var(--out); }
+details[open] summary::after { content: '+'; transform: rotate(45deg); }
+details::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size var(--t2) var(--out), opacity var(--t2) ease, content-visibility var(--t2) allow-discrete; }
+details[open]::details-content { block-size: auto; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .promo.live .slide-tx > *, .promo.live .slide-fig { opacity: 1; transform: none; }
+}

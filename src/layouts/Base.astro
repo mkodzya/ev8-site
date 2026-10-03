@@ -16,6 +16,7 @@ const noindex = process.env.PREVIEW === '1';
 // The site is light (Mika, 03.10.2026, after a trial next to the black one).
 // THEME=dark still builds the black version; the styles are at the end of global.css.
 const light = process.env.THEME !== 'dark';
+const cur = (p: string) => (path === p ? 'page' : undefined);
 ---
 <!doctype html>
 <html lang={t.htmlLang} data-theme={light ? 'light' : undefined}>
@@ -41,13 +42,13 @@ const light = process.env.THEME !== 'dark';
       <div class="wrap">
         <a class="logo" href={href(locale)} aria-label={t.nav.home}><img src={asset(light ? 'img/brand/logo.svg' : 'img/brand/logo-light.svg')} alt="EV8" width="109" height="28" /></a>
         <nav>
-          <a href={href(locale, 'models/')}>{t.nav.garage}</a>
-          <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
-          <a class="wide" href={href(locale, 'stations/')}>{t.stationsPage.nav}</a>
-          <a class="wide" href={href(locale, 'am-licence/')}>{t.licence.nav}</a>
-          <a class="wide" href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
-          <a class="wider" href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
-          <a class="wider" href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
+          <a href={href(locale, 'models/')} aria-current={cur('models/')}>{t.nav.garage}</a>
+          <a href={href(locale, 'subscription/')} aria-current={cur('subscription/')}>{t.sub.nav}</a>
+          <a class="wide" href={href(locale, 'stations/')} aria-current={cur('stations/')}>{t.stationsPage.nav}</a>
+          <a class="wide" href={href(locale, 'am-licence/')} aria-current={cur('am-licence/')}>{t.licence.nav}</a>
+          <a class="wide" href={href(locale, 'how-it-works/')} aria-current={cur('how-it-works/')}>{t.how.nav}</a>
+          <a class="wider" href={href(locale, 'faq/')} aria-current={cur('faq/')}>{t.faqPage.nav}</a>
+          <a class="wider" href={href(locale, 'contacts/')} aria-current={cur('contacts/')}>{t.contacts.nav}</a>
           <span class="langs">
             {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
           </span>
