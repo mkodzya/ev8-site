@@ -1,20 +1,18 @@
 ---
-// Where a battery is swapped — its own page (Mika, 03.10.2026).
-// Addresses: handbook business/places.md, taken on Mika's word of 01.10.2026.
-// The live ev8.ge page /svap-sadgurebi/ (changed 01.10.2026) lists three other
-// Agrohub points and says "swaps 24/7, in 15 seconds": neither is carried over
-// until the points and the hours are confirmed (handbook register, items 47, 69).
+// Where a battery is swapped — its own page (Mika, 03.10.2026). The places,
+// "swaps 24/7" and "15 seconds" are those of the live ev8.ge page
+// /svap-sadgurebi/ (changed 01.10.2026), taken on Mika's word of 03.10.2026.
 import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { contact } from '../../../data/models';
-import { stations } from '../../../data/stations';
+import { stations, directions } from '../../../data/stations';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const d = dict(locale);
 const t = d.stationsPage;
-const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+const n = (s: string) => s.replace('{n}', String(stations.length));
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="stations/">
   <section class="dark page-head">
@@ -27,7 +25,7 @@ const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' +
   <section class="wrap info">
     <div>
       <ul class="fact-tiles">
-        {t.facts.map(([b, s]) => <li class="fact-tile"><b>{b.replace('{n}', String(stations.length))}</b><span>{s}</span></li>)}
+        {t.facts.map(([b, s]) => <li class="fact-tile"><b>{n(b)}</b><span>{n(s)}</span></li>)}
       </ul>
 
       <h2 class="h2 stations-h">{t.listTitle}</h2>
@@ -35,8 +33,8 @@ const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' +
         {stations.map((st, i) => (
           <li>
             <span class="row-ic"><Icon name={i === 0 ? 'bolt' : 'swap'} size={26} /></span>
-            <span class="row-tx"><b>{t.stations[i][0]}</b><small>{t.stations[i][1]}</small></span>
-            <a class="btn btn-line" href={maps(st.query)} rel="noopener">{t.routeShort}</a>
+            <span class="row-tx"><b>{t.stations[i][0]}</b><small>{t.stations[i][1]}</small><small class="hours">{t.always}{i === 0 && ` · ${t.service}`}</small></span>
+            <a class="btn btn-line" href={directions(st)} rel="noopener">{t.routeShort}</a>
           </li>
         ))}
       </ul>
