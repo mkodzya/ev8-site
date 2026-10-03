@@ -1,0 +1,54 @@
+---
+// Where a battery is swapped — its own page (Mika, 03.10.2026).
+// Addresses: handbook business/places.md, taken on Mika's word of 01.10.2026.
+// The live ev8.ge page /svap-sadgurebi/ (changed 01.10.2026) lists three other
+// Agrohub points and says "swaps 24/7, in 15 seconds": neither is carried over
+// until the points and the hours are confirmed (handbook register, items 47, 69).
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { contact } from '../../../data/models';
+import { stations } from '../../../data/stations';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.stationsPage;
+const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="stations/">
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{t.sub}</p>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <ul class="fact-tiles">
+        {t.facts.map(([b, s]) => <li class="fact-tile"><b>{b.replace('{n}', String(stations.length))}</b><span>{s}</span></li>)}
+      </ul>
+
+      <h2 class="h2 stations-h">{t.listTitle}</h2>
+      <ul class="stations">
+        {stations.map((st, i) => (
+          <li>
+            <span class="row-ic"><Icon name={i === 0 ? 'bolt' : 'swap'} size={26} /></span>
+            <span class="row-tx"><b>{t.stations[i][0]}</b><small>{t.stations[i][1]}</small></span>
+            <a class="btn btn-line" href={maps(st.query)} rel="noopener">{t.routeShort}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="honest">{t.rule}</p>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaText}</p>
+        <a class="btn btn-ink btn-block" href={href(locale, 'subscription/')}>{t.cta} →</a>
+      </div>
+      <a class="btn btn-line btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{d.contacts.wa}</a>
+    </aside>
+  </section>
+</Base>

@@ -1,7 +1,6 @@
 #!/bin/sh
 # Put a preview build where Mika opens it from his phone:
-#   scripts/deploy-preview.sh          https://test.ops.ev8.ge/garage/site/
-#   scripts/deploy-preview.sh light    https://test.ops.ev8.ge/garage/site-light/   (light theme, a trial)
+#   https://test.ops.ev8.ge/garage/site/
 # Static files on the test host, next to the garage mockup, outside EV8 Ops.
 # This copies files only: it does not restart anything on the server.
 # Production (ev8.ge) is not touched by this script — there is no production
@@ -11,7 +10,6 @@ cd "$(dirname "$0")/.."
 
 HOST=root@204.168.149.105
 NAME=site
-if [ "${1:-}" = "light" ]; then NAME=site-light; export THEME=light; fi
 DIR=/srv/ev8-site-preview/www/garage/$NAME
 export PREVIEW_BASE=/garage/$NAME/
 

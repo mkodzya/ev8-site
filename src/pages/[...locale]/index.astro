@@ -67,6 +67,7 @@ const papers = [
               <h3>{title}</h3>
               <p>{text}</p>
               {papers[i].price && <span class="paper-price">{papers[i].price}</span>}
+              {i === 0 && <a class="more" href={href(locale, 'am-licence/')}>{t.papers.more} →</a>}
             </div>
           </div>
         ))}
@@ -90,6 +91,7 @@ const papers = [
         <h2 class="h2">{t.included.title}</h2>
         <ul class="ticks">{t.included.items.map((x) => <li>{x}</li>)}</ul>
         <p class="honest">{t.included.honest}</p>
+        <a class="more" href={href(locale, 'stations/')}>{t.included.stationsLink} →</a>
       </div>
     </div>
   </section>

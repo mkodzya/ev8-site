@@ -5,7 +5,7 @@
 #   scripts/build.sh            production build -> dist/   (ka, en; base /)
 #   scripts/build.sh preview    preview build    -> dist/   (ka, en; noindex;
 #                               served under the folder in PREVIEW_BASE)
-#   THEME=light scripts/build.sh preview    the same with the light theme (a trial)
+#   THEME=dark scripts/build.sh preview     the black version (the site is light: Mika, 03.10.2026)
 set -eu
 cd "$(dirname "$0")/.."
 

@@ -31,7 +31,9 @@ speaker has read it (book register, item 15). Georgian needs Noto Sans Georgian 
 stack; Russian needs Inter.
 
 ## Design
-Direction "Black and lime" (Mika, 01.10.2026): black top, lime accent, light body. Colours,
+The site is light (Mika, 03.10.2026, chosen after a trial against "Black and lime"): light top,
+green and lime accents; the garage, the earnings card and the footer stay black, because the
+moped renders are shot on black. `THEME=dark` still builds the black version. Colours,
 type and button shape come from the EV8 brand (`docs/design/brand.md` in `mkodzya/ev8-ops`);
 no new colours. Phone first: couriers open the site from a phone. The moped picker is the
 "garage": dark stage, podium, three mopeds in a loop — `src/components/Garage.astro`.
@@ -49,7 +51,7 @@ This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB)
     scripts/build.sh              # production build -> dist/
     scripts/build.sh preview      # preview build (ka, en; noindex; base /garage/site/)
     scripts/deploy-preview.sh     # build a preview and copy it to https://test.ops.ev8.ge/garage/site/
-    scripts/qa.sh                 # check the deployed preview: 6 pages × 2 languages × 2 widths and the flows
+    scripts/qa.sh                 # check the deployed preview: 8 pages × 2 languages × 2 widths and the flows
 
 Verify by doing: open the preview at phone width, click through, then report.
 
