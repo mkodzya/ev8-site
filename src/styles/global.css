@@ -77,8 +77,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* ===== home: the carousel of benefits fills the first screen (Mika, 03.10.2026) =====
    A scroll-snap row: it swipes on its own; the script adds dots, arrows and autoplay.
    Phone: text on top, the figure panel takes the height that is left.
-   Laptop: text on the left, the figure on the right. */
-.promo { min-height: 100svh; display: flex; flex-direction: column; padding-top: 72px; }
+   Laptop: text on the left, the figure on the right.
+   Height: the small viewport (svh), so the first screen keeps its size when the
+   phone's address bar hides and shows; vh is the fallback for browsers without
+   svh. Nothing inside the carousel reads the viewport height on a phone: the
+   figure panel takes what is left with flex. Never dvh or a resize listener. */
+.promo { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; padding-top: 72px; }
 .promo-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
 .promo-track::-webkit-scrollbar { display: none; }
 .slide { flex: 0 0 100%; min-width: 0; display: flex; scroll-snap-align: start; scroll-snap-stop: always; }
@@ -123,7 +127,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .slide-in { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 64px; padding-block: 24px; }
   .slide h1, .slide h2 { font-size: clamp(44px, 5vw, 68px); margin-top: 18px; }
   .slide-p { font-size: 18px; margin-top: 18px; }
-  .slide-fig { flex: none; height: min(52vh, 440px); max-height: none; margin-top: 0; padding: 32px; }
+  .slide-fig { flex: none; height: min(52vh, 440px); height: min(52svh, 440px); max-height: none; margin-top: 0; padding: 32px; }
   .slide-fig b { font-size: clamp(72px, 9vw, 128px); }
   .slide-fig span { font-size: 16px; }
   .slide-fig .icon { width: 56px; height: 56px; top: 28px; right: 28px; }
