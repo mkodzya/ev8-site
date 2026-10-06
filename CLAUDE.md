@@ -11,6 +11,17 @@ The plan the site is built from, all in the book under `notes/` (01.10.2026): br
 (`site-brief.md`), map (`site-map.html`), flow and quiz (`site-flow.html`), master text
 (`site-copy.md`), page design (`site-design-pages.html`).
 
+## Who runs sessions (since 06.10.2026)
+Two people work on the site, each with their own Claude on their own machine: **Mika** and
+**Kardu** (GitHub `Kardu89`, Write access). Both work in `feature/*` branches and merge into
+`develop`. The preview on the test host is put there by Mika's session
+(`scripts/deploy-preview.sh` needs the server). In a session run by Kardu: never push `main`
+or a tag, never touch the server (`.githooks/pre-push` refuses the first two); a merge of
+Kardu's reaches the preview with Mika's session's next deploy, or when Kardu asks Mika. The
+production address moves only on Mika's word. Product decisions stay with Mika; Kardu
+proposes. Kardu's setup: `README.md`, "Для Kardu". Talk to whoever runs the session in the
+language they write in.
+
 ## Non-negotiable rules (from the owner)
 1. **Never invent data.** A price, a figure or a claim appears on the site only if the book
    has it with a source. No data — the block stays closed and the open item is in the
