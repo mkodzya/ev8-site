@@ -1,5 +1,6 @@
 // The request builder in the browser: restores the saved choice, recounts on
-// every change, hands the request to the "Write to us" widget.
+// every change, hands the request to the "Write to us" widget and sends what
+// it gives back to the queue (POST /api/site/queue).
 //
 // This file is NOT loaded as a module. The request page bundles it with
 // esbuild and puts it into the page as a plain inline script (see
@@ -70,17 +71,97 @@ form.addEventListener('input', onChange);
 form.addEventListener('change', onChange);
 q<HTMLButtonElement>('[data-hours]').forEach((b) => b.addEventListener('click', () => { hours.value = b.dataset.hours!; tick = true; render(); tick = false; }));
 
+// The request goes to the queue by email through the server. If the server is
+// down or the network fails, WhatsApp opens with the same message, as before.
+const API = '/api/site/queue';
+const fields: Record<string, HTMLInputElement> = {
+  name: form.querySelector<HTMLInputElement>('#q-name')!,
+  phone: form.querySelector<HTMLInputElement>('#q-phone')!,
+};
+const trap = form.querySelector<HTMLInputElement>('input[name="website"]')!;
+const sendBtn = form.querySelector<HTMLButtonElement>('[data-sub-send]')!;
+const note = form.querySelector<HTMLElement>('[data-sub-note]')!;
+const status = form.querySelector<HTMLElement>('[data-sub-status]')!;
+const ctaText = sendBtn.textContent ?? '';
+
+const fieldError = (input: HTMLInputElement, on: boolean) => {
+  input.toggleAttribute('aria-invalid', on);
+  document.getElementById(`${input.id}-err`)!.hidden = !on;
+};
+const clear = () => { Object.values(fields).forEach((i) => fieldError(i, false)); status.hidden = true; status.replaceChildren(); note.hidden = false; };
+Object.values(fields).forEach((i) => i.addEventListener('input', () => fieldError(i, false)));
+
+const say = (title: string, text?: string, wa?: string) => {
+  const s = status.dataset;
+  const b = document.createElement('b');
+  b.textContent = title;
+  status.replaceChildren(b);
+  if (text) status.append(' ', text);
+  if (wa) {
+    const a = document.createElement('a');
+    a.href = wa; a.rel = 'noopener'; a.textContent = s.tWa ?? '';
+    status.append(' ', a);
+  }
+  status.hidden = false;
+  status.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+};
+
+const busy = (on: boolean) => {
+  sendBtn.disabled = on;
+  sendBtn.textContent = on ? sendBtn.dataset.tSending ?? '' : ctaText;
+};
+
+async function deliver(text: string, wa: string) {
+  clear();
+  busy(true);
+  const ctl = new AbortController();
+  const timer = window.setTimeout(() => ctl.abort(), 15000);
+  let res: Response;
+  try {
+    res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: fields.name.value.trim(), phone: fields.phone.value.trim(), text,
+        lang: form.dataset.lang, page: location.pathname, website: trap.value,
+      }),
+      signal: ctl.signal,
+    });
+  } catch {
+    res = new Response(null, { status: 599 }); // network error or timeout
+  } finally {
+    window.clearTimeout(timer);
+  }
+  busy(false);
+  if (res.status === 202) {
+    note.hidden = true;
+    say(status.dataset.tSent ?? '', status.dataset.tSentText);
+    return;
+  }
+  if (res.status === 400) {
+    const body = (await res.json().catch(() => ({}))) as { field?: string };
+    const input = body.field ? fields[body.field] : undefined;
+    if (input) { fieldError(input, true); input.focus(); input.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    else say(status.dataset.tErr ?? '', undefined, wa);
+    return;
+  }
+  // 502, 503, a network error and anything unexpected: the request is not
+  // lost, it goes to WhatsApp as before.
+  window.location.href = wa;
+}
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+  if (sendBtn.disabled) return;
   const sel = read();
   const r = compute(sel);
   const d = form.dataset;
   const label = (i: HTMLInputElement) => i.dataset.label ?? i.value;
   const picks = [...checked('model'), ...checked('gear'), ...checked('service')].map(label);
   const lines = [d.hello, ...picks.map((p) => `• ${p}`), `${d.lWeekly}: ${gel(r.weekly)} ₾`, `${d.lToday}: ${gel(r.today)} ₾`, `${d.lHours}: ${sel.hours}`];
-  // The "Write to us" widget adds the three answers and opens WhatsApp
-  // (components/Ask.astro): every request says who is writing.
-  document.dispatchEvent(new CustomEvent('ev8:request', { detail: { lines } }));
+  // The "Write to us" widget adds the three answers (components/Ask.astro), so
+  // every request says who is writing, and hands the message back to deliver().
+  document.dispatchEvent(new CustomEvent('ev8:request', { detail: { lines, deliver } }));
 });
 
 render();

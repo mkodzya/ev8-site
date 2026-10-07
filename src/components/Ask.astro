@@ -7,7 +7,9 @@
 //
 // Every "write on WhatsApp" link on the site carries data-ask and opens this
 // panel. The subscription builder hands its request over with the event
-// `ev8:request`; the answers are asked once per visit.
+// `ev8:request`; the answers are asked once per visit. If the request carries
+// `deliver`, the finished message goes back to the builder, which sends it to
+// the queue (and opens WhatsApp itself if that fails).
 // Without JavaScript the button is a plain link to WhatsApp.
 import Icon from './Icon.astro';
 import { dict, href, type Locale } from '../i18n';
@@ -120,6 +122,8 @@ const onBuilder = path === 'subscription/';
     let closing = 0;
     // Lines of a request from the subscription builder that waits for the answers.
     let request: string[] | null = null;
+    type Deliver = (text: string, wa: string) => void;
+    let deliver: Deliver | null = null;
 
     // Who is this: q1 = works as a courier (0 yes, 1 not yet), q2 = vehicle.
     const segment = (a: number[]) => (a[0] === 1 ? 'novice' : ['petrol', 'car', 'electric', 'other'][a[1]] ?? 'other');
@@ -130,14 +134,16 @@ const onBuilder = path === 'subscription/';
     };
     const complete = (a: unknown): a is number[] => Array.isArray(a) && a.length === steps.length;
 
-    const link = (about: string, lines: string[] | null) => {
+    const message = (about: string, lines: string[] | null) => {
       const out = lines ? [...lines] : [d.hello!];
       out.push(`${d.lAbout}: ${about}`);
       if (!lines) {
         try { const m = localStorage.getItem('ev8-model'); if (m && names[m]) out.push(`${d.lModel}: ${names[m]}`); } catch {}
       }
-      return `https://wa.me/${d.wa}?text=${encodeURIComponent(out.join('\n'))}`;
+      return out.join('\n');
     };
+    const wa = (text: string) => `https://wa.me/${d.wa}?text=${encodeURIComponent(text)}`;
+    const link = (about: string, lines: string[] | null) => wa(message(about, lines));
 
     const show = () => {
       const done = answers.length >= steps.length;
@@ -167,10 +173,10 @@ const onBuilder = path === 'subscription/';
     };
 
     const hideHint = () => { hint.hidden = true; };
-    const open = (lines: string[] | null = null) => {
+    const open = (lines: string[] | null = null, onDone: Deliver | null = null) => {
       window.clearTimeout(closing); closing = 0;
       panel.classList.remove('out'); veil.classList.remove('out');
-      request = lines;
+      request = lines; deliver = onDone;
       const s = stored();
       answers = complete(s?.answers) ? s!.answers! : [];
       show();
@@ -183,7 +189,7 @@ const onBuilder = path === 'subscription/';
       const done = () => {
         closing = 0;
         panel.classList.remove('out'); veil.classList.remove('out');
-        panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null;
+        panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null; deliver = null;
         fab.classList.add('back');
         document.documentElement.classList.remove('ask-open');
         fab.focus();
@@ -199,6 +205,14 @@ const onBuilder = path === 'subscription/';
       if (el.closest('[data-ask-hint-close]')) { hideHint(); return; }
       if (el.closest('[data-ask-close]')) { close(); return; }
       if (el.closest('[data-ask]')) { e.preventDefault(); open(); return; }
+      // The send link in a builder request goes to the queue too, not straight to WhatsApp.
+      if (deliver && request && el.closest('[data-ask-send]')) {
+        e.preventDefault();
+        const out = deliver, text = message(labels(answers), request);
+        close();
+        out(text, wa(text));
+        return;
+      }
       const opt = el.closest<HTMLElement>('[data-answer]');
       if (opt && panel.contains(opt)) {
         if (busy) return;
@@ -211,7 +225,13 @@ const onBuilder = path === 'subscription/';
           answers.push(Number(opt.dataset.answer));
           morph(show);
           // A builder request goes out with the last answer: the tap is the send.
-          if (request && answers.length >= steps.length) window.location.href = send.href;
+          if (request && answers.length >= steps.length) {
+            if (deliver) {
+              const out = deliver, text = message(labels(answers), request);
+              close();
+              out(text, wa(text));
+            } else window.location.href = send.href;
+          }
           else panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-send]')?.focus({ preventScroll: true });
         }, reduce ? 0 : 280);
         return;
@@ -229,10 +249,13 @@ const onBuilder = path === 'subscription/';
     // The subscription builder sends its request through here, so every
     // request carries the three answers. Asked once per visit.
     document.addEventListener('ev8:request', (e) => {
-      const lines = (e as CustomEvent<{ lines: string[] }>).detail.lines;
+      const { lines, deliver: onDone } = (e as CustomEvent<{ lines: string[]; deliver?: Deliver }>).detail;
       const s = stored();
-      if (complete(s?.answers) && s?.text) window.location.href = link(s.text, lines);
-      else open(lines);
+      if (complete(s?.answers) && s?.text) {
+        const text = message(s.text, lines);
+        if (onDone) onDone(text, wa(text));
+        else window.location.href = wa(text);
+      } else open(lines, onDone ?? null);
     });
 
     // One nudge per visit, once the visitor is half way down the page and

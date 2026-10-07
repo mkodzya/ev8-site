@@ -37,7 +37,7 @@ const client = buildSync({
     </div>
   </section>
 
-  <form class="wrap sub init" data-sub data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-weekly={t.msgWeekly} data-l-today={t.msgToday} data-l-hours={t.msgHours}>
+  <form class="wrap sub init" data-sub data-lang={locale} data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-weekly={t.msgWeekly} data-l-today={t.msgToday} data-l-hours={t.msgHours}>
     <div class="sub-opts">
       <fieldset>
         <legend>{t.moped}</legend>
@@ -140,8 +140,28 @@ const client = buildSync({
         <p class="fine">{t.vsNote}</p>
       </div>
 
-      <button type="submit" class="btn btn-lime btn-block">{t.cta}</button>
-      <p class="fine center">{t.ctaNote}</p>
+      <div class="sum-card reach">
+        <p class="eyebrow">{t.contactTitle}</p>
+        <label class="field">
+          <span>{t.name}</span>
+          <input type="text" id="q-name" name="name" required maxlength="100" autocomplete="name" aria-describedby="q-name-err" />
+          <small id="q-name-err" class="field-err" hidden>{t.errName}</small>
+        </label>
+        <label class="field">
+          <span>{t.phone}</span>
+          <input type="tel" id="q-phone" name="phone" required maxlength="30" autocomplete="tel" inputmode="tel" aria-describedby="q-phone-err" />
+          <small id="q-phone-err" class="field-err" hidden>{t.errPhone}</small>
+        </label>
+        <!-- against bots: people never see or fill this field -->
+        <div class="trap" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-lime btn-block" data-sub-send data-t-sending={t.sending}>{t.cta}</button>
+      <p class="fine center" data-sub-note>{t.ctaNote}</p>
+      <div class="sub-status" data-sub-status role="status" aria-live="polite" hidden
+           data-t-sent={t.sent} data-t-sent-text={t.sentText} data-t-err={t.errOther} data-t-wa={t.errWa}></div>
     </aside>
   </form>
 
