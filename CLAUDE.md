@@ -18,9 +18,12 @@ Two people work on the site, each with their own Claude on their own machine: **
 (`scripts/deploy-preview.sh` needs the server). In a session run by Kardu: never push `main`
 or a tag, never touch the server (`.githooks/pre-push` refuses the first two); a merge of
 Kardu's reaches the preview with Mika's session's next deploy, or when Kardu asks Mika. The
-production address moves only on Mika's word. Product decisions stay with Mika; Kardu
-proposes. Kardu's setup: `README.md`, "Для Kardu". Talk to whoever runs the session in the
-language they write in.
+production address moves only on Mika's word. Decisions about the site are made by Mika and
+Kardu together, and neither needs the other's permission to change the site (Kardu's
+proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
+Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the production
+address are not part of that: they stay as written. Kardu's setup: `README.md`, "Для Kardu".
+Talk to whoever runs the session in the language they write in.
 
 ## Non-negotiable rules (from the owner)
 1. **Never invent data.** A price, a figure or a claim appears on the site only if the book
@@ -63,6 +66,14 @@ builder, then the papers (licence, registration, tax) and the questions. The qui
 gate any more: its three questions live in the "Write to us" widget (`Ask.astro`), on every
 page; every WhatsApp link carries `data-ask` and opens it, and the builder sends its request
 through it, so each message says who is writing. The queue is shown without numbers.
+
+The request (Kardu, 06.10.2026; accepted by Mika, 07.10.2026): the builder asks for a name
+and a phone and posts the request to `POST /api/site/queue` on its own host — EV8 Ops, which
+sends it to the company mailbox by email and stores nothing (`apps/api/src/routes/site.ts` in
+`mkodzya/ev8-ops`). 202 shows "Request received"; a server that is off (503 until Mika sets
+the mailbox up), down or unreachable opens WhatsApp with the same message, as before. On the
+production address the edge has to send `/api/site/*` to the production stack — part of the
+launch. `scripts/qa.sh` plays the server: it never sends a real request.
 
 ## How to build
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
