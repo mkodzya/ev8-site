@@ -140,7 +140,7 @@ const client = buildSync({
         <p class="fine">{t.vsNote}</p>
       </div>
 
-      <div class="sum-card reach">
+      <div class="sum-card reach" id="reach">
         <p class="eyebrow">{t.contactTitle}</p>
         <label class="field">
           <span>{t.name}</span>
@@ -167,7 +167,7 @@ const client = buildSync({
 
   <div class="sub-bar init">
     <div><b><span data-out="weekly">{gel(initial.weekly)}</span> ₾</b> <span>{t.weekly}</span><small>{t.today}: <span data-out="today">{gel(initial.today)}</span> ₾</small></div>
-    <a class="btn btn-lime" href="#summary">{t.bar}</a>
+    <a class="btn btn-lime" href="#reach">{t.bar}</a>
   </div>
   <script is:inline set:html={client}></script>
 </Base>

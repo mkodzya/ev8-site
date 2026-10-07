@@ -54,9 +54,6 @@ export const en: Dict = {
     queue: 'Join the queue',
   },
   ask: {
-    fab: 'Write to us',
-    hint: 'Three questions, and we help you choose',
-    hintClose: 'Hide the hint',
     title: 'Three short questions',
     close: 'Close',
     wa: 'Message us on WhatsApp',
