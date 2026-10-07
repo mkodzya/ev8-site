@@ -63,9 +63,10 @@ switches all of it off.
 Structure of the home page (Mika, 03.10.2026): it sells first. A carousel of the main
 benefits (`Promo.astro`), the garage, the queue for new mopeds with the way into the request
 builder, then the papers (licence, registration, tax) and the questions. The quiz is not a
-gate any more: its three questions live in the "Write to us" widget (`Ask.astro`), on every
-page; every WhatsApp link carries `data-ask` and opens it, and the builder sends its request
-through it, so each message says who is writing. The queue is shown without numbers.
+gate any more: its three questions live in a panel (`Ask.astro`); every WhatsApp link
+carries `data-ask` and opens it, and the builder sends its request through it, so each message
+says who is writing. There is no floating "Write to us" button (removed by Mika, 07.10.2026):
+the request form is the way in. The queue is shown without numbers.
 
 The request (Kardu, 06.10.2026; accepted by Mika, 07.10.2026): the builder asks for a name
 and a phone and posts the request to `POST /api/site/queue` on its own host — EV8 Ops, which

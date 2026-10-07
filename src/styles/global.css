@@ -113,10 +113,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .promo-arrow { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--muted); font: 500 20px/1 var(--f); color: inherit; }
 .promo-cta { display: grid; gap: 10px; }
 .promo-cta .btn-line { min-height: 52px; font-size: 16px; }
-/* phone: the second action is a plain link on the left — the "Write to us" button sits on the right of the same line */
-@media (max-width: 599px) {
-  .promo-cta .btn-line { justify-self: start; min-height: 56px; padding: 0 2px; border: 0; text-decoration: underline; text-underline-offset: 5px; }
-}
 @media (min-width: 600px) {
   .promo-cta { display: flex; }
   .promo-arrow { display: grid; place-items: center; }
@@ -132,7 +128,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .slide-fig span { font-size: 16px; }
   .slide-fig .icon { width: 56px; height: 56px; top: 28px; right: 28px; }
   .slide-fig.pic b { font-size: clamp(44px, 5vw, 64px); }
-  /* dots and arrows right after the buttons: the corner on the right belongs to the "Write to us" button */
+  /* dots and arrows right after the buttons */
   .promo-foot { grid-template-columns: auto 1fr; align-items: center; gap: 28px; padding-block: 8px 44px; }
   .promo-cta { order: 1; }
   .promo-nav { order: 2; }
@@ -168,16 +164,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .paper { grid-template-columns: 1fr; padding: 22px; }
 }
 
-/* ===== "Write to us": the button, the nudge and the panel with three questions =====
+/* ===== the panel with three questions (the floating "Write to us" button is gone: Mika, 07.10.2026) =====
    Phone: a sheet from the bottom over a veil. Laptop: a card in the corner. */
-.ask-fab { position: fixed; z-index: 20; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px;
-           height: 56px; padding: 0 20px 0 16px; border-radius: 999px; background: var(--lime); color: var(--ink); border: 1px solid var(--ink);
-           box-shadow: 0 8px 28px rgba(11, 11, 11, 0.35); font: 500 15px/1 var(--f); text-decoration: none; transition: transform 0.2s ease; }
-.ask-fab:active { transform: scale(0.97); }
-.ask-hint { position: fixed; z-index: 20; right: 16px; bottom: calc(82px + env(safe-area-inset-bottom, 0px)); margin: 0; display: flex; align-items: center; gap: 2px;
-            max-width: min(290px, calc(100vw - 32px)); padding: 4px 4px 4px 14px; border-radius: 18px 18px 4px 18px; background: var(--surface); color: var(--ink);
-            border: 1px solid var(--ink); box-shadow: 0 8px 28px rgba(11, 11, 11, 0.25); font-size: 14px; line-height: 1.3; animation: ask-in 0.4s ease both; }
-.ask-hint button[data-ask] { text-align: left; padding: 8px 0; }
 .ask-x { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; font-size: 22px; line-height: 1; }
 .ask-veil { position: fixed; inset: 0; z-index: 21; background: rgba(11, 11, 11, 0.6); }
 .ask-panel { position: fixed; z-index: 22; inset: auto 0 0 0; max-height: 92svh; overflow-y: auto; overscroll-behavior: contain;
@@ -215,17 +203,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .again { display: block; margin: 2px auto 0; font-size: 13px; color: var(--grey); text-decoration: underline; }
 @media (max-width: 599px) { html.ask-open { overflow: hidden; } }
 @media (min-width: 600px) {
-  .ask-fab { right: 20px; bottom: 20px; }
-  .ask-hint { right: 20px; bottom: 88px; }
   .ask-veil { display: none !important; }
   .ask-panel { inset: auto 20px 20px auto; width: 400px; max-height: min(700px, calc(100vh - 40px)); padding-bottom: 20px; border-radius: 24px;
                border: 1px solid var(--line-dark); box-shadow: 0 24px 64px rgba(11, 11, 11, 0.5); }
 }
-/* The subscription page has its own bar at the bottom of a phone: the button sits above it. */
+/* The request page has its own bar fixed to the bottom of a phone: the footer ends above it. */
 @media (max-width: 899px) {
-  body:has(.sub-bar) .ask-fab { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
-  body:has(.sub-bar) .ask-hint { bottom: calc(152px + env(safe-area-inset-bottom, 0px)); }
-  .foot { padding-bottom: 92px; }
+  body:has(.sub-bar) .foot { padding-bottom: 92px; }
 }
 
 /* blocks */
@@ -332,7 +316,7 @@ details p { margin-top: 8px; color: var(--muted); }
   html { scroll-behavior: auto; }
   .ring { animation: none; }
   .car, .name, .stat u::after, .btn, .ask-opt { transition: none; }
-  .ask-panel, .ask-hint { animation: none; }
+  .ask-panel { animation: none; }
   .promo-track { scroll-behavior: auto; }
 }
 
@@ -376,6 +360,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .hours output b { font: 500 28px/1 var(--f); color: var(--ink); font-variant-numeric: tabular-nums; }
 .hours input[type='range'] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); height: 32px; }
 .sub-sum { display: grid; gap: 12px; align-content: start; scroll-margin-top: 16px; }
+#reach { scroll-margin-top: 16px; }
 .sum-card { border-radius: 22px; padding: 18px; background: var(--surface); border: 1px solid var(--line); }
 .sum-card.net { background: var(--ink); color: #fff; border-color: var(--ink); }
 .sum-card .eyebrow { font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
@@ -726,7 +711,6 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 .top .langs { view-transition-name: top-langs; }
 ::view-transition-group(top-logo), ::view-transition-group(top-nav), ::view-transition-group(top-langs) { animation-duration: 0.5s; animation-timing-function: var(--out); }
 ::view-transition-new(top-logo):only-child, ::view-transition-new(top-nav):only-child, ::view-transition-new(top-langs):only-child { animation: fade-in 0.5s ease 0.12s both; }
-.ask-fab { view-transition-name: ask-fab; }
 /* browsers without page transitions: the page fades in (no transform — the bar fixed to the bottom lives inside main) */
 @supports not (view-transition-name: none) { main { animation: fade-in 0.6s ease backwards; } }
 
@@ -748,10 +732,10 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 }
 
 /* buttons */
-.btn, .ask-fab, .promo-arrow, .arrow { transition: transform var(--t1) var(--out), background-color var(--t1) ease, color var(--t1) ease, border-color var(--t1) ease, box-shadow var(--t2) ease; }
-.btn:active, .ask-fab:active, .promo-arrow:active { transform: scale(0.98); transition-duration: 0.12s; }
+.btn, .promo-arrow, .arrow { transition: transform var(--t1) var(--out), background-color var(--t1) ease, color var(--t1) ease, border-color var(--t1) ease, box-shadow var(--t2) ease; }
+.btn:active, .promo-arrow:active { transform: scale(0.98); transition-duration: 0.12s; }
 @media (hover: hover) {
-  .btn-lime:hover, .btn-ink:hover, .ask-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(11, 11, 11, 0.16); }
+  .btn-lime:hover, .btn-ink:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(11, 11, 11, 0.16); }
   .btn-line:hover, .promo-arrow:hover { background-color: color-mix(in srgb, currentColor 8%, transparent); }
 }
 
@@ -799,9 +783,6 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 .ask-veil { animation: veil-in var(--t1) ease both; }
 .ask-panel.out { animation: ask-out 0.28s ease both; }
 .ask-veil.out { animation: veil-out 0.28s ease both; }
-/* the button rises when it comes back after the panel — not on every page */
-.ask-fab { animation: none; }
-.ask-fab.back, .ask-hint { animation: ask-in var(--t2) var(--out) backwards; }
 .ask-panel [data-step] > .ask-q, .ask-offer > .ask-q, .ask-offer > .ask-text { animation: step-in var(--t2) var(--out) backwards; }
 .ask-panel [data-step] .ask-opt, .ask-tiles li, .ask-actions > * { animation: opt-in var(--t2) var(--out) backwards; }
 .ask-opt:nth-child(1), .ask-tiles li:nth-child(1) { animation-delay: 0.06s; }

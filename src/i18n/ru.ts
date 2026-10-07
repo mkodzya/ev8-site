@@ -58,11 +58,8 @@ export const ru = {
     wa: 'Написать в WhatsApp',
     queue: 'Встать в очередь',
   },
-  // The "Write to us" widget: the three quiz questions, then the message.
+  // The panel with the three quiz questions, then the message.
   ask: {
-    fab: 'Написать',
-    hint: 'Три вопроса — и поможем выбрать',
-    hintClose: 'Скрыть подсказку',
     title: 'Три коротких вопроса',
     close: 'Закрыть',
     wa: 'Написать в WhatsApp',

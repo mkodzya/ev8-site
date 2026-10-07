@@ -111,14 +111,10 @@ for (const loc of LOCALES) {
   if (at !== 2) note(where, `carousel dot 3 shows slide ${at + 1}`);
   await page.screenshot({ path: `${OUT}/flow-${lang}-promo.png` });
 
-  // the nudge appears half way down, once
-  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
-  await page.waitForTimeout(600);
-  if (!(await page.locator('[data-ask-hint]').isVisible())) note(where, 'the nudge did not appear at the bottom of the page');
-  await page.screenshot({ path: `${OUT}/flow-${lang}-hint.png` });
-
-  // widget: yes -> petrol moped -> AM, then the message carries the answers
-  await page.locator('.ask-fab').click();
+  // the questions panel, opened from a WhatsApp button: yes -> petrol moped -> AM, then the message carries the answers
+  if (await page.locator('.ask-fab, [data-ask-hint]').count()) note(where, 'the floating "Write to us" button is back');
+  await page.locator('.lead-cta [data-ask]').scrollIntoViewIfNeeded();
+  await page.locator('.lead-cta [data-ask]').click();
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${OUT}/flow-${lang}-ask.png` });
   const picked3 = [];
@@ -178,6 +174,13 @@ for (const loc of LOCALES) {
   if (saved.moving) note(where, `the request page animates ${saved.moving} things into the saved choice on load`);
   if (saved.model !== picked || !saved.helmet || saved.weekly !== weekly) note(where, `the saved choice did not come back: ${JSON.stringify(saved)}`);
   await page.waitForLoadState('networkidle');
+  // the bar at the bottom of a phone brings the form itself on screen: name, phone and the button
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.locator('.sub-bar a.btn').click();
+  await page.waitForTimeout(1500);
+  const formSeen = await page.evaluate(() => ['#q-name', '#q-phone', '[data-sub-send]'].map((q) => { const b = document.querySelector(q).getBoundingClientRect(); const bar = document.querySelector('.sub-bar').getBoundingClientRect(); return b.top >= 0 && b.bottom <= bar.top; }));
+  if (formSeen.includes(false)) note(where, `the bar's button does not bring the whole form on screen (name, phone, button: ${formSeen.join(', ')})`);
+  await page.screenshot({ path: `${OUT}/flow-${lang}-bar-to-form.png` });
   // The request goes to the queue (POST /api/site/queue) with the name and the phone. The server is
   // played here: it never gets a real request from the check, and WhatsApp is never opened.
   // 1) an empty form does not go anywhere

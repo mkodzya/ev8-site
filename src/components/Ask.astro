@@ -1,16 +1,16 @@
 ---
-// "Write to us": the button at the bottom right of every page and the panel it
-// opens. The three quiz questions live here now (Mika, 03.10.2026): they are
-// asked at the moment a visitor wants to write, and the answers travel in the
-// WhatsApp message, so the manager sees who is writing. On a phone the panel is
-// a sheet from the bottom, on a laptop a card in the corner.
+// The panel with the three quiz questions. It opens from every "write on
+// WhatsApp" link on the site (they carry data-ask) and from the request
+// builder; the answers travel in the message, so the manager sees who is
+// writing. On a phone the panel is a sheet from the bottom, on a laptop a card
+// in the corner. The floating "Write to us" button that used to open it on
+// every page is gone (Mika, 07.10.2026): the request form is the way in.
 //
-// Every "write on WhatsApp" link on the site carries data-ask and opens this
-// panel. The subscription builder hands its request over with the event
-// `ev8:request`; the answers are asked once per visit. If the request carries
-// `deliver`, the finished message goes back to the builder, which sends it to
-// the queue (and opens WhatsApp itself if that fails).
-// Without JavaScript the button is a plain link to WhatsApp.
+// The builder hands its request over with the event `ev8:request`; the answers
+// are asked once per visit. If the request carries `deliver`, the finished
+// message goes back to the builder, which sends it to the queue (and opens
+// WhatsApp itself if that fails).
+// Without JavaScript the links simply open WhatsApp.
 import Icon from './Icon.astro';
 import { dict, href, type Locale } from '../i18n';
 import { models, contact } from '../data/models';
@@ -39,11 +39,6 @@ const onBuilder = path === 'subscription/';
 ---
 <div class="ask" data-ask-root data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-about={t.msgAbout} data-l-model={t.msgModel}
      data-t-wa={t.wa} data-t-send={t.send} data-models={JSON.stringify(names)}>
-  <p class="ask-hint" data-ask-hint hidden>
-    <button type="button" data-ask>{t.hint}</button>
-    <button type="button" class="ask-x" data-ask-hint-close aria-label={t.hintClose}>×</button>
-  </p>
-  <a class="ask-fab" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener"><Icon name="chat" size={24} /><span>{t.fab}</span></a>
 
   <div class="ask-veil" data-ask-close hidden></div>
   <div class="ask-panel" role="dialog" aria-labelledby="ask-title" hidden>
@@ -97,14 +92,13 @@ const onBuilder = path === 'subscription/';
 
 <script>
   const KEY = 'ev8-quiz';
-  const HINT = 'ev8-ask-hint';
   const root = document.querySelector<HTMLElement>('[data-ask-root]');
   if (root) {
     const d = root.dataset;
     const panel = root.querySelector<HTMLElement>('.ask-panel')!;
     const veil = root.querySelector<HTMLElement>('.ask-veil')!;
-    const fab = root.querySelector<HTMLElement>('.ask-fab')!;
-    const hint = root.querySelector<HTMLElement>('[data-ask-hint]')!;
+    // What opened the panel, to give the focus back when it closes.
+    let opener: HTMLElement | null = null;
     const box = root.querySelector<HTMLElement>('[data-ask-box]')!;
     const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
     const dots = Array.from(root.querySelectorAll<HTMLElement>('.dots i'));
@@ -172,7 +166,6 @@ const onBuilder = path === 'subscription/';
       if (before !== after) panel.animate([{ height: `${before}px`, overflow: 'hidden' }, { height: `${after}px`, overflow: 'hidden' }], { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
     };
 
-    const hideHint = () => { hint.hidden = true; };
     const open = (lines: string[] | null = null, onDone: Deliver | null = null) => {
       window.clearTimeout(closing); closing = 0;
       panel.classList.remove('out'); veil.classList.remove('out');
@@ -180,7 +173,8 @@ const onBuilder = path === 'subscription/';
       const s = stored();
       answers = complete(s?.answers) ? s!.answers! : [];
       show();
-      panel.hidden = false; veil.hidden = false; fab.hidden = true; hideHint();
+      opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      panel.hidden = false; veil.hidden = false;
       document.documentElement.classList.add('ask-open');
       panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-actions]:not([hidden]) [data-ask-send]')?.focus();
     };
@@ -189,10 +183,9 @@ const onBuilder = path === 'subscription/';
       const done = () => {
         closing = 0;
         panel.classList.remove('out'); veil.classList.remove('out');
-        panel.hidden = true; veil.hidden = true; fab.hidden = false; request = null; deliver = null;
-        fab.classList.add('back');
+        panel.hidden = true; veil.hidden = true; request = null; deliver = null;
         document.documentElement.classList.remove('ask-open');
-        fab.focus();
+        opener?.focus({ preventScroll: true });
       };
       if (reduce) { done(); return; }
       // the panel sinks and the veil fades before they go
@@ -202,7 +195,6 @@ const onBuilder = path === 'subscription/';
 
     document.addEventListener('click', (e) => {
       const el = e.target as HTMLElement;
-      if (el.closest('[data-ask-hint-close]')) { hideHint(); return; }
       if (el.closest('[data-ask-close]')) { close(); return; }
       if (el.closest('[data-ask]')) { e.preventDefault(); open(); return; }
       // The send link in a builder request goes to the queue too, not straight to WhatsApp.
@@ -257,21 +249,5 @@ const onBuilder = path === 'subscription/';
         else window.location.href = wa(text);
       } else open(lines, onDone ?? null);
     });
-
-    // One nudge per visit, once the visitor is half way down the page and
-    // has neither opened the panel nor answered before.
-    let seen = true;
-    try { seen = sessionStorage.getItem(HINT) === '1' || !!sessionStorage.getItem(KEY); } catch {}
-    if (!seen) {
-      const onScroll = () => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        if (max < 400 || window.scrollY < max / 2 || !panel.hidden) return;
-        window.removeEventListener('scroll', onScroll);
-        hint.hidden = false;
-        try { sessionStorage.setItem(HINT, '1'); } catch {}
-        window.setTimeout(hideHint, 12000);
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-    }
   }
 </script>
