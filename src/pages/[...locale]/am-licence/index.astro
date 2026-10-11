@@ -4,21 +4,18 @@
 // /am-kategoriis-migheba/ (changed 21.09.2026): what AM covers, the exam, the
 // age, the documents, the steps and the fees. Kardu has not confirmed it yet
 // (handbook register, item 59). Not carried over: "first week free with a new
-// licence" — there are no discounts (Mika, 01.10.2026). The price of the help
-// comes from data/subscription.ts; what the help consists of is not in the
-// book (register, item 66), so the page does not describe it.
+// licence" — there are no discounts (Mika, 01.10.2026). The paid help with the
+// licence is off the site with the other services (Kardu, 11.10.2026): the
+// card sends the question to WhatsApp. Which licence each moped needs is
+// models.ts (Kardu, same day), listed under it.
 import Base from '../../../layouts/Base.astro';
-import { dict, href, localePaths, type Locale } from '../../../i18n';
-import { contact } from '../../../data/models';
-import { services } from '../../../data/subscription';
-import { gel } from '../../../lib/calc';
+import { dict, localePaths, type Locale } from '../../../i18n';
+import { contact, models } from '../../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const d = dict(locale);
 const t = d.licence;
-const help = services.find((s) => s.id === 'licence');
-const price = help?.once ? d.sub.once.replace('{n}', gel(help.once)) : null;
 // Where the exam questions are open, as listed on ev8.ge.
 const study = [
   ['sa.gov.ge', 'https://sa.gov.ge/p/gamocdiskitxvebi'],
@@ -59,11 +56,14 @@ const study = [
       <div class="offer">
         <h2>{t.helpTitle}</h2>
         <p>{t.helpText}</p>
-        {price && <span class="paper-price">{price}</span>}
-        <a class="btn btn-ink btn-block" href={href(locale, 'subscription/')}>{t.add} →</a>
       </div>
       <a class="btn btn-line btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.ask}</a>
-      <p class="honest">{t.modelNote}</p>
+      <div class="honest">
+        <b>{t.modelNote}</b>
+        <ul class="licence-models">
+          {models.map((m) => <li>{m.name} — {m.licence === 'none' ? d.garage.noLicence : d.garage.licenceAM}</li>)}
+        </ul>
+      </div>
     </aside>
   </section>
 </Base>

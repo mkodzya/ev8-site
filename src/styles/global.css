@@ -716,6 +716,9 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 .wl-consent a { text-decoration: underline; }
 .field input[type=email] { width: 100%; }
 
+/* Which licence each moped needs, under the AM page's help card (Kardu, 11.10.2026). */
+.licence-models { margin: 6px 0 0; padding-left: 18px; }
+
 /* The privacy policy: plain reading text. */
 .prose { padding-block: 28px 56px; }
 .prose h2 { font-size: 20px; line-height: 1.25; margin: 28px 0 8px; }
