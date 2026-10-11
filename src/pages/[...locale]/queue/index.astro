@@ -79,7 +79,7 @@ const groups = [
 
     <label class="wl-consent">
       <input type="checkbox" name="consent" id="wl-consent" required aria-describedby="wl-consent-err" />
-      <span>{t.consent} <a href={href(locale, 'privacy/')}>{t.consentLink}</a></span>
+      <span>{t.consent} <a href={href(locale, 'privacy/')}>{t.consentLink}</a>{t.consentAfter === '.' ? '.' : ` ${t.consentAfter}`}</span>
     </label>
     <small id="wl-consent-err" class="field-err" hidden>{t.errConsent}</small>
 
