@@ -108,6 +108,8 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
         <span>{t.footer.hours}</span>
         <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
+        <a href={contact.instagram} rel="noopener">Instagram</a>
+        <a href={contact.facebook} rel="noopener">Facebook</a>
       </div>
     </footer>
     <Ask locale={locale} path={path} />
