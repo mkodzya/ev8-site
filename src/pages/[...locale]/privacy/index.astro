@@ -1,0 +1,18 @@
+---
+// The privacy policy the waiting list's consent points at (src/data/privacy.ts).
+import Base from '../../../layouts/Base.astro';
+import { dict, localePaths, type Locale } from '../../../i18n';
+import { privacy } from '../../../data/privacy';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const t = dict(locale).privacy;
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaTitle} path="privacy/">
+  <section class="dark page-head">
+    <div class="wrap narrow">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+    </div>
+  </section>
+  <article class="wrap narrow prose" set:html={privacy[locale]} />
+</Base>

@@ -1,0 +1,215 @@
+---
+// The waiting list (Kardu, 11.10.2026): the form of the old ev8.ge/waitlist/
+// in the new site's style — name, surname, phone, email, the licence, courier
+// experience, the company, and the moped if one was picked in the garage or
+// the builder (read from what they saved in the browser). It goes to the
+// company mailbox through POST /api/site/queue on EV8 Ops, like the builder's
+// request did; the server stores nothing. A server that is off, down or
+// unreachable keeps what was typed and shows the phone number to call (no
+// WhatsApp on the site: Kardu, 11.10.2026).
+// Every "Join the queue" on the site leads here.
+import Base from '../../../layouts/Base.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { models, contact } from '../../../data/models';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.waitlist;
+const groups = [
+  { name: 'licence', q: t.licenceQ, a: t.licenceA, label: t.lLicence },
+  { name: 'courier', q: t.courierQ, a: t.courierA, label: t.lCourier },
+  { name: 'company', q: t.companyQ, a: t.companyA, label: t.lCompany },
+];
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="queue/">
+  <section class="dark page-head">
+    <div class="wrap narrow">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{t.lead}</p>
+    </div>
+  </section>
+
+  <form class="wrap narrow wl" data-wl novalidate data-lang={locale}
+        data-hello={t.msgHello} data-l-surname={t.lSurname} data-l-email={t.lEmail} data-l-model={t.lModel}
+        data-l-hours={d.sub.msgHours}>
+    <div class="wl-two">
+      <label class="field">
+        <span>{t.name}</span>
+        <input type="text" id="wl-name" name="name" required maxlength="60" autocomplete="given-name" aria-describedby="wl-name-err" />
+        <small id="wl-name-err" class="field-err" hidden>{t.errName}</small>
+      </label>
+      <label class="field">
+        <span>{t.surname}</span>
+        <input type="text" id="wl-surname" name="surname" maxlength="60" autocomplete="family-name" />
+      </label>
+    </div>
+    <div class="wl-two">
+      <label class="field">
+        <span>{t.phone}</span>
+        <input type="tel" id="wl-phone" name="phone" required maxlength="30" autocomplete="tel" inputmode="tel" aria-describedby="wl-phone-err" />
+        <small id="wl-phone-err" class="field-err" hidden>{t.errPhone}</small>
+      </label>
+      <label class="field">
+        <span>{t.email}</span>
+        <input type="email" id="wl-email" name="email" maxlength="100" autocomplete="email" inputmode="email" />
+      </label>
+    </div>
+
+    {groups.map((g) => (
+      <fieldset class="wl-group" data-group={g.name} data-label={g.label}>
+        <legend>{g.q}</legend>
+        <div class="wl-choices">
+          {g.a.map((a) => (
+            <label class="wl-choice"><input type="radio" name={g.name} value={a} required /><span>{a}</span></label>
+          ))}
+        </div>
+        <small class="field-err" data-err={g.name} hidden>{t.errChoose}</small>
+      </fieldset>
+    ))}
+
+    <fieldset class="wl-group">
+      <legend>{t.modelQ}</legend>
+      <div class="wl-choices">
+        {models.map((m) => (
+          <label class="wl-choice"><input type="radio" name="model" value={m.id} data-label={m.name} /><span>{m.name}</span></label>
+        ))}
+        <label class="wl-choice"><input type="radio" name="model" value="" data-label={t.modelAny} checked /><span>{t.modelAny}</span></label>
+      </div>
+    </fieldset>
+
+    <label class="wl-consent">
+      <input type="checkbox" name="consent" id="wl-consent" required aria-describedby="wl-consent-err" />
+      <span>{t.consent} <a href={href(locale, 'privacy/')}>{t.consentLink}</a>{t.consentAfter === '.' ? '.' : ` ${t.consentAfter}`}</span>
+    </label>
+    <small id="wl-consent-err" class="field-err" hidden>{t.errConsent}</small>
+
+    <!-- against bots: people never see or fill this field -->
+    <div class="trap" aria-hidden="true">
+      <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    <button type="submit" class="btn btn-lime btn-block" data-wl-send data-t-sending={t.sending}>{t.send}</button>
+    <div class="sub-status" data-wl-status role="status" aria-live="polite" hidden
+         data-t-sent={t.sent} data-t-sent-text={t.sentText} data-t-err={t.errOther} data-t-call={t.errCall}
+         data-phone={contact.phone} data-tel={`tel:${contact.phone.replace(/\s/g, '')}`}></div>
+  </form>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-wl]');
+  if (form) {
+    const d = form.dataset;
+    const $ = <T extends HTMLElement>(s: string) => form.querySelector<T>(s)!;
+    const name = $<HTMLInputElement>('#wl-name');
+    const surname = $<HTMLInputElement>('#wl-surname');
+    const phone = $<HTMLInputElement>('#wl-phone');
+    const email = $<HTMLInputElement>('#wl-email');
+    const consent = $<HTMLInputElement>('#wl-consent');
+    const trap = $<HTMLInputElement>('input[name="website"]');
+    const send = $<HTMLButtonElement>('[data-wl-send]');
+    const status = $<HTMLElement>('[data-wl-status]');
+    const ctaText = send.textContent ?? '';
+    const picked = (n: string) => form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`);
+
+    // The moped picked in the garage or the builder, and the builder's hours.
+    let hours = '';
+    try {
+      const model = localStorage.getItem('ev8-model');
+      if (model) {
+        const r = form.querySelector<HTMLInputElement>(`input[name="model"][value="${CSS.escape(model)}"]`);
+        if (r) r.checked = true;
+      }
+      const sub = JSON.parse(localStorage.getItem('ev8-sub') || 'null') as { hours?: number } | null;
+      if (sub?.hours) hours = String(sub.hours);
+    } catch {}
+
+    const err = (el: HTMLElement | null, on: boolean) => { if (el) el.hidden = !on; };
+    const fieldErr = (input: HTMLInputElement, on: boolean) => {
+      input.toggleAttribute('aria-invalid', on);
+      err(document.getElementById(`${input.id}-err`), on);
+    };
+    [name, phone].forEach((i) => i.addEventListener('input', () => fieldErr(i, false)));
+    consent.addEventListener('change', () => fieldErr(consent, false));
+    form.querySelectorAll<HTMLElement>('[data-group]').forEach((g) =>
+      g.addEventListener('change', () => err(form.querySelector(`[data-err="${g.dataset.group}"]`), false)));
+
+    const say = (title: string, text?: string, call = false) => {
+      const b = document.createElement('b');
+      b.textContent = title;
+      status.replaceChildren(b);
+      if (text) status.append(' ', text);
+      if (call) {
+        const a = document.createElement('a');
+        a.href = status.dataset.tel ?? ''; a.textContent = status.dataset.phone ?? '';
+        status.append(' ', a);
+      }
+      status.hidden = false;
+      status.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+    const busy = (on: boolean) => { send.disabled = on; send.textContent = on ? send.dataset.tSending ?? '' : ctaText; };
+
+    // Checked here first, so the visitor learns what is missing without a round trip.
+    const check = (): HTMLElement | null => {
+      let first: HTMLElement | null = null;
+      const mark = (bad: boolean, el: HTMLElement, show: () => void) => { if (bad) { show(); first ??= el; } };
+      mark(name.value.trim().length < 1, name, () => fieldErr(name, true));
+      mark(phone.value.replace(/\D/g, '').length < 9, phone, () => fieldErr(phone, true));
+      form.querySelectorAll<HTMLElement>('[data-group]').forEach((g) =>
+        mark(!picked(g.dataset.group!), g, () => err(form.querySelector(`[data-err="${g.dataset.group}"]`), true)));
+      mark(!consent.checked, consent, () => fieldErr(consent, true));
+      return first;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (send.disabled) return;
+      status.hidden = true;
+      const bad = check();
+      if (bad) { bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); (bad.querySelector('input') ?? bad).focus?.(); return; }
+
+      const model = picked('model');
+      const lines = [d.hello!];
+      if (surname.value.trim()) lines.push(`${d.lSurname}: ${surname.value.trim()}`);
+      if (email.value.trim()) lines.push(`${d.lEmail}: ${email.value.trim()}`);
+      form.querySelectorAll<HTMLElement>('[data-group]').forEach((g) => lines.push(`${g.dataset.label}: ${picked(g.dataset.group!)!.value}`));
+      lines.push(`${d.lModel}: ${model?.dataset.label ?? ''}`);
+      if (hours) lines.push(`${d.lHours}: ${hours}`);
+      const text = lines.join('\n');
+      const full = `${name.value.trim()} ${surname.value.trim()}`.trim();
+
+      busy(true);
+      const ctl = new AbortController();
+      const timer = window.setTimeout(() => ctl.abort(), 15000);
+      let res: Response;
+      try {
+        res = await fetch('/api/site/queue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: full, phone: phone.value.trim(), text, lang: d.lang, page: location.pathname, website: trap.value }),
+          signal: ctl.signal,
+        });
+      } catch {
+        res = new Response(null, { status: 599 }); // network error or timeout
+      } finally {
+        window.clearTimeout(timer);
+      }
+      busy(false);
+      if (res.status === 202) {
+        form.querySelectorAll('input, button').forEach((el) => ((el as HTMLInputElement).disabled = true));
+        say(status.dataset.tSent ?? '', status.dataset.tSentText);
+        return;
+      }
+      if (res.status === 400) {
+        const body = (await res.json().catch(() => ({}))) as { field?: string };
+        const input = body.field === 'name' ? name : body.field === 'phone' ? phone : null;
+        if (input) { fieldErr(input, true); input.focus(); input.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        else say(status.dataset.tErr ?? '', status.dataset.tCall, true);
+        return;
+      }
+      // 502, 503, a network error and anything unexpected: what was typed
+      // stays, and the visitor gets the number to call.
+      say(status.dataset.tErr ?? '', status.dataset.tCall, true);
+    });
+  }
+</script>

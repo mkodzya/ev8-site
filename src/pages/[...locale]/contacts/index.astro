@@ -1,0 +1,44 @@
+---
+// Address, hours and phone: handbook business/places.md. The showroom is closed
+// at the weekend (Kardu, 11.10.2026; the Google card says the same). No embedded
+// map: a link to directions.
+// Where a battery is swapped has its own page: stations/.
+import Base from '../../../layouts/Base.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { contact } from '../../../data/models';
+import Reviews from '../../../components/Reviews.astro';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.contacts;
+const route = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('65 Shalva Nutsubidze St, Tbilisi');
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="contacts/">
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{d.footer.address}</p>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <p class="lede">{t.here}</p>
+      <dl class="facts">
+        <div><dt>{t.weekdays}</dt><dd>10:00–20:00</dd></div>
+        <div><dt>{t.weekend}</dt><dd>{t.weekendNote}</dd></div>
+        <div><dt>{t.swap}</dt><dd>{t.swapWhere}</dd></div>
+        <div><dt>{t.phone}</dt><dd><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></dd></div>
+        <div><dt>{t.email}</dt><dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd></div>
+      </dl>
+      <Reviews locale={locale} />
+    </div>
+    <aside class="info-side">
+      <a class="btn btn-lime btn-block" href={href(locale, 'queue/')}>{t.queue} →</a>
+      <a class="btn btn-ink btn-block" href={route} rel="noopener">{t.route}</a>
+      <a class="btn btn-line btn-block" data-ask href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.ask}</a>
+      <a class="btn btn-line btn-block" href={href(locale, 'stations/')}>{t.stationsLink} →</a>
+    </aside>
+  </section>
+</Base>

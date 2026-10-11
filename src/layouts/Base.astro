@@ -1,44 +1,87 @@
 ---
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
 import '@fontsource/noto-sans-georgian/400.css';
 import '@fontsource/noto-sans-georgian/500.css';
 import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
+import Ask from '../components/Ask.astro';
+import { prodUrl, business, ogLocale, ogAlternates, ORIGIN } from '../lib/seo';
+import latin400 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff2?url';
+import latin500 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-500-normal.woff2?url';
+import georgian400 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-400-normal.woff2?url';
+import georgian500 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-500-normal.woff2?url';
+import logoOnLight from '../../public/img/brand/logo.svg?raw';
+import logoOnDark from '../../public/img/brand/logo-light.svg?raw';
 
-interface Props { locale: Locale; title: string; description: string; path: string; }
-const { locale, title, description, path } = Astro.props;
+interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; jsonLd?: object[]; noindex?: boolean; }
+const { locale, title, description, path, preloadImage, jsonLd = [], noindex: hidePage = false } = Astro.props;
+// Search: one address per page, the other language beside it, and the business
+// described on every page (src/lib/seo.ts).
+const canonical = prodUrl(locale, path);
+const structured = [business(locale), ...jsonLd];
 const t = dict(locale);
 // Previews are never indexed; the production build drops this flag.
-const noindex = process.env.PREVIEW === '1';
+const noindex = process.env.PREVIEW === '1' || hidePage;
+// The site is light (Mika, 03.10.2026, after a trial next to the black one).
+// THEME=dark still builds the black version; the styles are at the end of global.css.
+const light = process.env.THEME !== 'dark';
+// The garage page is dark whatever the theme: you walk into a garage (Mika, 03.10.2026).
+const garagePage = path === 'models/';
+const lightTop = light && !garagePage;
+// The fonts every page draws its text with are fetched with the page itself.
+// Without this Safari drew the page in a fallback font first and redrew it a
+// moment later: the menu jumped sideways on every page change (measured
+// 03.10.2026 — 60 px in English, 100 px in Georgian). The logo is inlined for
+// the same reason: nothing in the header arrives after the first paint.
+const preloadFonts = [latin500, latin400, ...(locale === 'ka' ? [georgian500, georgian400] : [])];
+const warmFonts = locale === 'ka' ? [] : [georgian500, georgian400];
+const cur = (p: string) => (path === p ? 'page' : undefined);
 ---
 <!doctype html>
-<html lang={t.htmlLang}>
+<html lang={t.htmlLang} data-theme={light ? 'light' : undefined} data-page={garagePage ? 'garage' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#0b0b0b" />
+    {preloadFonts.map((f) => <link rel="preload" as="font" type="font/woff2" href={f} crossorigin />)}
+    {preloadImage && <link rel="preload" as="image" href={asset(preloadImage)} fetchpriority="high" />}
+    <meta name="theme-color" content={lightTop ? '#fbfbfb' : '#0b0b0b'} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content={lightTop ? 'default' : 'black-translucent'} />
     <meta name="apple-mobile-web-app-title" content="EV8" />
+    <link rel="canonical" href={canonical} />
+    {locales.map((l) => <link rel="alternate" hreflang={l} href={prodUrl(l, path)} />)}
+    <link rel="alternate" hreflang="x-default" href={prodUrl('ka', path)} />
+    <meta property="og:site_name" content="EV8" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    {locales.filter((l) => l !== 'ru').map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${ORIGIN}/img/og.jpg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    {ogAlternates(locale).map((l) => <meta property="og:locale:alternate" content={l} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    {structured.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
-  <body>
-    <header class="top">
+  <body data-warm-fonts={JSON.stringify(warmFonts)}>
+    <header class="top" data-tone={lightTop ? 'light' : 'dark'}>
       <div class="wrap">
-        <a class="logo" href={href(locale)} aria-label={t.nav.home}><img src={asset('img/brand/logo-light.svg')} alt="EV8" width="109" height="28" /></a>
+        <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={lightTop ? logoOnLight : logoOnDark} /></a>
         <nav>
-          <a href={href(locale, 'models/')}>{t.nav.garage}</a>
+          <a href={href(locale, 'models/')} aria-current={cur('models/')}>{t.nav.garage}</a>
+          <a href={href(locale, 'rent/')} aria-current={cur('rent/')}>{t.sub.nav}</a>
+          <a class="wide" href={href(locale, 'stations/')} aria-current={cur('stations/')}>{t.stationsPage.nav}</a>
+          <a class="wide" href={href(locale, 'am-licence/')} aria-current={cur('am-licence/')}>{t.licence.nav}</a>
+          <a class="wide" href={href(locale, 'how-it-works/')} aria-current={cur('how-it-works/')}>{t.how.nav}</a>
+          <a class="wider" href={href(locale, 'faq/')} aria-current={cur('faq/')}>{t.faqPage.nav}</a>
+          <a class="wider" href={href(locale, 'contacts/')} aria-current={cur('contacts/')}>{t.contacts.nav}</a>
           <span class="langs">
             {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
           </span>
@@ -49,12 +92,54 @@ const noindex = process.env.PREVIEW === '1';
       <slot />
     </main>
     <footer class="dark">
+      <nav class="wrap foot-nav">
+        <a href={href(locale, 'models/')}>{t.nav.garage}</a>
+        <a href={href(locale, 'rent/')}>{t.sub.nav}</a>
+        <a href={href(locale, 'stations/')}>{t.stationsPage.nav}</a>
+        <a href={href(locale, 'am-licence/')}>{t.licence.nav}</a>
+        <a href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
+        <a href={href(locale, 'faq/')}>{t.faqPage.nav}</a>
+        <a href={href(locale, 'contacts/')}>{t.contacts.nav}</a>
+        <a href={href(locale, 'queue/')}>{t.waitlist.nav}</a>
+        <a href={href(locale, 'privacy/')}>{t.privacy.nav}</a>
+      </nav>
       <div class="wrap foot">
         <span>{t.footer.address}</span>
         <span>{t.footer.hours}</span>
         <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
         <a href={`mailto:${contact.email}`}>{contact.email}</a>
+        <a href={contact.instagram} rel="noopener">Instagram</a>
+        <a href={contact.facebook} rel="noopener">Facebook</a>
       </div>
     </footer>
+    <Ask locale={locale} path={path} />
+    <script>
+      // Page transitions hold the logo, the menu and the language switch in
+      // place (view-transition-name in the styles, block "motion"). Two cases
+      // where holding would look wrong:
+      // — the visitor leaves from further down the page (a button in the middle,
+      //   a footer link): the old header is off screen and would fly in from
+      //   above, so it is left out and the new one fades in where it stands;
+      // — the language changes: the two menus have different words in different
+      //   places and would show through each other, so the old menu leaves with
+      //   its page and the new one fades in. The logo and the switch stay put.
+      const header = document.querySelector<HTMLElement>('.top');
+      if (header) {
+        const parts = Array.from(header.querySelectorAll<HTMLElement>('.logo, nav, .langs'));
+        const drop = (els: HTMLElement[]) => els.forEach((el) => (el.style.viewTransitionName = 'none'));
+        window.addEventListener('pageswap', () => { if (window.scrollY > header.offsetHeight) drop(parts); });
+        header.querySelectorAll('.langs a').forEach((a) => a.addEventListener('click', () => drop(parts.filter((el) => el.matches('nav')))));
+        window.addEventListener('pageshow', () => parts.forEach((el) => (el.style.viewTransitionName = '')));
+      }
+      // The fonts of the other language are fetched as soon as the page has
+      // loaded, so the first switch of the language does not redraw the text.
+      const warm = () => (JSON.parse(document.body.dataset.warmFonts || '[]') as string[]).forEach((href) => {
+        const link = document.createElement('link');
+        link.rel = 'preload'; link.as = 'font'; link.type = 'font/woff2'; link.crossOrigin = ''; link.href = href;
+        document.head.append(link);
+      });
+      if (document.readyState === 'complete') warm();
+      else window.addEventListener('load', warm);
+    </script>
   </body>
 </html>

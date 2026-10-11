@@ -1,0 +1,72 @@
+---
+// Where a battery is swapped — its own page (Mika, 03.10.2026). The places,
+// "swaps 24/7" and "15 seconds" are those of the live ev8.ge page
+// /svap-sadgurebi/ (changed 01.10.2026), taken on Mika's word of 03.10.2026.
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import { asset, dict, href, localePaths, type Locale } from '../../../i18n';
+import { stations, directions } from '../../../data/stations';
+import { swapStations } from '../../../lib/seo';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.stationsPage;
+const n = (s: string) => s.replace('{n}', String(stations.length));
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="stations/" jsonLd={[swapStations(locale)]}>
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{t.sub}</p>
+      <!-- A swap at the Agrohub station, at night (Kardu, 11.10.2026). Silent,
+           looped, played only while on screen; with reduced motion, or with
+           no JavaScript, it waits on its poster with the player's controls. -->
+      <figure class="swap-film">
+        <video src={asset('video/swap.mp4')} poster={asset('img/swap-poster.jpg')} width="848" height="480"
+               muted loop playsinline controls preload="none" aria-label={t.videoLabel} data-swap-film></video>
+        <figcaption><span class="dot" aria-hidden="true"></span>{t.videoCaption}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <ul class="fact-tiles">
+        {t.facts.map(([b, s]) => <li class="fact-tile"><b>{n(b)}</b><span>{n(s)}</span></li>)}
+      </ul>
+
+      <h2 class="h2 stations-h">{t.listTitle}</h2>
+      <ul class="stations">
+        {stations.map((st, i) => (
+          <li>
+            <span class="row-ic"><Icon name={i === 0 ? 'bolt' : 'swap'} size={26} /></span>
+            <span class="row-tx"><b>{t.stations[i][0]}</b><small>{t.stations[i][1]}</small><small class="hours">{t.always}{i === 0 && ` · ${t.service}`}</small></span>
+            <a class="btn btn-line" href={directions(st)} rel="noopener">{t.routeShort}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="honest">{t.rule}</p>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaText}</p>
+        <a class="btn btn-ink btn-block" href={href(locale, 'queue/')}>{t.cta} →</a>
+      </div>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  // Plays like a moving picture: no controls, only while it is on screen.
+  const film = document.querySelector<HTMLVideoElement>('[data-swap-film]');
+  if (film && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    film.controls = false;
+    film.preload = 'auto';
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) film.play().catch(() => { film.controls = true; });
+      else film.pause();
+    }, { threshold: 0.25 }).observe(film);
+  }
+</script>

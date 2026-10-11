@@ -1,0 +1,86 @@
+---
+// The AM licence and EV8's help with it — its own page (Mika, 03.10.2026).
+// Every fact about the licence is the text of the live ev8.ge page
+// /am-kategoriis-migheba/ (changed 21.09.2026): what AM covers, the exam, the
+// age, the documents, the steps and the fees. Kardu has not confirmed it yet
+// (handbook register, item 59). The old page's "first week free with a new
+// licence" was left out on 01.10.2026 (Mika: no discounts) and is back as a
+// promo with no end date (Kardu, 12.10.2026): a licence of any category from the
+// last 3 months, the first week free, the deposit paid as usual. The paid help with the
+// licence is off the site with the other services (Kardu, 11.10.2026): the
+// card opens the question form. Which licence each moped needs is
+// models.ts (Kardu, same day), listed under it. The old page's claim that the
+// law will soon require a licence for every moped is gone with the "our help"
+// title (Kardu, 11.10.2026): no source for it.
+import Base from '../../../layouts/Base.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { models, DEPOSIT_GEL } from '../../../data/models';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.licence;
+// The intro names the mopeds that need the licence, from models.ts.
+const and = { ka: ' და ', en: ' and ', ru: ' и ' }[locale as string] ?? ' & ';
+const needAM = models.filter((m) => m.licence === 'AM').map((m) => m.name);
+const intro = t.intro.replace('{models}', needAM.length > 1 ? `${needAM.slice(0, -1).join(', ')}${and}${needAM.at(-1)}` : needAM[0] ?? '');
+// Where the exam questions are open, as listed on ev8.ge.
+const study = [
+  ['sa.gov.ge', 'https://sa.gov.ge/p/gamocdiskitxvebi'],
+  ['teoria.on.ge', 'https://teoria.on.ge/tickets/10'],
+  ['martiviteoria.ge', 'https://martiviteoria.ge'],
+];
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="am-licence/">
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{intro}</p>
+    </div>
+  </section>
+
+  <section class="wrap licence-promo">
+    <div class="offer">
+      <p class="tag">{t.promoTag}</p>
+      <h2>{t.promoTitle}</h2>
+      <p>{t.promoText.replace('{deposit}', String(DEPOSIT_GEL))}</p>
+      <a class="btn btn-ink" href={href(locale, 'queue/')}>{t.promoCta} →</a>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <h2 class="h2">{t.whatTitle}</h2>
+      <dl class="facts">
+        {t.what.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+
+      <h2 class="h2 stations-h">{t.docsTitle}</h2>
+      <ul class="ticks">{t.docs.map((x) => <li>{x}</li>)}</ul>
+      <p class="honest">{t.docsNote}</p>
+
+      <h2 class="h2 stations-h">{t.stepsTitle}</h2>
+      <ol class="steps">
+        {t.steps.map(([b, s], i) => (
+          <li><div>
+            <b>{b}</b><span>{s}</span>
+            {i === 1 && <span class="step-links">{study.map(([name, url]) => <a href={url} rel="noopener nofollow">{name}</a>)}</span>}
+          </div></li>
+        ))}
+      </ol>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.helpTitle}</h2>
+        <p>{t.helpText}</p>
+      </div>
+      <a class="btn btn-line btn-block" data-ask href={href(locale, 'contacts/')}>{t.ask}</a>
+      <div class="honest">
+        <b>{t.modelNote}</b>
+        <ul class="licence-models">
+          {models.map((m) => <li>{m.name} — {m.licence === 'none' ? d.garage.noLicence : d.garage.licenceAM}</li>)}
+        </ul>
+      </div>
+    </aside>
+  </section>
+</Base>

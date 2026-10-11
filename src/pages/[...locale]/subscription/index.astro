@@ -1,0 +1,22 @@
+---
+// The calculator lived here until 11.10.2026; it is "rent/" now (Kardu: the word
+// "subscription" confused couriers). Old links and the edge's redirects from the
+// WordPress site still land here, so the page sends them on at once.
+import { href, localePaths, type Locale } from '../../../i18n';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const to = href(locale, 'rent/');
+const canonical = new URL(to, Astro.site);
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <title>EV8</title>
+  </head>
+  <body><a href={to}>{to}</a></body>
+</html>

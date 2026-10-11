@@ -2,12 +2,17 @@
 import Base from '../../../layouts/Base.astro';
 import Garage from '../../../components/Garage.astro';
 import { dict, localePaths, type Locale } from '../../../i18n';
+import { models, fromGel } from '../../../data/models';
+import { offers } from '../../../lib/seo';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const t = dict(locale);
+const title = t.meta.modelsTitle.replace('{models}', models.map((m) => m.name).join(', '));
 ---
-<Base locale={locale} title={t.meta.modelsTitle} description={t.meta.modelsDesc} path="models/">
-  <h1 hidden>{t.meta.modelsTitle}</h1>
-  <Garage locale={locale} variant="page" id="garage" />
+<Base locale={locale} title={title} description={t.meta.modelsDesc.replace('{n}', String(fromGel))} path="models/" preloadImage={models[0].image} jsonLd={[offers(locale)]}>
+  <h1 class="sr-only">{title}</h1>
+  <section class="dark garage-screen first">
+    <Garage locale={locale} variant="page" id="garage" />
+  </section>
 </Base>

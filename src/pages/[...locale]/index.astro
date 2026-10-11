@@ -1,38 +1,45 @@
 ---
+// The home page sells (Mika, 03.10.2026): a carousel of the main benefits,
+// the garage, the queue for new mopeds with the way onto the waiting list
+// (queue/). The papers block (licence, registration and tax) and the common
+// questions are off the home page for now (Kardu, 11.10.2026); the questions
+// stay on faq/. The quiz is no longer a gate: it lives in the "Write to us"
+// widget (components/Ask.astro), on every page.
 import Base from '../../layouts/Base.astro';
-import Quiz from '../../components/Quiz.astro';
+import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
-import Lead from '../../components/Lead.astro';
-import { dict, localePaths, type Locale } from '../../i18n';
+import Reviews from '../../components/Reviews.astro';
+import { dict, href, localePaths, type Locale } from '../../i18n';
+import { models, fromGel } from '../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const t = dict(locale);
+const queue = href(locale, 'queue/');
+
 ---
-<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="">
-  <section class="dark hero">
-    <div class="wrap hero-grid">
-      <div>
-        <h1>{t.hero.line1}<em>{t.hero.line2}</em></h1>
-        <p class="sub">{t.hero.sub}</p>
-      </div>
-      <Quiz locale={locale} />
-    </div>
+<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc.replace('{n}', String(fromGel))} path="" preloadImage={models[models.length - 1].image}>
+  <Promo locale={locale} />
+
+  <section class="dark garage-screen">
+    <Garage locale={locale} variant="page" id="garage" />
   </section>
 
-  <section class="section">
-    <div class="wrap narrow">
-      <div class="fuel">
-        <h2 class="h2" style="margin-bottom:0">{t.fuel.title}</h2>
-        <p>{t.fuel.text}</p>
-      </div>
-    </div>
-  </section>
+  <div class="wrap reviews-row"><Reviews locale={locale} /></div>
 
-  <section class="section">
-    <div class="wrap narrow">
-      <h2 class="h2">{t.garage.homeTitle}</h2>
-      <Garage locale={locale} variant="inset" id="garage" />
+  <section class="queue" id="queue">
+    <div class="wrap">
+      <div class="queue-card">
+        <div>
+          <p class="tag">{t.queue.tag}</p>
+          <h2>{t.queue.title}</h2>
+          <p class="queue-p">{t.queue.text}</p>
+          <a class="btn btn-ink" href={queue}>{t.queue.cta} →</a>
+        </div>
+        <ol class="queue-steps">
+          {t.queue.steps.map(([b, s]) => <li><div><b>{b}</b><span>{s}</span></div></li>)}
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -44,20 +51,29 @@ const t = dict(locale);
           {t.steps.items.map(([b, s]) => <li><div><b>{b}</b><span>{s}</span></div></li>)}
         </ol>
       </div>
-      <div class="section" style="padding-top:0">
-        <h2 class="h2" style="margin-top:40px">{t.included.title}</h2>
+      <div class="col-b">
+        <h2 class="h2">{t.included.title}</h2>
         <ul class="ticks">{t.included.items.map((x) => <li>{x}</li>)}</ul>
         <p class="honest">{t.included.honest}</p>
+        <a class="more" href={href(locale, 'stations/')}>{t.included.stationsLink} →</a>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section about-ev8">
     <div class="wrap narrow">
-      <h2 class="h2">{t.faq.title}</h2>
-      {t.faq.items.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+      <h2 class="h2">{t.about.title}</h2>
+      <p class="lede">{t.about.text.replace('{n}', String(fromGel))}</p>
     </div>
   </section>
 
-  <Lead locale={locale} />
+  <section class="dark lead" id="lead">
+    <div class="wrap narrow">
+      <h2 class="h2">{t.closing.title1} <em>{t.closing.title2}</em></h2>
+      <div class="lead-cta">
+        <a class="btn btn-lime" data-ask href={href(locale, 'contacts/')}>{t.closing.ask}</a>
+        <a class="btn btn-line" href={queue}>{t.closing.queue} →</a>
+      </div>
+    </div>
+  </section>
 </Base>

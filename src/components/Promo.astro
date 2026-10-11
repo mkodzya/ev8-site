@@ -1,0 +1,132 @@
+---
+// The first screen of the home page: a carousel of the main benefits
+// (Mika, 03.10.2026: the home page sells first, the quiz moved into the
+// "Write to us" widget). Every figure comes from the data files, none is typed
+// here — except the saving on the second slide, a fixed figure Kardu set on
+// 11.10.2026 (PROMO_SAVE_GEL). The track is a scroll-snap row, so it swipes without JavaScript; the
+// script adds the dots, the arrows and the autoplay: it glides by itself every
+// five seconds, waits while the visitor handles it, and goes on (Mika, 03.10.2026).
+import Icon from './Icon.astro';
+import { dict, href, asset, type Locale } from '../i18n';
+import { models, fromGel } from '../data/models';
+import { calc, PROMO_SAVE_GEL } from '../data/subscription';
+import { gel } from '../lib/calc';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = dict(locale).promo;
+
+// "from {n}" is the lowest weekly price; the saving is Kardu's fixed 600 ₾.
+const numbers = [String(fromGel), gel(PROMO_SAVE_GEL * 100), '', ''];
+const icons = ['bolt', 'fuel', 'battery', 'swap'];
+const fill = (s: string, i: number) => s.replace('{n}', numbers[i]).replace('{h}', String(calc.hoursDefault));
+const hero = models[models.length - 1];
+---
+<section class="dark promo" data-promo>
+  <div class="promo-track" tabindex="0">
+    {t.slides.map((s, i) => (
+      <article class={`slide ${i === 0 ? 'on' : ''}`}>
+        <div class="wrap slide-in">
+          <div class="slide-tx">
+            {i === 0
+              ? <h1><span class="tag">{s.tag}</span> {s.a} <em>{s.b}</em></h1>
+              : <><p class="tag">{s.tag}</p><h2>{s.a} <em>{s.b}</em></h2></>}
+            <p class="slide-p">{s.text}</p>
+          </div>
+          <div class={`slide-fig ${i === 0 ? 'pic' : ''}`}>
+            {i === 0
+              ? <img src={asset(hero.image)} alt={`EV8 ${hero.name}`} width="1700" height="1536" fetchpriority="high" />
+              : <Icon name={icons[i]} label={icons[i] === 'card' ? 'AM' : undefined} size={40} />}
+            <b>{fill(s.fig, i)}</b>
+            <span>{fill(s.note, i)}</span>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+  <div class="wrap promo-foot">
+    <div class="promo-nav">
+      <div class="promo-dots">
+        {t.slides.map((_, i) => <button type="button" aria-label={`${t.dot} ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'}></button>)}
+      </div>
+      <button type="button" class="promo-arrow" data-promo-prev aria-label={t.prev}>‹</button>
+      <button type="button" class="promo-arrow" data-promo-next aria-label={t.next}>›</button>
+    </div>
+    <div class="promo-cta">
+      <a class="btn btn-lime" href={href(locale, 'queue/')}>{t.cta} →</a>
+      <a class="btn btn-line" href="#garage">{t.pick}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-promo]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.promo-track')!;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const count = slides.length;
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('.promo-dots button'));
+    const index = () => Math.round(track.scrollLeft / Math.max(track.clientWidth, 1));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The slide on screen is "on": its text and figure rise in (styles: "motion").
+    const mark = () => {
+      const now = index();
+      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === now)));
+      slides.forEach((s, i) => s.classList.toggle('on', i === now));
+    };
+    track.addEventListener('scroll', mark, { passive: true });
+
+    // The carousel glides: an eased scroll the script drives itself, so it is
+    // slow and even in every browser. Scroll-snap is off while it moves.
+    let frame = 0, swap = 0;
+    const settle = () => { cancelAnimationFrame(frame); frame = 0; track.style.scrollSnapType = ''; };
+    const glide = (to: number) => {
+      settle();
+      const from = track.scrollLeft, t0 = performance.now(), ms = 1100;
+      track.style.scrollSnapType = 'none';
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / ms);
+        const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        track.scrollLeft = from + (to - from) * e;
+        if (k < 1) frame = requestAnimationFrame(step); else settle();
+      };
+      frame = requestAnimationFrame(step);
+    };
+    const go = (i: number) => {
+      const target = ((i + count) % count) * track.clientWidth;
+      if (reduce) { track.scrollLeft = target; return; }
+      // From the last slide to the first, and back, the track fades out and
+      // in: a rewind through all five slides reads as a glitch.
+      if (i < 0 || i >= count) {
+        settle();
+        window.clearTimeout(swap);
+        track.classList.add('swap');
+        swap = window.setTimeout(() => { track.scrollLeft = target; mark(); track.classList.remove('swap'); }, 400);
+        return;
+      }
+      glide(target);
+    };
+
+    // Autoplay: while the carousel is on screen. A touch, a key or a click
+    // holds it; eight quiet seconds later it turns again. With reduced motion
+    // the slides change without any animation.
+    let timer = 0, wait = 0, visible = false;
+    const pause = () => { window.clearInterval(timer); timer = 0; };
+    const play = () => { if (!timer && visible && !document.hidden) timer = window.setInterval(() => go(index() + 1), 5000); };
+    const stop = () => { pause(); window.clearTimeout(wait); wait = window.setTimeout(play, 8000); };
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((ev) => track.addEventListener(ev, () => { settle(); stop(); }, { passive: true }));
+
+    dots.forEach((d, i) => d.addEventListener('click', () => { stop(); go(i); }));
+    root.querySelector('[data-promo-prev]')?.addEventListener('click', () => { stop(); go(index() - 1); });
+    root.querySelector('[data-promo-next]')?.addEventListener('click', () => { stop(); go(index() + 1); });
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { go(index() + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { go(index() - 1); e.preventDefault(); }
+    });
+
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) play(); else pause(); }, { threshold: 0.4 }).observe(root);
+    document.addEventListener('visibilitychange', () => (document.hidden ? pause() : play()));
+    // The first slide is lit in the markup: the first screen does not change after it is drawn.
+    root.classList.add('live');
+    mark();
+  });
+</script>
