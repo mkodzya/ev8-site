@@ -22,16 +22,19 @@ Actions builds it and ships it to the test host within a couple of minutes
 release of the site: the same workflow ships it to production. Either of them releases it:
 Kardu may release the site whenever he decides (Mika, 11.10.2026: «Карду может выпустить
 сайт когда захочет»; before that `main` was Mika's alone). A session never releases on its
-own — only when the person running it says so. In a session run by Kardu: never touch the
-server. Kardu's work is this repository
-and nothing else (Mika, 11.10.2026): EV8 Ops (`mkodzya/ev8-ops`, the company's ERP) and its
-two stands, test and prod, are changed by Mika's session only. What the site needs from
-there — an address of the API, the edge, the server — a session run by Kardu does not build
-itself: it writes down what is needed, and Kardu asks Mika. Decisions about the site are made by Mika and
+own — only when the person running it says so. Kardu does everything about the site himself —
+its pages, its releases, the DNS of ev8.ge (he holds its login) — and the one thing that is
+not his is changing EV8 Ops (Mika, 11.10.2026: «пускай он всё сам делает; единственное ему
+нельзя менять ERP»): EV8 Ops (`mkodzya/ev8-ops`, the company's ERP) and its two stands, test
+and prod, are changed by Mika's session only. Two things of the site's still pass through
+there, and so through Mika, until the site has its own: the server's door for ev8.ge
+(redirects, caching, the certificate — `Caddyfile.edge`; a change there takes a restart of the
+door) and the mail of the request forms (`/api/site/queue`). A session run by Kardu has no way
+onto the server: it writes down what it needs of those two, and Kardu asks Mika. Decisions about the site are made by Mika and
 Kardu together, and neither needs the other's permission to change the site (Kardu's
 proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
-Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the DNS of
-ev8.ge are not part of that: they stay as written. Kardu's setup: `README.md`, "Для Kardu".
+Mika, Kardu proposes"). The owner's rules below, the server and its secrets are not part of
+that: they stay as written. Kardu's setup: `README.md`, "Для Kardu".
 Talk to whoever runs the session in the language they write in.
 
 ## Non-negotiable rules (from the owner)
@@ -44,8 +47,9 @@ Talk to whoever runs the session in the language they write in.
    merges into `main` only when the person running it says to release, never on its own.
    The daily rebuild is not a release: it ships the released `main` again as it is, with the
    day's petrol price and nothing else.
-   The server, its secrets and the DNS of ev8.ge stay Mika's; the edge on the server (Caddy,
-   in `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
+   The DNS of ev8.ge is Kardu's to switch (Mika, 11.10.2026). The server and its secrets stay
+   Mika's; the edge on the server (Caddy, in `mkodzya/ev8-ops`) is restarted only by Mika: it
+   fronts prod.
 3. **No secrets in the repository.** The Kommo key and anything like it are registered and
    stored by Mika; code reads them from the server.
 4. **No customer data in the repository.**
@@ -141,8 +145,10 @@ GitFlow as in EV8 Ops: `develop` is the default and the working branch, `main` h
 releases tagged with bare semver. `feature/<topic>` from develop. A release, on Kardu's or
 Mika's word: merge `develop` into `main` (`--no-ff`), tag the merge with the next bare
 semver, push `main` and the tag — the workflow builds it and ships it, and the run under
-Actions says whether it arrived. Until the A record of ev8.ge points at the server (Mika's
-step: `deploy/README.md` in `mkodzya/ev8-ops`), a release lands in the production folder and
-visitors still see the WordPress site. Commit and push as you go;
+Actions says whether it arrived. Until the A record of ev8.ge points at the server (Kardu's
+step; `deploy/README.md` in `mkodzya/ev8-ops` lists the records not to touch), a release lands
+in the production folder and visitors still see the WordPress site. The switch needs Mika at
+hand once: the door must be restarted right after it, or ev8.ge has no certificate and
+browsers refuse it; and the request mail must already be on on prod, or the forms reach nobody. Commit and push as you go;
 commit titles are a verdict sentence. End commit messages with
 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
