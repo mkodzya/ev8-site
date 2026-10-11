@@ -11,7 +11,9 @@ const t = d.faqPage;
 // The five questions of the home page first, then the rest.
 // The range answer is built from the models' own figures.
 const range = models.map((m) => t.rangeLine.replace('{model}', m.name).replace('{km}', String(m.rangeKm))).join(' ');
-const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range)]);
+const num = (x: number) => (locale === 'en' ? String(x) : String(x).replace('.', ','));
+const charge = models.map((m) => t.chargeLine.replace('{model}', m.name).replace('{h}', num(m.chargeHours))).join(' ');
+const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range).replace('{charge}', charge)]);
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/" jsonLd={[faq(items)]}>
   <section class="dark page-head">

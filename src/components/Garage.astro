@@ -14,6 +14,14 @@ const n = models.length;
 const pad = (i: number) => String(i).padStart(2, '0');
 // Under each price: the licence it needs, and for a moped that is not in the
 // fleet yet, that it is insured and when it comes (Kardu, 11.10.2026; models.ts).
+const num = (x: number) => (locale === 'en' ? String(x) : String(x).replace('.', ','));
+const specs: { label: string; value: (m: (typeof models)[number]) => string }[] = [
+  { label: t.range, value: (m) => t.rangeValue.replace('{km}', String(m.rangeKm)).replace('{n}', String(BATTERIES)) },
+  { label: t.motor, value: (m) => t.motorValue.replace('{w}', String(m.motorW)) },
+  { label: t.battery, value: (m) => t.batteryValue.replace('{v}', String(m.battery.volts)).replace('{ah}', String(m.battery.ah)) },
+  { label: t.charge, value: (m) => t.chargeValue.replace('{h}', num(m.chargeHours)) },
+  { label: t.box, value: (m) => (m.deliveryBox ? t.boxValue : '—') },
+];
 const notes = (m: (typeof models)[number]) =>
   [m.licence === 'none' ? t.noLicence : t.licenceAM, m.insurance ? t.insurance : null].filter(Boolean).join(' · ');
 ---
@@ -50,9 +58,11 @@ const notes = (m: (typeof models)[number]) =>
       ))}
     </div>
     <!-- Real figures only (Kardu, 11.10.2026): the bars of the owner's ranking are
-         gone; more rows come as the book gets speed and the rest. -->
+         gone. Top speed is left out on purpose (Kardu, same day). -->
     <div class="stats">
-      <div class="stat spec">{t.range}<em>{models.map((m, i) => <span class={`l${i + 1}`}>{t.rangeValue.replace('{km}', String(m.rangeKm)).replace('{n}', String(BATTERIES))}</span>)}</em></div>
+      {specs.map((s) => (
+        <div class="stat spec">{s.label}<em>{models.map((m, i) => <span class={`l${i + 1}`}>{s.value(m)}</span>)}</em></div>
+      ))}
     </div>
     <div class="thumbs">
       {models.map((m, i) => (

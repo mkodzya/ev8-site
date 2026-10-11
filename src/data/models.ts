@@ -25,6 +25,11 @@ export interface Model {
   from?: string;
   /** Kilometres on one battery (Kardu, 11.10.2026). */
   rangeKm: number;
+  /** Motor, battery, full charge and delivery box (Kardu, 11.10.2026). Top speed is not published (Kardu, same day). */
+  motorW: number;
+  battery: { volts: number; ah: number };
+  chargeHours: number;
+  deliveryBox: boolean;
 }
 
 /** Batteries that come with every moped (Kardu, 11.10.2026: "Даем по 2 батареи"). */
@@ -33,9 +38,9 @@ export const BATTERIES = 2;
 export const DEPOSIT_GEL = 180;
 
 export const models: Model[] = [
-  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none', rangeKm: 50 },
-  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM', rangeKm: 50 },
-  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01', rangeKm: 75 },
+  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none', rangeKm: 50, motorW: 800, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true },
+  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM', rangeKm: 50, motorW: 1200, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true },
+  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01', rangeKm: 75, motorW: 1200, battery: { volts: 72, ah: 27 }, chargeHours: 3.5, deliveryBox: true },
 ];
 
 /** The lowest weekly price — what "from {n} ₾" says anywhere on the site. */
