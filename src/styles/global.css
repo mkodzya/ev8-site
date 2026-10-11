@@ -83,7 +83,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    svh. Nothing inside the carousel reads the viewport height on a phone: the
    figure panel takes what is left with flex. Never dvh or a resize listener. */
 .promo { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; padding-top: 72px; }
-.promo-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
+.promo-track { flex: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
 .promo-track::-webkit-scrollbar { display: none; }
 .slide { flex: 0 0 100%; min-width: 0; display: flex; scroll-snap-align: start; scroll-snap-stop: always; }
 .slide-in { width: 100%; display: flex; flex-direction: column; gap: 20px; padding-block: 16px 4px; }
