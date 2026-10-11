@@ -91,7 +91,7 @@ There is no floating "Write to us" button (removed by Mika, 07.10.2026). The que
 The waiting list (Kardu, 11.10.2026): `queue/` is the one form on the site — the fields of the
 old ev8.ge/waitlist/ (name, surname, phone, email, licence, courier experience, company,
 consent to the privacy policy at `privacy/`) plus the moped picked in the garage or the
-builder. Every "Join the queue" leads there; the builder only counts and sends nothing, its
+builder. Every "Book a moped" (formerly "Join the queue", Kardu, 12.10.2026) leads there; the builder only counts and sends nothing, its
 gear is out of stock and its services are off (Kardu, 11.10.2026). Before that (Kardu,
 06.10.2026; accepted by Mika, 07.10.2026) the builder itself asked for a name and a phone.
 The form posts to `POST /api/site/queue` on its own host — EV8 Ops, which

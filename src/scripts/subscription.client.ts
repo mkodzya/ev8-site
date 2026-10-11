@@ -1,5 +1,5 @@
 // The request builder in the browser: restores the saved choice and recounts
-// on every change. It sends nothing: "Join the queue" leads to the waiting
+// on every change. It sends nothing: "Book a moped" leads to the waiting
 // list (queue/), which reads the choice saved here (Kardu, 11.10.2026).
 //
 // This file is NOT loaded as a module. The request page bundles it with
