@@ -393,5 +393,10 @@ export const en: Dict = {
     label: '{n} reviews on Google',
     cta: 'Read the reviews',
   },
+  notFound: {
+    title: 'This page does not exist',
+    text: 'The address may have changed. Start from the home page or look into the garage.',
+    home: 'Home page',
+  },
   footer: { address: '65 Shalva Nutsubidze St, Tbilisi', hours: 'Mon–Fri 10:00–20:00' },
 };

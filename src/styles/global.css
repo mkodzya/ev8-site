@@ -542,6 +542,8 @@ details p { margin-top: 8px; color: var(--muted); }
 .info-side .offer p { margin-bottom: 14px; }
 /* the new-licence promo on the AM page (Kardu, 12.10.2026) */
 .licence-promo { padding-top: 20px; }
+/* the 404 page */
+.not-found { display: flex; flex-wrap: wrap; gap: 10px; padding-block: 24px 56px; }
 .licence-promo .offer { background: var(--lime); color: var(--ink); border-radius: 22px; padding: 20px; }
 .licence-promo .offer .tag { color: var(--ink); }
 .licence-promo .offer h2 { font-size: 24px; line-height: 1.12; margin: 6px 0 8px; }

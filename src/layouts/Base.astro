@@ -15,15 +15,15 @@ import georgian500 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian
 import logoOnLight from '../../public/img/brand/logo.svg?raw';
 import logoOnDark from '../../public/img/brand/logo-light.svg?raw';
 
-interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; jsonLd?: object[]; }
-const { locale, title, description, path, preloadImage, jsonLd = [] } = Astro.props;
+interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; jsonLd?: object[]; noindex?: boolean; }
+const { locale, title, description, path, preloadImage, jsonLd = [], noindex: hidePage = false } = Astro.props;
 // Search: one address per page, the other language beside it, and the business
 // described on every page (src/lib/seo.ts).
 const canonical = prodUrl(locale, path);
 const structured = [business(locale), ...jsonLd];
 const t = dict(locale);
 // Previews are never indexed; the production build drops this flag.
-const noindex = process.env.PREVIEW === '1';
+const noindex = process.env.PREVIEW === '1' || hidePage;
 // The site is light (Mika, 03.10.2026, after a trial next to the black one).
 // THEME=dark still builds the black version; the styles are at the end of global.css.
 const light = process.env.THEME !== 'dark';

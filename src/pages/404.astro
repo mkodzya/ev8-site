@@ -1,0 +1,25 @@
+---
+// The page for an address that does not exist: the server's door serves this
+// 404.html for any unknown path on ev8.ge (book note of 11.10.2026). Georgian
+// first, English under it; never indexed.
+import Base from '../layouts/Base.astro';
+import { dict, href } from '../i18n';
+
+const ka = dict('ka').notFound;
+const en = dict('en').notFound;
+---
+<Base locale="ka" title={`${ka.title} — EV8`} description={ka.text} path="404/" noindex>
+  <section class="dark page-head">
+    <div class="wrap narrow">
+      <p class="tag">404</p>
+      <h1>{ka.title}</h1>
+      <p class="head-sub">{ka.text}</p>
+      <p class="head-sub" lang="en">{en.title}. {en.text}</p>
+    </div>
+  </section>
+  <section class="wrap narrow not-found">
+    <a class="btn btn-ink" href={href('ka')}>{ka.home} →</a>
+    <a class="btn btn-line" href={href('ka', 'models/')}>{dict('ka').nav.garage}</a>
+    <a class="btn btn-line" href={href('en')} lang="en">{en.home} →</a>
+  </section>
+</Base>
