@@ -266,6 +266,8 @@ export const en: Dict = {
     title1: 'Battery swap',
     title2: 'stations',
     sub: 'Flat during a shift — swap it for a charged one and ride on.',
+    videoLabel: 'A courier swaps a battery at the Agrohub station',
+    videoCaption: 'At night too: swaps 24/7',
     facts: [
       ['3.49 ₾', 'a swap'],
       ['24/7', 'swap at any time — at all {n} stations'],
