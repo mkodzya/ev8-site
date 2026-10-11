@@ -9,7 +9,7 @@ import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { dict, localePaths, asset, type Locale } from '../../../i18n';
 import { models, contact } from '../../../data/models';
-import { gear, services, calc, DEPOSIT } from '../../../data/subscription';
+import { gear, services, calc, petrolPrice, DEPOSIT } from '../../../data/subscription';
 import { compute, gel } from '../../../lib/calc';
 import { buildSync } from 'esbuild';
 
@@ -18,6 +18,11 @@ const { locale } = Astro.props as { locale: Locale };
 const d = dict(locale);
 const t = d.sub;
 const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
+// The petrol price is read when the site is built (scripts/fuel-price.mjs), so
+// the note under the comparison says the price and the day it is of.
+const petrolShown = (petrolPrice.tetri / 100).toFixed(2).replace('.', locale === 'en' ? '.' : ',');
+const petrolDate = petrolPrice.asOf.split('-').reverse().join('.');
+const vsNote = t.vsNote.replace('{petrol}', petrolShown).replace('{petrolDate}', petrolDate);
 
 const initial = compute({ modelId: models[0].id, gear: [], services: [], hours: calc.hoursDefault });
 const gearText = t.gear as Record<string, string[]>;
@@ -137,7 +142,7 @@ const client = buildSync({
           <i class="vs-bar ev8" data-bar="ev8" style={`width:${Math.round((initial.ev8CostMonth / initial.petrolCostMonth) * 100)}%`}></i>
         </div>
         <p class="vs-save" data-save hidden={initial.saveMonth <= 0}>{t.vsSave} <b><span data-out="save">{gel(initial.saveMonth)}</span> ₾</b></p>
-        <p class="fine">{t.vsNote}</p>
+        <p class="fine">{vsNote}</p>
       </div>
 
       <div class="sum-card reach" id="reach">

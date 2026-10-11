@@ -8,6 +8,12 @@
 # So a merge into main IS the release of the site: made on Kardu's or Mika's
 # word, never by a session on its own (CLAUDE.md, rule 2).
 #
+# Once a day both are built again as they are, for one number: the price of
+# petrol in the calculator's comparison, read while the site is built
+# (scripts/fuel-price.mjs). That run changes no code and releases nothing new;
+# if the price cannot be read it ships nothing, and the site keeps the price
+# it has, with its date.
+#
 # Secrets of this repository, set by deploy/site-deploy-setup.sh in ev8-ops:
 #   SITE_DEPLOY_KEY          private key of ev8site@204.168.149.105
 #   SITE_DEPLOY_KNOWN_HOSTS  that server's host key
@@ -16,42 +22,85 @@ name: Deploy
 on:
   push:
     branches: [develop, main]
+  schedule:
+    # 09:30 in Tbilisi (UTC+4, no summer time).
+    - cron: '30 5 * * *'
   workflow_dispatch:
-
-# One deploy per branch at a time, in order; a second push waits, it does not
-# cancel the one that is shipping.
-concurrency:
-  group: deploy-${{ github.ref_name }}
-  cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
+  # Which branches this run builds. A push or a hand-started run builds its
+  # own branch; the daily run builds develop, and main too once a release has
+  # brought the price script to it — an older main is left as it was shipped.
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      branches: ${{ steps.pick.outputs.branches }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ "$EVENT" != schedule ]; then
+            echo "branches=$(jq -cn --arg b "$REF_NAME" '[$b]')" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if gh api "repos/$REPO/contents/scripts/fuel-price.mjs?ref=main" --silent 2>/dev/null; then
+            echo 'branches=["develop","main"]' >> "$GITHUB_OUTPUT"
+          else
+            echo "main has no scripts/fuel-price.mjs yet: the daily run leaves it alone."
+            echo 'branches=["develop"]' >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
+    needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJSON(needs.plan.outputs.branches) }}
+    # One deploy per branch at a time, in order; a second one waits, it does
+    # not cancel the one that is shipping.
+    concurrency:
+      group: deploy-${{ matrix.branch }}
+      cancel-in-progress: false
     env:
-      TARGET: ${{ github.ref_name == 'main' && 'prod' || 'test' }}
-      SITE_BASE: ${{ github.ref_name == 'main' && '/' || '/garage/site/' }}
+      TARGET: ${{ matrix.branch == 'main' && 'prod' || 'test' }}
+      SITE_BASE: ${{ matrix.branch == 'main' && '/' || '/garage/site/' }}
       # The preview build is marked noindex by the site itself. Written from
       # develop's side on purpose: `== 'main' && '' || '1'` gives '1' on main
       # too (an empty string is false to &&), and ev8.ge would ask search
       # engines not to index it.
-      PREVIEW: ${{ github.ref_name != 'main' && '1' || '' }}
+      PREVIEW: ${{ matrix.branch != 'main' && '1' || '' }}
       ASTRO_TELEMETRY_DISABLED: '1'
-      CHECK_URL: ${{ github.ref_name == 'main' && 'https://ev8.ge/' || 'https://test.ops.ev8.ge/garage/site/' }}
+      CHECK_URL: ${{ matrix.branch == 'main' && 'https://ev8.ge/' || 'https://test.ops.ev8.ge/garage/site/' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: The petrol price of the day
+        env:
+          # What the live site was built with: the fallback of a build that
+          # cannot read the price page, so a push never steps back to an older price.
+          FUEL_LIVE_URL: ${{ env.CHECK_URL }}fuel.json
+          STRICT: ${{ github.event_name == 'schedule' && '--strict' || '' }}
+        run: node scripts/fuel-price.mjs $STRICT
       - run: npm run build
       - name: A production build must be indexable
-        if: github.ref_name == 'main'
+        if: matrix.branch == 'main'
         run: |
           if grep -q 'content="noindex' dist/index.html; then
             echo "The production build says noindex: PREVIEW leaked into it."
