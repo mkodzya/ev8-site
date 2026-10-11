@@ -9,7 +9,7 @@ export const en: Dict = {
     modelsTitle: 'Electric mopeds for rent: {models} — EV8',
     modelsDesc: 'Three electric mopeds with a removable battery, for rent from {n} ₾ a week. Which need an AM licence and which do not.',
   },
-  nav: { garage: 'Garage', home: 'Home' },
+  nav: { garage: 'Garage', home: 'Home', menu: 'Menu', close: 'Close the menu', call: 'Call us' },
   promo: {
     slides: [
       { tag: 'Electric moped rental for couriers', a: 'Drop the petrol.', b: 'Keep the difference.', text: 'A moped for couriers in Tbilisi — one price a week.', fig: 'from {n} ₾', note: 'a week' },

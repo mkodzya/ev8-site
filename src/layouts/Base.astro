@@ -39,6 +39,10 @@ const lightTop = light && !garagePage;
 const preloadFonts = [latin500, latin400, ...(locale === 'ka' ? [georgian500, georgian400] : [])];
 const warmFonts = locale === 'ka' ? [] : [georgian500, georgian400];
 const cur = (p: string) => (path === p ? 'page' : undefined);
+const menu: [string, string][] = [
+  ['models/', t.nav.garage], ['rent/', t.sub.nav], ['stations/', t.stationsPage.nav], ['am-licence/', t.licence.nav],
+  ['how-it-works/', t.how.nav], ['faq/', t.faqPage.nav], ['contacts/', t.contacts.nav],
+];
 ---
 <!doctype html>
 <html lang={t.htmlLang} data-theme={light ? 'light' : undefined} data-page={garagePage ? 'garage' : undefined}>
@@ -89,9 +93,30 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
           <span class="langs">
             {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
           </span>
+          <button type="button" class="burger" aria-expanded="false" aria-controls="menu" aria-label={t.nav.menu} data-menu-open><i></i><i></i><i></i></button>
         </nav>
       </div>
     </header>
+    <!-- The menu on a phone (Kardu, 12.10.2026): every page in reach of a thumb.
+         A dark curtain comes down from the top; on a wide screen the header
+         shows the pages itself and the button is not there. Without
+         JavaScript the footer still lists every page. -->
+    <div class="menu dark" id="menu" role="dialog" aria-modal="true" aria-label={t.nav.menu} data-menu inert>
+      <div class="wrap menu-top">
+        <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={logoOnDark} /></a>
+        <span class="langs">
+          {locales.map((l) => <a href={href(l, path)} aria-current={l === locale ? 'true' : undefined} lang={dict(l).htmlLang}>{dict(l).langName}</a>)}
+        </span>
+        <button type="button" class="menu-close" aria-label={t.nav.close} data-menu-close>×</button>
+      </div>
+      <nav class="wrap menu-list">
+        {menu.map(([p, label]) => <a href={href(locale, p)} aria-current={cur(p)}>{label}<span aria-hidden="true">→</span></a>)}
+      </nav>
+      <div class="wrap menu-foot">
+        <a class="btn btn-lime btn-block" href={href(locale, 'queue/')}>{t.promo.cta} →</a>
+        <a class="menu-call" href={`tel:${contact.phone.replace(/\s/g, '')}`}>{t.nav.call}: {contact.phone}</a>
+      </div>
+    </div>
     <main>
       <slot />
     </main>
@@ -135,6 +160,27 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
         window.addEventListener('pageswap', () => { if (window.scrollY > header.offsetHeight) drop(parts); });
         header.querySelectorAll('.langs a').forEach((a) => a.addEventListener('click', () => drop(parts.filter((el) => el.matches('nav')))));
         window.addEventListener('pageshow', () => parts.forEach((el) => (el.style.viewTransitionName = '')));
+      }
+      // The phone menu: opens and closes, holds the page still while it is open,
+      // and closes on Escape, on a link, and when the page comes back from history.
+      const menuEl = document.querySelector<HTMLElement>('[data-menu]');
+      const opener = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+      if (menuEl && opener) {
+        const setOpen = (open: boolean) => {
+          menuEl.classList.toggle('open', open);
+          menuEl.inert = !open;
+          opener.setAttribute('aria-expanded', String(open));
+          document.documentElement.classList.toggle('menu-on', open);
+          (open ? menuEl.querySelector<HTMLElement>('[data-menu-close]') : opener)?.focus({ preventScroll: true });
+        };
+        opener.addEventListener('click', () => setOpen(true));
+        menuEl.querySelector('[data-menu-close]')?.addEventListener('click', () => setOpen(false));
+        // A link to the page already on screen only closes the menu.
+        menuEl.querySelectorAll<HTMLAnchorElement>('a').forEach((a) => a.addEventListener('click', (e) => {
+          if (a.getAttribute('aria-current') === 'page') { e.preventDefault(); setOpen(false); }
+        }));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuEl.classList.contains('open')) setOpen(false); });
+        window.addEventListener('pageshow', () => { if (menuEl.classList.contains('open')) setOpen(false); });
       }
       // The fonts of the other language are fetched as soon as the page has
       // loaded, so the first switch of the language does not redraw the text.
