@@ -14,11 +14,13 @@ The plan the site is built from, all in the book under `notes/` (01.10.2026): br
 ## Who runs sessions (since 06.10.2026)
 Two people work on the site, each with their own Claude on their own machine: **Mika** and
 **Kardu** (GitHub `Kardu89`, Write access). Both work in `feature/*` branches and merge into
-`develop`. The preview on the test host is put there by Mika's session
-(`scripts/deploy-preview.sh` needs the server). In a session run by Kardu: never push `main`
-or a tag, never touch the server (`.githooks/pre-push` refuses the first two); a merge of
-Kardu's reaches the preview with Mika's session's next deploy, or when Kardu asks Mika. The
-production address moves only on Mika's word. Decisions about the site are made by Mika and
+`develop`. A merge into `develop` puts itself on the preview (since 11.10.2026): GitHub
+Actions builds it and ships it to the test host within a couple of minutes
+(`.github/workflows/deploy.yml`; the receiving side is `deploy/site-receive.sh` in
+`mkodzya/ev8-ops`), so nobody copies files to the server by hand. A merge into `main` is the
+release of the site: the same workflow ships it to production. In a session run by Kardu:
+never push `main` or a tag, never touch the server (`.githooks/pre-push` refuses the first
+two). The production address moves only on Mika's word. Decisions about the site are made by Mika and
 Kardu together, and neither needs the other's permission to change the site (Kardu's
 proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
 Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the production
@@ -29,9 +31,10 @@ Talk to whoever runs the session in the language they write in.
 1. **Never invent data.** A price, a figure or a claim appears on the site only if the book
    has it with a source. No data — the block stays closed and the open item is in the
    book's `register.md`. Prices and model order live in `src/data/models.ts`, with the source.
-2. **Production moves only on Mika's word.** `scripts/deploy-preview.sh` copies a preview to
-   the test host and restarts nothing; there is no production deploy yet. The edge on the
-   server (Caddy, in `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
+2. **Production moves only on Mika's word.** A push to `main` is what moves it: the deploy
+   workflow ships `main` to the server's production folder, which ev8.ge serves once its DNS
+   points there. So `main` is pushed by Mika only. The edge on the server (Caddy, in
+   `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
 3. **No secrets in the repository.** The Kommo key and anything like it are registered and
    stored by Mika; code reads them from the server.
 4. **No customer data in the repository.**
@@ -81,8 +84,10 @@ This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB)
 
     scripts/build.sh              # production build -> dist/
     scripts/build.sh preview      # preview build (ka, en; noindex; base /garage/site/)
-    scripts/deploy-preview.sh     # build a preview and copy it to https://test.ops.ev8.ge/garage/site/
     scripts/qa.sh                 # check the deployed preview: 8 pages × 2 languages × 2 widths and the flows
+
+The preview at https://test.ops.ev8.ge/garage/site/ deploys itself on a merge into `develop`;
+the run is on GitHub under Actions ("Deploy"), and "Run workflow" there repeats it by hand.
 
 Verify by doing: open the preview at phone width, click through, then report.
 

@@ -42,7 +42,9 @@ git clone git@github.com:mkodzya/ev8-site.git && cd ev8-site && git config core.
    не отправлять: релизы выпускает Mika.
 4. Посмотреть сайт у себя: с Docker — `scripts/build.sh preview`; с Node 22 — `npm install`, затем
    `npm run dev`.
-5. На тестовый адрес правки выкладывает сессия Mika: после слияния в `develop` написать Mika.
+5. На тестовый адрес правки выкладываются сами: через минуту-две после слияния в `develop`
+   (ход видно на GitHub, вкладка Actions, «Deploy»). На боевой адрес сайт попадает, только когда
+   Mika сливает `develop` в `main`.
 
 Тексты лежат в `src/i18n/` (`ka.ts`, `en.ts`; `ru.ts` — исходный смысл, на сайте его нет), цены и
 модели — в `src/data/`. Проверка, что в трёх языках одни и те же ключи: `npm run check`.
@@ -55,8 +57,6 @@ Node на Mac нет — всё в Docker:
 scripts/build.sh preview
 ```
 
-```bash
-scripts/deploy-preview.sh
-```
+Выкладывать руками не нужно: сборку и выкладку делает GitHub (`.github/workflows/deploy.yml`).
 
 Правила — в `CLAUDE.md`. Решения и открытые вопросы — в книге проекта `mkodzya/ev8-handbook`.
