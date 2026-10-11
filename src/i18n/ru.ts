@@ -411,6 +411,11 @@ export const ru = {
     text: 'Возможно, адрес изменился. Начни с главной или загляни в гараж.',
     home: 'На главную',
   },
+  // The window after a form went through (components/Done.astro).
+  done: {
+    home: 'На главную',
+    close: 'Закрыть',
+  },
   footer: { address: 'Тбилиси, ул. Шалвы Нуцубидзе, 65', hours: 'пн–пт 10:00–20:00' },
 };
 

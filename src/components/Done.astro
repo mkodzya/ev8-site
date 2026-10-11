@@ -1,0 +1,40 @@
+---
+// The window that says a form went through (Kardu, 12.10.2026): the waiting
+// list and the "Ask us" panel both open it on success with the event
+// `ev8:done` ({ title, text }). One button to the home page and a cross.
+import { dict, href, type Locale } from '../i18n';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = dict(locale).done;
+---
+<div class="done-veil" data-done-veil hidden></div>
+<div class="done" role="dialog" aria-modal="true" aria-labelledby="done-title" data-done hidden>
+  <button type="button" class="done-x" data-done-close aria-label={t.close}>×</button>
+  <span class="done-mark" aria-hidden="true">✓</span>
+  <h2 id="done-title" data-done-title></h2>
+  <p data-done-text></p>
+  <a class="btn btn-ink btn-block" href={href(locale)}>{t.home} →</a>
+</div>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-done]');
+  const veil = document.querySelector<HTMLElement>('[data-done-veil]');
+  if (box && veil) {
+    const title = box.querySelector<HTMLElement>('[data-done-title]')!;
+    const text = box.querySelector<HTMLElement>('[data-done-text]')!;
+    const close = () => { box.hidden = true; veil.hidden = true; document.documentElement.classList.remove('done-open'); };
+    document.addEventListener('ev8:done', (e) => {
+      const d = (e as CustomEvent<{ title: string; text?: string }>).detail;
+      title.textContent = d.title;
+      text.textContent = d.text ?? '';
+      text.hidden = !d.text;
+      box.hidden = false; veil.hidden = false;
+      document.documentElement.classList.add('done-open');
+      box.querySelector<HTMLElement>('a.btn')?.focus({ preventScroll: true });
+    });
+    box.querySelector('[data-done-close]')!.addEventListener('click', close);
+    veil.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.hidden) close(); });
+  }
+</script>

@@ -292,7 +292,9 @@ const tel = `tel:${contact.phone.replace(/\s/g, '')}`;
       busySend(false);
       if (res.status === 202) {
         form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>('input, textarea, button[type=submit]').forEach((el) => (el.disabled = true));
-        say(status.dataset.tSent ?? '', status.dataset.tSentText);
+        // The panel closes and the success shows as a window (Kardu, 12.10.2026).
+        close();
+        document.dispatchEvent(new CustomEvent('ev8:done', { detail: { title: status.dataset.tSent ?? '', text: status.dataset.tSentText } }));
         return;
       }
       if (res.status === 400) {
