@@ -147,8 +147,11 @@ Mika's word: merge `develop` into `main` (`--no-ff`), tag the merge with the nex
 semver, push `main` and the tag — the workflow builds it and ships it, and the run under
 Actions says whether it arrived. Until the A record of ev8.ge points at the server (Kardu's
 step; `deploy/README.md` in `mkodzya/ev8-ops` lists the records not to touch), a release lands
-in the production folder and visitors still see the WordPress site. The switch needs Mika at
-hand once: the door must be restarted right after it, or ev8.ge has no certificate and
-browsers refuse it; and the request mail must already be on on prod, or the forms reach nobody. Commit and push as you go;
+in the production folder and visitors still see the WordPress site. The switch itself needs
+nobody at the server: the door issues ev8.ge's certificate at the first visit (the first
+visitor waits a few seconds). Two things Mika does once beforehand, and the book's site note
+(`notes/2026-10-11_site-edits-kardu.md`, last section) says whether they are done: the door
+recreated with that setting, and the request mail switched on on prod — without the first
+browsers refuse ev8.ge, without the second the forms reach nobody. Release before you switch. Commit and push as you go;
 commit titles are a verdict sentence. End commit messages with
 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
