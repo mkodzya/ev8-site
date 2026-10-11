@@ -5,7 +5,7 @@
 // entrance: the lamp comes on, the moped appears out of the dark, the figures
 // follow (Mika, 03.10.2026: "as if you really walk into a garage").
 import { dict, href, asset, type Locale } from '../i18n';
-import { models } from '../data/models';
+import { models, BATTERIES } from '../data/models';
 
 interface Props { locale: Locale; variant?: 'page' | 'inset'; id?: string; }
 const { locale, variant = 'inset', id = 'garage' } = Astro.props;
@@ -49,10 +49,10 @@ const notes = (m: (typeof models)[number]) =>
         </div>
       ))}
     </div>
+    <!-- Real figures only (Kardu, 11.10.2026): the bars of the owner's ranking are
+         gone; more rows come as the book gets speed and the rest. -->
     <div class="stats">
-      {t.stats.map((s) => (
-        <div class="stat">{s}<u></u><em>{t.barLevels.map((l, i) => <span class={`l${i + 1}`}>{l}</span>)}</em></div>
-      ))}
+      <div class="stat spec">{t.range}<em>{models.map((m, i) => <span class={`l${i + 1}`}>{t.rangeValue.replace('{km}', String(m.rangeKm)).replace('{n}', String(BATTERIES))}</span>)}</em></div>
     </div>
     <div class="thumbs">
       {models.map((m, i) => (

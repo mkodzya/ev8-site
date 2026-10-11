@@ -1,0 +1,15 @@
+---
+// The Google rating as a link to the reviews (Kardu, 11.10.2026). Figures: data/reviews.ts.
+import { dict, type Locale } from '../i18n';
+import { googleReviews as g } from '../data/reviews';
+
+interface Props { locale: Locale; }
+const t = dict(Astro.props.locale).reviews;
+const rating = g.rating.toFixed(1).replace('.', Astro.props.locale === 'en' ? '.' : ',');
+---
+<a class="g-reviews" href={g.url} rel="noopener">
+  <span class="g-star" aria-hidden="true">★</span>
+  <b>{rating}</b>
+  <span>{t.label.replace('{n}', String(g.count))}</span>
+  <span class="g-more">{t.cta} →</span>
+</a>

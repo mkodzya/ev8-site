@@ -1,11 +1,12 @@
 ---
-// Address, hours and phone: handbook business/places.md. Whether the showroom
-// is open at the weekend is not known (register item 30), so the page says to
-// call ahead rather than name hours. No embedded map: a link to directions.
+// Address, hours and phone: handbook business/places.md. The showroom is closed
+// at the weekend (Kardu, 11.10.2026; the Google card says the same). No embedded
+// map: a link to directions.
 // Where a battery is swapped has its own page: stations/.
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { contact } from '../../../data/models';
+import Reviews from '../../../components/Reviews.astro';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -31,6 +32,7 @@ const route = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComp
         <div><dt>{t.phone}</dt><dd><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></dd></div>
         <div><dt>{t.email}</dt><dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd></div>
       </dl>
+      <Reviews locale={locale} />
     </div>
     <aside class="info-side">
       <a class="btn btn-lime btn-block" href={href(locale, 'queue/')}>{t.queue} →</a>

@@ -56,7 +56,7 @@ export function business(l: Locale) {
       closes: '20:00',
     }],
     // EV8's own pages, as its Google business profile lists them (Kardu's profile, 11.10.2026).
-    sameAs: ['https://www.instagram.com/ev8electricmopeds/', 'https://www.facebook.com/ev8electricmopeds'],
+    sameAs: [contact.instagram, contact.facebook],
     inLanguage: d.htmlLang,
   };
 }

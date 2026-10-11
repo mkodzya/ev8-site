@@ -2,13 +2,16 @@
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { faq } from '../../../lib/seo';
+import { models } from '../../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const d = dict(locale);
 const t = d.faqPage;
 // The five questions of the home page first, then the rest.
-const items = [...d.faq.items, ...t.more];
+// The range answer is built from the models' own figures.
+const range = models.map((m) => t.rangeLine.replace('{model}', m.name).replace('{km}', String(m.rangeKm))).join(' ');
+const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range)]);
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/" jsonLd={[faq(items)]}>
   <section class="dark page-head">

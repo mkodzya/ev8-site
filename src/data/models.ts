@@ -23,14 +23,19 @@ export interface Model {
   insurance?: boolean;
   /** Not in the fleet yet: the month it arrives (YYYY-MM). Until then it is queue only. */
   from?: string;
+  /** Kilometres on one battery (Kardu, 11.10.2026). */
+  rangeKm: number;
 }
+
+/** Batteries that come with every moped (Kardu, 11.10.2026: "Даем по 2 батареи"). */
+export const BATTERIES = 2;
 
 export const DEPOSIT_GEL = 180;
 
 export const models: Model[] = [
-  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none' },
-  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM' },
-  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01' },
+  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none', rangeKm: 50 },
+  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM', rangeKm: 50 },
+  { id: 's70-pro', name: 'S70 Pro', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01', rangeKm: 75 },
 ];
 
 /** The lowest weekly price — what "from {n} ₾" says anywhere on the site. */
@@ -39,4 +44,7 @@ export const fromGel = Math.min(...models.map((m) => m.weeklyGel));
 export const contact = {
   phone: '+995 595 16 55 88',
   email: 'info@ev8.ge',
+  // EV8's own pages, as its Google business profile lists them (11.10.2026).
+  instagram: 'https://www.instagram.com/ev8electricmopeds/',
+  facebook: 'https://www.facebook.com/ev8electricmopeds',
 };

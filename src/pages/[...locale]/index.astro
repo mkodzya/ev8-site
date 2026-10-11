@@ -8,6 +8,7 @@
 import Base from '../../layouts/Base.astro';
 import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
+import Reviews from '../../components/Reviews.astro';
 import { dict, href, localePaths, type Locale } from '../../i18n';
 import { models, fromGel } from '../../data/models';
 
@@ -23,6 +24,8 @@ const queue = href(locale, 'queue/');
   <section class="dark garage-screen">
     <Garage locale={locale} variant="page" id="garage" />
   </section>
+
+  <div class="wrap reviews-row"><Reviews locale={locale} /></div>
 
   <section class="queue" id="queue">
     <div class="wrap">

@@ -303,6 +303,8 @@ details p { margin-top: 8px; color: var(--muted); }
 .g3:checked ~ .g-body .stat u::after { width: 92%; }
 .stat em { font-style: normal; text-align: right; text-transform: none; letter-spacing: 0; color: var(--lime); font-weight: 400; }
 .stat em span { display: none; }
+.stat.spec { grid-template-columns: auto 1fr; }
+.stat.spec em { color: #fff; font-size: 14px; }
 .g1:checked ~ .g-body .stat em .l1, .g2:checked ~ .g-body .stat em .l2, .g3:checked ~ .g-body .stat em .l3 { display: inline; }
 .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
 .thumb { min-width: 0; border: 1px solid var(--line-dark); border-radius: 12px; padding: 10px 9px; font: 500 13px/1.2 var(--f); cursor: pointer; color: var(--soft);
@@ -552,6 +554,14 @@ details p { margin-top: 8px; color: var(--muted); }
 .facts dt { color: var(--muted); }
 .facts dd { margin: 0; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
 .facts a { text-decoration: none; }
+/* the Google rating, a link to the reviews (components/Reviews.astro) */
+.g-reviews { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin-top: 20px; padding: 14px 18px; border-radius: 18px;
+             border: 1px solid var(--line-control); background: var(--surface); color: var(--ink); text-decoration: none; font-size: 15px; }
+.g-reviews b { font: 500 22px/1 var(--f); }
+.g-star { color: var(--accent); font-size: 18px; }
+.g-reviews .g-more { margin-left: auto; font-weight: 500; text-decoration: underline; }
+.reviews-row { padding-block: 8px 0; }
+.reviews-row .g-reviews { margin-top: 16px; }
 /* the swap film on the stations page: a night scene, so a black window on any page */
 .swap-film { position: relative; margin: 20px 0 0; max-width: 880px; aspect-ratio: 848 / 480;
              border-radius: 22px; overflow: hidden; background: #000; color: #fff; }
