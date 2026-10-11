@@ -540,6 +540,12 @@ details p { margin-top: 8px; color: var(--muted); }
 .info-side .offer { background: var(--lime); color: var(--ink); border-radius: 22px; padding: 18px; }
 .info-side .offer h2 { font-size: 24px; line-height: 1.12; margin-bottom: 6px; }
 .info-side .offer p { margin-bottom: 14px; }
+/* the new-licence promo on the AM page (Kardu, 12.10.2026) */
+.licence-promo { padding-top: 20px; }
+.licence-promo .offer { background: var(--lime); color: var(--ink); border-radius: 22px; padding: 20px; }
+.licence-promo .offer .tag { color: var(--ink); }
+.licence-promo .offer h2 { font-size: 24px; line-height: 1.12; margin: 6px 0 8px; }
+.licence-promo .offer p { margin-bottom: 14px; max-width: 60ch; }
 .info { display: grid; gap: 28px; padding-block: 28px 56px; }
 .info-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
 .info-list li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }

@@ -131,7 +131,7 @@ export const en: Dict = {
   included: {
     title: 'One price a week. What is in it',
     items: ['The moped', 'Two batteries and two chargers', 'Consumables and fixing malfunctions'],
-    honest: 'Swapping a battery for a charged one costs 3.49 ₾ a swap, at the stations in Agrohub and at the showroom. No discounts for longer terms — one price for everyone. No delivery — you collect the moped at the showroom.',
+    honest: 'Swapping a battery for a charged one costs 3.49 ₾ a swap, at the stations in Agrohub and at the showroom. No discounts for longer terms. No delivery — you collect the moped at the showroom.',
     stationsLink: 'Where to swap a battery',
   },
   faq: {
@@ -247,6 +247,7 @@ export const en: Dict = {
       ['What if the moped breaks down during a shift?', 'Call us: +995 595 16 55 88. We fix the malfunction — it is included in the rent.'],
       ['Is there insurance?', 'The compulsory insurance is included in the S70 Pro weekly price. The XL1200 and the Eagle have no insurance for now.'],
       ['Can I rent a helmet and gear?', 'No, we sell gear by instalments: you pay weekly with the rent and the item stays yours.'],
+      ['Are there any offers?', 'Yes: if you got your licence in the last 3 months (any category), the first week of rent is free — on the first day you pay only the {deposit} ₾ deposit.'],
       ['Are there discounts for a longer term?', 'No. The weekly price is the same for any term.'],
       ['Is there delivery?', 'No, you collect the moped at the showroom, 65 Nutsubidze St.'],
       ['Can I try it before signing?', 'Yes, the test ride is free, at the showroom.'],
@@ -305,6 +306,10 @@ export const en: Dict = {
     cta: 'Join the queue',
   },
   licence: {
+    promoTag: 'Offer',
+    promoTitle: 'New licence — first week free',
+    promoText: 'Got your licence in the last 3 months — any category, not only AM? Your first week of rent is free: on the first day you pay only the {deposit} ₾ deposit.',
+    promoCta: 'Join the queue',
     metaTitle: 'AM category licence for a moped: how to get it — EV8',
     metaDesc: 'What the AM category is, which documents you need, what the exam costs and which EV8 mopeds need the licence.',
     nav: 'AM licence',
