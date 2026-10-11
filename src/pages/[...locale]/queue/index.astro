@@ -197,7 +197,8 @@ const groups = [
       busy(false);
       if (res.status === 202) {
         form.querySelectorAll('input, button').forEach((el) => ((el as HTMLInputElement).disabled = true));
-        say(status.dataset.tSent ?? '', status.dataset.tSentText);
+        // The success shows as a window (Kardu, 12.10.2026); the form stays filled and locked.
+        document.dispatchEvent(new CustomEvent('ev8:done', { detail: { title: status.dataset.tSent ?? '', text: status.dataset.tSentText } }));
         return;
       }
       if (res.status === 400) {

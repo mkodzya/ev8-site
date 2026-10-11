@@ -148,12 +148,15 @@ for (const loc of LOCALES) {
     if (askPosted.name !== 'Test' || askPosted.phone !== '+995 555 12 34 56' || askPosted.lang !== lang) note(where, `the question went with wrong fields: ${JSON.stringify(askPosted).slice(0, 200)}`);
     if (!picked3.every((p) => String(askPosted.text).includes(p)) || !String(askPosted.text).includes('QA question')) note(where, `the question lacks the answers: ${String(askPosted.text).slice(0, 200)}`);
   }
-  if (!(await page.locator('[data-ask-status]').isVisible())) note(where, 'no "question received" after the server took it');
+  // the panel closes and the "question received" window opens
+  await page.waitForTimeout(500);
+  if (!(await page.locator('[data-done]').isVisible())) note(where, 'no "question received" window after the server took it');
+  if (await page.locator('.ask-panel').isVisible()) note(where, 'the widget did not close after sending');
   await page.screenshot({ path: `${OUT}/flow-${lang}-ask-sent.png` });
   await ctx.unroute('**/api/site/queue');
-  await page.locator('.ask-panel [data-ask-close]').click();
-  await page.waitForTimeout(500);
-  if (await page.locator('.ask-panel').isVisible()) note(where, 'the widget did not close');
+  await page.locator('[data-done-close]').click();
+  await page.waitForTimeout(300);
+  if (await page.locator('[data-done]').isVisible()) note(where, 'the "received" window did not close');
 
   // garage: three steps forward come back to the first
   await page.locator('#garage').scrollIntoViewIfNeeded();
@@ -226,7 +229,7 @@ for (const loc of LOCALES) {
     if (posted.name !== 'Test Courier' || posted.phone !== '+995 555 12 34 56' || posted.lang !== lang || posted.website !== '') note(where, `the queue got wrong fields: ${JSON.stringify(posted).slice(0, 200)}`);
     if (!String(posted.text).includes('test@example.test') || !String(posted.text).includes('Wolt')) note(where, `the queue request lacks the answers: ${String(posted.text).slice(0, 200)}`);
   }
-  if (!(await page.locator('[data-wl-status]').isVisible())) note(where, 'no "you are in the queue" after the server took it');
+  if (!(await page.locator('[data-done]').isVisible())) note(where, 'no "you are in the queue" window after the server took it');
   if (sent) note(where, 'WhatsApp opened');
   await page.screenshot({ path: `${OUT}/flow-${lang}-queue-sent.png`, fullPage: true });
   await ctx.close();

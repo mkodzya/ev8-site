@@ -398,5 +398,9 @@ export const en: Dict = {
     text: 'The address may have changed. Start from the home page or look into the garage.',
     home: 'Home page',
   },
+  done: {
+    home: 'Home page',
+    close: 'Close',
+  },
   footer: { address: '65 Shalva Nutsubidze St, Tbilisi', hours: 'Mon–Fri 10:00–20:00' },
 };

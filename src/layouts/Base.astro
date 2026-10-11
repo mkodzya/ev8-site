@@ -7,6 +7,7 @@ import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
 import Ask from '../components/Ask.astro';
+import Done from '../components/Done.astro';
 import { prodUrl, business, ogLocale, ogAlternates, ORIGIN } from '../lib/seo';
 import latin400 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff2?url';
 import latin500 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-500-normal.woff2?url';
@@ -49,6 +50,9 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {preloadFonts.map((f) => <link rel="preload" as="font" type="font/woff2" href={f} crossorigin />)}
     {preloadImage && <link rel="preload" as="image" href={asset(preloadImage)} fetchpriority="high" />}
+    <link rel="icon" href={asset('favicon.ico')} sizes="32x32" />
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
     <meta name="theme-color" content={lightTop ? '#fbfbfb' : '#0b0b0b'} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -113,6 +117,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
       </div>
     </footer>
     <Ask locale={locale} path={path} />
+    <Done locale={locale} />
     <script>
       // Page transitions hold the logo, the menu and the language switch in
       // place (view-transition-name in the styles, block "motion"). Two cases
