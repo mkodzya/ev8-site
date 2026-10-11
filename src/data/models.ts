@@ -38,6 +38,5 @@ export const fromGel = Math.min(...models.map((m) => m.weeklyGel));
 
 export const contact = {
   phone: '+995 595 16 55 88',
-  whatsapp: '995595165588',
   email: 'info@ev8.ge',
 };

@@ -1,7 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { dict, localePaths, type Locale } from '../../../i18n';
-import { contact } from '../../../data/models';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -22,7 +21,7 @@ const items = [...d.faq.items, ...t.more];
     <aside class="info-side">
       <div class="fuel">
         <h2 class="h2" style="margin-bottom:14px">{t.ask}</h2>
-        <a class="btn btn-lime btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.askBtn}</a>
+        <a class="btn btn-lime btn-block" data-ask href={href(locale, 'contacts/')}>{t.askBtn}</a>
       </div>
     </aside>
   </section>

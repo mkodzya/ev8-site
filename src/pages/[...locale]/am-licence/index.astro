@@ -9,8 +9,8 @@
 // card sends the question to WhatsApp. Which licence each moped needs is
 // models.ts (Kardu, same day), listed under it.
 import Base from '../../../layouts/Base.astro';
-import { dict, localePaths, type Locale } from '../../../i18n';
-import { contact, models } from '../../../data/models';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { models } from '../../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -57,7 +57,7 @@ const study = [
         <h2>{t.helpTitle}</h2>
         <p>{t.helpText}</p>
       </div>
-      <a class="btn btn-line btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.ask}</a>
+      <a class="btn btn-line btn-block" data-ask href={href(locale, 'contacts/')}>{t.ask}</a>
       <div class="honest">
         <b>{t.modelNote}</b>
         <ul class="licence-models">

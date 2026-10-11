@@ -1,24 +1,22 @@
 ---
-// The panel with the three quiz questions. It opens from every "write on
-// WhatsApp" link on the site (they carry data-ask) and from the request
-// builder; the answers travel in the message, so the manager sees who is
-// writing. On a phone the panel is a sheet from the bottom, on a laptop a card
-// in the corner. The floating "Write to us" button that used to open it on
-// every page is gone (Mika, 07.10.2026): the request form is the way in.
-//
-// The builder hands its request over with the event `ev8:request`; the answers
-// are asked once per visit. If the request carries `deliver`, the finished
-// message goes back to the builder, which sends it to the queue (and opens
-// WhatsApp itself if that fails).
-// Without JavaScript the links simply open WhatsApp.
+// The "Ask us" panel (Kardu, 11.10.2026: no WhatsApp anywhere on the site;
+// a question goes by email like the waiting list does). It opens from every
+// "Ask a question" button (they carry data-ask): three quick questions about
+// the visitor, a short answer for who they are, then name, phone and the
+// question. It posts to the same POST /api/site/queue as the waiting list —
+// EV8 Ops mails it to the company and stores nothing. A mail that does not go
+// out keeps what was typed and shows the phone number instead.
+// On a phone the panel is a sheet from the bottom, on a laptop a card in the
+// corner. Without JavaScript the buttons lead to the contacts page.
 import Icon from './Icon.astro';
 import { dict, href, type Locale } from '../i18n';
 import { models, contact } from '../data/models';
 
 interface Props { locale: Locale; path: string; }
-const { locale, path } = Astro.props;
+const { locale } = Astro.props;
 const d = dict(locale);
 const t = d.ask;
+const w = d.waitlist;
 
 const questions = [
   { q: d.quiz.q1, a: d.quiz.q1a, icons: [{ name: 'bag' }, { name: 'userplus' }] },
@@ -35,10 +33,10 @@ const offers = [
   { key: 'other', tiles: d.info.included, icons: includedIcons },
 ] as const;
 const names = Object.fromEntries(models.map((m) => [m.id, m.name]));
-const onBuilder = path === 'subscription/';
+const tel = `tel:${contact.phone.replace(/\s/g, '')}`;
 ---
-<div class="ask" data-ask-root data-wa={contact.whatsapp} data-hello={t.msgHello} data-l-about={t.msgAbout} data-l-model={t.msgModel}
-     data-t-wa={t.wa} data-t-send={t.send} data-models={JSON.stringify(names)}>
+<div class="ask" data-ask-root data-lang={locale} data-hello={t.msgHello} data-l-about={t.msgAbout} data-l-model={t.msgModel}
+     data-l-question={t.msgQuestion} data-models={JSON.stringify(names)}>
 
   <div class="ask-veil" data-ask-close hidden></div>
   <div class="ask-panel" role="dialog" aria-labelledby="ask-title" hidden>
@@ -76,17 +74,37 @@ const onBuilder = path === 'subscription/';
         </ul>
       </div>
     ))}
-    <div class="ask-offer" data-ask-ready hidden>
-      <h2 class="ask-q">{t.ready}</h2>
-      <p class="ask-text">{t.readyText}</p>
-    </div>
 
-    <div class="ask-actions" data-ask-actions hidden>
-      <a class="btn btn-lime btn-block" data-ask-send href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{t.wa}</a>
-      {!onBuilder && <a class="btn btn-line btn-block" data-ask-build href={href(locale, 'subscription/')}>{t.build} →</a>}
-      <p class="ask-note">{t.note}</p>
+    <form class="ask-form" data-ask-form novalidate hidden>
+      <h3 class="ask-form-title">{t.formTitle}</h3>
+      <label class="field">
+        <span>{w.name}</span>
+        <input type="text" id="ask-name" name="name" required maxlength="60" autocomplete="name" aria-describedby="ask-name-err" />
+        <small id="ask-name-err" class="field-err" hidden>{w.errName}</small>
+      </label>
+      <label class="field">
+        <span>{w.phone}</span>
+        <input type="tel" id="ask-phone" name="phone" required maxlength="30" autocomplete="tel" inputmode="tel" aria-describedby="ask-phone-err" />
+        <small id="ask-phone-err" class="field-err" hidden>{w.errPhone}</small>
+      </label>
+      <label class="field">
+        <span>{t.question} <small class="hint">· {t.questionHint}</small></span>
+        <textarea id="ask-question" name="question" rows="3" maxlength="1200"></textarea>
+      </label>
+      <label class="wl-consent">
+        <input type="checkbox" id="ask-consent" name="consent" required aria-describedby="ask-consent-err" />
+        <span>{w.consent} <a href={href(locale, 'privacy/')}>{w.consentLink}</a>{w.consentAfter === '.' ? '.' : ` ${w.consentAfter}`}</span>
+      </label>
+      <small id="ask-consent-err" class="field-err" hidden>{w.errConsent}</small>
+      <div class="trap" aria-hidden="true">
+        <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <button type="submit" class="btn btn-lime btn-block" data-ask-send data-t-sending={t.sending}>{t.send}</button>
+      <div class="sub-status" data-ask-status role="status" aria-live="polite" hidden
+           data-t-sent={t.sent} data-t-sent-text={t.sentText} data-t-fail={t.errFail} data-phone={contact.phone} data-tel={tel}></div>
+      <a class="btn btn-line btn-block" href={href(locale, 'queue/')}>{t.queue} →</a>
       <button type="button" class="again" data-again>{d.quiz.again}</button>
-    </div>
+    </form>
   </div>
 </div>
 
@@ -104,40 +122,38 @@ const onBuilder = path === 'subscription/';
     const dots = Array.from(root.querySelectorAll<HTMLElement>('.dots i'));
     const count = root.querySelector<HTMLElement>('[data-count]')!;
     const offers = Array.from(root.querySelectorAll<HTMLElement>('[data-offer]'));
-    const ready = root.querySelector<HTMLElement>('[data-ask-ready]')!;
-    const actions = root.querySelector<HTMLElement>('[data-ask-actions]')!;
-    const send = root.querySelector<HTMLAnchorElement>('[data-ask-send]')!;
-    const build = root.querySelector<HTMLElement>('[data-ask-build]');
+    const form = root.querySelector<HTMLFormElement>('[data-ask-form]')!;
+    const nameIn = form.querySelector<HTMLInputElement>('#ask-name')!;
+    const phoneIn = form.querySelector<HTMLInputElement>('#ask-phone')!;
+    const question = form.querySelector<HTMLTextAreaElement>('#ask-question')!;
+    const consent = form.querySelector<HTMLInputElement>('#ask-consent')!;
+    const trap = form.querySelector<HTMLInputElement>('input[name="website"]')!;
+    const send = form.querySelector<HTMLButtonElement>('[data-ask-send]')!;
+    const status = form.querySelector<HTMLElement>('[data-ask-status]')!;
+    const sendText = send.textContent ?? '';
     const names = JSON.parse(d.models || '{}') as Record<string, string>;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let answers: number[] = [];
     let busy = false;
     let closing = 0;
-    // Lines of a request from the subscription builder that waits for the answers.
-    let request: string[] | null = null;
-    type Deliver = (text: string, wa: string) => void;
-    let deliver: Deliver | null = null;
 
     // Who is this: q1 = works as a courier (0 yes, 1 not yet), q2 = vehicle.
     const segment = (a: number[]) => (a[0] === 1 ? 'novice' : ['petrol', 'car', 'electric', 'other'][a[1]] ?? 'other');
     const labels = (a: number[]) =>
       steps.map((s, i) => s.querySelectorAll('.ask-opt span')[a[i]]?.textContent?.trim()).filter(Boolean).join(' · ');
-    const stored = (): { answers?: number[]; text?: string } | null => {
+    const stored = (): { answers?: number[] } | null => {
       try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; }
     };
     const complete = (a: unknown): a is number[] => Array.isArray(a) && a.length === steps.length;
 
-    const message = (about: string, lines: string[] | null) => {
-      const out = lines ? [...lines] : [d.hello!];
-      out.push(`${d.lAbout}: ${about}`);
-      if (!lines) {
-        try { const m = localStorage.getItem('ev8-model'); if (m && names[m]) out.push(`${d.lModel}: ${names[m]}`); } catch {}
-      }
+    const message = () => {
+      const out = [d.hello!, `${d.lAbout}: ${labels(answers)}`];
+      try { const m = localStorage.getItem('ev8-model'); if (m && names[m]) out.push(`${d.lModel}: ${names[m]}`); } catch {}
+      const q = question.value.trim();
+      if (q) out.push(`${d.lQuestion}: ${q}`);
       return out.join('\n');
     };
-    const wa = (text: string) => `https://wa.me/${d.wa}?text=${encodeURIComponent(text)}`;
-    const link = (about: string, lines: string[] | null) => wa(message(about, lines));
 
     const show = () => {
       const done = answers.length >= steps.length;
@@ -146,15 +162,9 @@ const onBuilder = path === 'subscription/';
       dots.forEach((dot, i) => dot.classList.toggle('on', i <= answers.length));
       count.textContent = String(Math.min(answers.length + 1, steps.length));
       const seg = done ? segment(answers) : null;
-      offers.forEach((o) => (o.hidden = !!request || o.dataset.offer !== seg));
-      ready.hidden = !(done && request);
-      actions.hidden = !done;
-      if (!done) return;
-      const about = labels(answers);
-      try { sessionStorage.setItem(KEY, JSON.stringify({ answers, segment: seg, text: about })); } catch {}
-      send.href = link(about, request);
-      send.textContent = (request ? d.tSend : d.tWa) ?? '';
-      if (build) build.hidden = !!request;
+      offers.forEach((o) => (o.hidden = o.dataset.offer !== seg));
+      form.hidden = !done;
+      if (done) try { sessionStorage.setItem(KEY, JSON.stringify({ answers, segment: seg })); } catch {}
     };
 
     // The panel changes its height smoothly when a question gives way to the next one.
@@ -166,24 +176,23 @@ const onBuilder = path === 'subscription/';
       if (before !== after) panel.animate([{ height: `${before}px`, overflow: 'hidden' }, { height: `${after}px`, overflow: 'hidden' }], { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
     };
 
-    const open = (lines: string[] | null = null, onDone: Deliver | null = null) => {
+    const open = () => {
       window.clearTimeout(closing); closing = 0;
       panel.classList.remove('out'); veil.classList.remove('out');
-      request = lines; deliver = onDone;
       const s = stored();
       answers = complete(s?.answers) ? s!.answers! : [];
       show();
       opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       panel.hidden = false; veil.hidden = false;
       document.documentElement.classList.add('ask-open');
-      panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-actions]:not([hidden]) [data-ask-send]')?.focus();
+      panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, form:not([hidden]) #ask-name')?.focus();
     };
     const close = () => {
       if (panel.hidden || closing) return;
       const done = () => {
         closing = 0;
         panel.classList.remove('out'); veil.classList.remove('out');
-        panel.hidden = true; veil.hidden = true; request = null; deliver = null;
+        panel.hidden = true; veil.hidden = true;
         document.documentElement.classList.remove('ask-open');
         opener?.focus({ preventScroll: true });
       };
@@ -197,14 +206,6 @@ const onBuilder = path === 'subscription/';
       const el = e.target as HTMLElement;
       if (el.closest('[data-ask-close]')) { close(); return; }
       if (el.closest('[data-ask]')) { e.preventDefault(); open(); return; }
-      // The send link in a builder request goes to the queue too, not straight to WhatsApp.
-      if (deliver && request && el.closest('[data-ask-send]')) {
-        e.preventDefault();
-        const out = deliver, text = message(labels(answers), request);
-        close();
-        out(text, wa(text));
-        return;
-      }
       const opt = el.closest<HTMLElement>('[data-answer]');
       if (opt && panel.contains(opt)) {
         if (busy) return;
@@ -216,15 +217,7 @@ const onBuilder = path === 'subscription/';
           opt.classList.remove('picked');
           answers.push(Number(opt.dataset.answer));
           morph(show);
-          // A builder request goes out with the last answer: the tap is the send.
-          if (request && answers.length >= steps.length) {
-            if (deliver) {
-              const out = deliver, text = message(labels(answers), request);
-              close();
-              out(text, wa(text));
-            } else window.location.href = send.href;
-          }
-          else panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, [data-ask-send]')?.focus({ preventScroll: true });
+          panel.querySelector<HTMLElement>('[data-step]:not([hidden]) .ask-opt, form:not([hidden]) #ask-name')?.focus({ preventScroll: true });
         }, reduce ? 0 : 280);
         return;
       }
@@ -238,16 +231,71 @@ const onBuilder = path === 'subscription/';
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
-    // The subscription builder sends its request through here, so every
-    // request carries the three answers. Asked once per visit.
-    document.addEventListener('ev8:request', (e) => {
-      const { lines, deliver: onDone } = (e as CustomEvent<{ lines: string[]; deliver?: Deliver }>).detail;
-      const s = stored();
-      if (complete(s?.answers) && s?.text) {
-        const text = message(s.text, lines);
-        if (onDone) onDone(text, wa(text));
-        else window.location.href = wa(text);
-      } else open(lines, onDone ?? null);
+    // The form: checked here first, then mailed through the queue's address.
+    const fieldErr = (input: HTMLInputElement, on: boolean) => {
+      input.toggleAttribute('aria-invalid', on);
+      const err = document.getElementById(`${input.id}-err`);
+      if (err) err.hidden = !on;
+    };
+    [nameIn, phoneIn].forEach((i) => i.addEventListener('input', () => fieldErr(i, false)));
+    consent.addEventListener('change', () => fieldErr(consent, false));
+
+    const say = (title: string, text?: string, call = false) => {
+      const b = document.createElement('b');
+      b.textContent = title;
+      status.replaceChildren(b);
+      if (text) status.append(' ', text);
+      if (call) {
+        const a = document.createElement('a');
+        a.href = status.dataset.tel ?? ''; a.textContent = status.dataset.phone ?? '';
+        status.append(' ', a);
+      }
+      status.hidden = false;
+      status.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    };
+    const busySend = (on: boolean) => { send.disabled = on; send.textContent = on ? send.dataset.tSending ?? '' : sendText; };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (send.disabled) return;
+      status.hidden = true;
+      const bad: HTMLInputElement[] = [];
+      if (nameIn.value.trim().length < 1) bad.push(nameIn);
+      if (phoneIn.value.replace(/\D/g, '').length < 9) bad.push(phoneIn);
+      if (!consent.checked) bad.push(consent);
+      bad.forEach((i) => fieldErr(i, true));
+      if (bad.length) { bad[0].focus(); return; }
+
+      busySend(true);
+      const ctl = new AbortController();
+      const timer = window.setTimeout(() => ctl.abort(), 15000);
+      let res: Response;
+      try {
+        res = await fetch('/api/site/queue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: nameIn.value.trim(), phone: phoneIn.value.trim(), text: message(), lang: d.lang, page: location.pathname, website: trap.value }),
+          signal: ctl.signal,
+        });
+      } catch {
+        res = new Response(null, { status: 599 }); // network error or timeout
+      } finally {
+        window.clearTimeout(timer);
+      }
+      busySend(false);
+      if (res.status === 202) {
+        form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>('input, textarea, button[type=submit]').forEach((el) => (el.disabled = true));
+        say(status.dataset.tSent ?? '', status.dataset.tSentText);
+        return;
+      }
+      if (res.status === 400) {
+        const body = (await res.json().catch(() => ({}))) as { field?: string };
+        const input = body.field === 'name' ? nameIn : body.field === 'phone' ? phoneIn : null;
+        if (input) { fieldErr(input, true); input.focus(); return; }
+      }
+      // Mail off, down, unreachable or anything unexpected: what was typed
+      // stays, and the visitor gets the number to call.
+      say(status.dataset.tFail ?? '', undefined, true);
     });
   }
 </script>

@@ -5,7 +5,8 @@
 // the builder (read from what they saved in the browser). It goes to the
 // company mailbox through POST /api/site/queue on EV8 Ops, like the builder's
 // request did; the server stores nothing. A server that is off, down or
-// unreachable opens WhatsApp with the same message, so nobody is lost.
+// unreachable keeps what was typed and shows the phone number to call (no
+// WhatsApp on the site: Kardu, 11.10.2026).
 // Every "Join the queue" on the site leads here.
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
@@ -29,9 +30,9 @@ const groups = [
     </div>
   </section>
 
-  <form class="wrap narrow wl" data-wl novalidate data-lang={locale} data-wa={contact.whatsapp}
+  <form class="wrap narrow wl" data-wl novalidate data-lang={locale}
         data-hello={t.msgHello} data-l-surname={t.lSurname} data-l-email={t.lEmail} data-l-model={t.lModel}
-        data-l-hours={d.sub.msgHours} data-l-phone={t.phone} data-l-name={t.name}>
+        data-l-hours={d.sub.msgHours}>
     <div class="wl-two">
       <label class="field">
         <span>{t.name}</span>
@@ -90,7 +91,8 @@ const groups = [
 
     <button type="submit" class="btn btn-lime btn-block" data-wl-send data-t-sending={t.sending}>{t.send}</button>
     <div class="sub-status" data-wl-status role="status" aria-live="polite" hidden
-         data-t-sent={t.sent} data-t-sent-text={t.sentText} data-t-err={t.errOther} data-t-wa={t.errWa}></div>
+         data-t-sent={t.sent} data-t-sent-text={t.sentText} data-t-err={t.errOther} data-t-call={t.errCall}
+         data-phone={contact.phone} data-tel={`tel:${contact.phone.replace(/\s/g, '')}`}></div>
   </form>
 </Base>
 
@@ -132,14 +134,14 @@ const groups = [
     form.querySelectorAll<HTMLElement>('[data-group]').forEach((g) =>
       g.addEventListener('change', () => err(form.querySelector(`[data-err="${g.dataset.group}"]`), false)));
 
-    const say = (title: string, text?: string, wa?: string) => {
+    const say = (title: string, text?: string, call = false) => {
       const b = document.createElement('b');
       b.textContent = title;
       status.replaceChildren(b);
       if (text) status.append(' ', text);
-      if (wa) {
+      if (call) {
         const a = document.createElement('a');
-        a.href = wa; a.rel = 'noopener'; a.textContent = status.dataset.tWa ?? '';
+        a.href = status.dataset.tel ?? ''; a.textContent = status.dataset.phone ?? '';
         status.append(' ', a);
       }
       status.hidden = false;
@@ -175,7 +177,6 @@ const groups = [
       if (hours) lines.push(`${d.lHours}: ${hours}`);
       const text = lines.join('\n');
       const full = `${name.value.trim()} ${surname.value.trim()}`.trim();
-      const wa = `https://wa.me/${d.wa}?text=${encodeURIComponent([text, `${d.lName}: ${full}`, `${d.lPhone}: ${phone.value.trim()}`].join('\n'))}`;
 
       busy(true);
       const ctl = new AbortController();
@@ -203,12 +204,12 @@ const groups = [
         const body = (await res.json().catch(() => ({}))) as { field?: string };
         const input = body.field === 'name' ? name : body.field === 'phone' ? phone : null;
         if (input) { fieldErr(input, true); input.focus(); input.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-        else say(status.dataset.tErr ?? '', undefined, wa);
+        else say(status.dataset.tErr ?? '', status.dataset.tCall, true);
         return;
       }
-      // 502, 503, a network error and anything unexpected: the request is not
-      // lost, it goes to WhatsApp.
-      window.location.href = wa;
+      // 502, 503, a network error and anything unexpected: what was typed
+      // stays, and the visitor gets the number to call.
+      say(status.dataset.tErr ?? '', status.dataset.tCall, true);
     });
   }
 </script>

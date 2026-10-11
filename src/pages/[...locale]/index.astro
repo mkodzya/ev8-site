@@ -9,13 +9,12 @@ import Base from '../../layouts/Base.astro';
 import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
 import { dict, href, localePaths, type Locale } from '../../i18n';
-import { models, contact } from '../../data/models';
+import { models } from '../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const t = dict(locale);
 const queue = href(locale, 'queue/');
-const wa = `https://wa.me/${contact.whatsapp}`;
 
 ---
 <Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="" preloadImage={models[models.length - 1].image}>
@@ -62,7 +61,7 @@ const wa = `https://wa.me/${contact.whatsapp}`;
     <div class="wrap narrow">
       <h2 class="h2">{t.closing.title1} <em>{t.closing.title2}</em></h2>
       <div class="lead-cta">
-        <a class="btn btn-lime" data-ask href={wa} rel="noopener">{t.closing.wa}</a>
+        <a class="btn btn-lime" data-ask href={href(locale, 'contacts/')}>{t.closing.ask}</a>
         <a class="btn btn-line" href={queue}>{t.closing.queue} →</a>
       </div>
     </div>
