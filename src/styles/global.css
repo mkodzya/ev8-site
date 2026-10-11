@@ -273,11 +273,14 @@ details p { margin-top: 8px; color: var(--muted); }
 .arrow.prev { left: 12px; } .arrow.next { right: 12px; }
 .g1:checked ~ .stage .a1, .g2:checked ~ .stage .a2, .g3:checked ~ .stage .a3 { display: grid; }
 .g-body { max-width: 520px; margin-inline: auto; padding-inline: var(--gutter); padding-bottom: 24px; }
-.names { position: relative; height: 96px; }
+.names { position: relative; height: 136px; }
 .name { position: absolute; inset: 0; opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform var(--ease); }
 .name i { font-style: normal; font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
 .name b { display: block; margin-top: 6px; font: 500 34px/1 var(--f); letter-spacing: -0.03em; }
 .name > span { display: block; margin-top: 8px; color: var(--soft); font-variant-numeric: tabular-nums; }
+/* Licence, insurance, when it arrives (Kardu, 11.10.2026). */
+.name-note { display: block; margin-top: 6px; font-size: 13px; line-height: 1.3; color: var(--soft); }
+.name-note.soon { color: var(--lime); font-weight: 500; }
 .g1:checked ~ .g-body .n1, .g2:checked ~ .g-body .n2, .g3:checked ~ .g-body .n3 { opacity: 1; transform: none; }
 .stats { display: grid; gap: 10px; margin-top: 8px; }
 .stat { display: grid; grid-template-columns: 104px 1fr 76px; gap: 10px; align-items: center; font: 500 12px/1 var(--f); letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey); }
@@ -308,7 +311,7 @@ details p { margin-top: 8px; color: var(--muted); }
   .garage.page .g-body { width: 100%; max-width: 440px; padding-bottom: 0; }
   .garage.page .eyebrow { top: 40px; text-align: left; padding-left: var(--gutter); }
   .garage.page .name b { font-size: 48px; }
-  .garage.page .names { height: 118px; }
+  .garage.page .names { height: 162px; }
   .col-b { margin-top: 0; }
 }
 
@@ -403,7 +406,7 @@ details p { margin-top: 8px; color: var(--muted); }
   .garage.page .g-body { width: 100%; max-width: 440px; padding-bottom: 0; }
   .garage.page .eyebrow { top: 40px; text-align: left; padding-left: var(--gutter); }
   .garage.page .name b { font-size: 48px; }
-  .garage.page .names { height: 118px; }
+  .garage.page .names { height: 162px; }
   .col-b { margin-top: 0; }
 }
 
@@ -662,7 +665,7 @@ html[data-page='garage'] .garage.page { min-height: calc(100svh - 64px); }
   .garage.page .arrow.prev { left: calc(50% - 62px); }
   .garage.page .arrow.next { right: calc(50% - 62px); }
   .garage.page .name b { font-size: 60px; }
-  .garage.page .names { height: 132px; }
+  .garage.page .names { height: 176px; }
   .garage.page .g-body { max-width: 460px; }
 }
 
@@ -685,6 +688,40 @@ html[data-page='garage'] .garage.page { min-height: calc(100svh - 64px); }
 .garage.entering .stat u::after { transition-duration: 1.2s; transition-delay: 1.5s; }
 /* the page itself goes dark as you walk in: a light sheet over the garage page fades away */
 html[data-theme='light'][data-page='garage'] body::before { content: ''; position: fixed; inset: 0; z-index: 4; pointer-events: none; background: var(--bg); animation: dim-in 1.1s ease 0.05s both; }
+
+/* Kardu, 11.10.2026: the licence or the arrival month under each moped in the
+   builder; gear out of stock. */
+.moped-note { font-style: normal; font-size: 11px; line-height: 1.25; color: var(--muted); }
+.moped:has(input:checked) .moped-note { color: var(--ink); }
+.row-pr .oos { color: var(--ink); font-weight: 500; text-transform: lowercase; }
+.row.off .row-pr .oos { color: var(--muted); }
+
+/* The waiting list (queue/, Kardu 11.10.2026): the builder's fields and pills, on one column. */
+.wl { display: grid; gap: 16px; padding-block: 28px 56px; }
+.wl-two { display: grid; gap: 16px; }
+@media (min-width: 600px) { .wl-two { grid-template-columns: 1fr 1fr; } }
+.wl-group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.wl-group legend { font: 500 17px/1.3 var(--f); padding: 0; margin-bottom: 10px; }
+.wl-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.wl-choice { position: relative; }
+.wl-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wl-choice span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-control);
+                  font: 500 14px/1.2 var(--f); cursor: pointer; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+.wl-choice input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--lime); }
+.wl-choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wl-group .field-err { display: block; margin-top: 6px; }
+.wl-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; }
+.wl-consent input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--ink); flex: none; }
+.wl-consent input[aria-invalid] { outline: 2px solid var(--ink); outline-offset: 2px; }
+.wl-consent a { text-decoration: underline; }
+.field input[type=email] { width: 100%; }
+
+/* The privacy policy: plain reading text. */
+.prose { padding-block: 28px 56px; }
+.prose h2 { font-size: 20px; line-height: 1.25; margin: 28px 0 8px; }
+.prose p, .prose li { color: var(--muted); max-width: 70ch; }
+.prose ul { padding-left: 20px; margin: 8px 0; }
+.prose li { margin: 4px 0; }
 
 /* ===== motion (Mika, 03.10.2026): every change is smooth, small and unhurried =====
    One curve and three durations for the whole site. Pages fade into each other;
@@ -807,3 +844,4 @@ details[open]::details-content { block-size: auto; opacity: 1; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
   .promo.live .slide-tx > *, .promo.live .slide-fig { opacity: 1; transform: none; }
 }
+

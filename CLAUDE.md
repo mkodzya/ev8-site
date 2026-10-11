@@ -74,15 +74,20 @@ quiz change softly. One curve and three durations, all in the "motion" block at 
 switches all of it off.
 
 Structure of the home page (Mika, 03.10.2026): it sells first. A carousel of the main
-benefits (`Promo.astro`), the garage, the queue for new mopeds with the way into the request
-builder, then the papers (licence, registration, tax) and the questions. The quiz is not a
+benefits (`Promo.astro`), the garage, the queue for new mopeds with the way onto the waiting
+list. The papers block (licence, registration, tax) and the common questions are off the home
+page for now (Kardu, 11.10.2026); the questions stay on `faq/`. The quiz is not a
 gate any more: its three questions live in a panel (`Ask.astro`); every WhatsApp link
-carries `data-ask` and opens it, and the builder sends its request through it, so each message
-says who is writing. There is no floating "Write to us" button (removed by Mika, 07.10.2026):
+carries `data-ask` and opens it, so each message says who is writing. There is no floating "Write to us" button (removed by Mika, 07.10.2026):
 the request form is the way in. The queue is shown without numbers.
 
-The request (Kardu, 06.10.2026; accepted by Mika, 07.10.2026): the builder asks for a name
-and a phone and posts the request to `POST /api/site/queue` on its own host — EV8 Ops, which
+The waiting list (Kardu, 11.10.2026): `queue/` is the one form on the site — the fields of the
+old ev8.ge/waitlist/ (name, surname, phone, email, licence, courier experience, company,
+consent to the privacy policy at `privacy/`) plus the moped picked in the garage or the
+builder. Every "Join the queue" leads there; the builder only counts and sends nothing, its
+gear is out of stock and its services are off (Kardu, 11.10.2026). Before that (Kardu,
+06.10.2026; accepted by Mika, 07.10.2026) the builder itself asked for a name and a phone.
+The form posts to `POST /api/site/queue` on its own host — EV8 Ops, which
 sends it to the company mailbox by email and stores nothing (`apps/api/src/routes/site.ts` in
 `mkodzya/ev8-ops`). 202 shows "Request received"; a server that is off (503 until Mika sets
 the mailbox up), down or unreachable opens WhatsApp with the same message, as before. On the

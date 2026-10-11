@@ -2,24 +2,23 @@
 // The first screen of the home page: a carousel of the main benefits
 // (Mika, 03.10.2026: the home page sells first, the quiz moved into the
 // "Write to us" widget). Every figure comes from the data files, none is typed
-// here. The track is a scroll-snap row, so it swipes without JavaScript; the
+// here — except the saving on the second slide, a fixed figure Kardu set on
+// 11.10.2026 (PROMO_SAVE_GEL). The track is a scroll-snap row, so it swipes without JavaScript; the
 // script adds the dots, the arrows and the autoplay: it glides by itself every
 // five seconds, waits while the visitor handles it, and goes on (Mika, 03.10.2026).
 import Icon from './Icon.astro';
 import { dict, href, asset, type Locale } from '../i18n';
-import { models } from '../data/models';
-import { services, calc } from '../data/subscription';
-import { compute, gel } from '../lib/calc';
+import { models, fromGel } from '../data/models';
+import { calc, PROMO_SAVE_GEL } from '../data/subscription';
+import { gel } from '../lib/calc';
 
 interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const t = dict(locale).promo;
 
-// The saving is the calculator's own answer for the cheapest moped at the
-// default hours — the same number the subscription page shows.
-const base = compute({ modelId: models[0].id, gear: [], services: [], hours: calc.hoursDefault });
-const numbers = [String(models[0].weeklyGel), gel(base.saveMonth), '', '', gel(services[0].once ?? 0)];
-const icons = ['bolt', 'fuel', 'battery', 'swap', 'card'];
+// "from {n}" is the lowest weekly price; the saving is Kardu's fixed 600 ₾.
+const numbers = [String(fromGel), gel(PROMO_SAVE_GEL * 100), '', ''];
+const icons = ['bolt', 'fuel', 'battery', 'swap'];
 const fill = (s: string, i: number) => s.replace('{n}', numbers[i]).replace('{h}', String(calc.hoursDefault));
 const hero = models[models.length - 1];
 ---
@@ -53,7 +52,7 @@ const hero = models[models.length - 1];
       <button type="button" class="promo-arrow" data-promo-next aria-label={t.next}>›</button>
     </div>
     <div class="promo-cta">
-      <a class="btn btn-lime" href={href(locale, 'subscription/')}>{t.cta} →</a>
+      <a class="btn btn-lime" href={href(locale, 'queue/')}>{t.cta} →</a>
       <a class="btn btn-line" href="#garage">{t.pick}</a>
     </div>
   </div>
