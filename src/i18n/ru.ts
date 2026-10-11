@@ -273,6 +273,8 @@ export const ru = {
     title2: 'батарей',
     sub: 'Села батарея в смену — меняешь на заряженную и едешь дальше.',
     // {n} is the number of places in data/stations.ts; 24/7 and 15 seconds are ev8.ge's words
+    videoLabel: 'Курьер меняет батарею на станции в Agrohub',
+    videoCaption: 'Ночью тоже: замена 24/7',
     facts: [
       ['3,49 ₾', 'за одну замену'],
       ['24/7', 'замена в любое время — на всех {n} станциях'],

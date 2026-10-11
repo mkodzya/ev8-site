@@ -539,6 +539,18 @@ details p { margin-top: 8px; color: var(--muted); }
 .facts dt { color: var(--muted); }
 .facts dd { margin: 0; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
 .facts a { text-decoration: none; }
+/* the swap film on the stations page: a night scene, so a black window on any page */
+.swap-film { position: relative; margin: 20px 0 0; max-width: 880px; aspect-ratio: 848 / 480;
+             border-radius: 22px; overflow: hidden; background: #000; color: #fff; }
+.swap-film video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.swap-film figcaption { position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px;
+                        padding: 7px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.62);
+                        font: 500 13px/1 var(--f); pointer-events: none; }
+.swap-film .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 0 var(--lime);
+                  animation: film-dot 2.4s ease-out infinite; }
+@keyframes film-dot { 0% { box-shadow: 0 0 0 0 rgba(224, 255, 162, 0.55); } 70%, 100% { box-shadow: 0 0 0 8px rgba(224, 255, 162, 0); } }
+@media (prefers-reduced-motion: reduce) { .swap-film .dot { animation: none; } }
+@media (min-width: 900px) { .swap-film { margin-top: 28px; border-radius: 28px; } .swap-film figcaption { left: 18px; bottom: 18px; font-size: 14px; } }
 @media (min-width: 900px) {
   .page-head { padding-block: 120px 40px; }
   .info { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 56px; padding-block: 44px 72px; align-items: start; }

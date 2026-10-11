@@ -4,7 +4,7 @@
 // /svap-sadgurebi/ (changed 01.10.2026), taken on Mika's word of 03.10.2026.
 import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
-import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { asset, dict, href, localePaths, type Locale } from '../../../i18n';
 import { stations, directions } from '../../../data/stations';
 
 export const getStaticPaths = localePaths;
@@ -18,6 +18,14 @@ const n = (s: string) => s.replace('{n}', String(stations.length));
     <div class="wrap">
       <h1>{t.title1} <em>{t.title2}</em></h1>
       <p class="head-sub">{t.sub}</p>
+      <!-- A swap at the Agrohub station, at night (Kardu, 11.10.2026). Silent,
+           looped, played only while on screen; with reduced motion, or with
+           no JavaScript, it waits on its poster with the player's controls. -->
+      <figure class="swap-film">
+        <video src={asset('video/swap.mp4')} poster={asset('img/swap-poster.jpg')} width="848" height="480"
+               muted loop playsinline controls preload="none" aria-label={t.videoLabel} data-swap-film></video>
+        <figcaption><span class="dot" aria-hidden="true"></span>{t.videoCaption}</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -48,3 +56,16 @@ const n = (s: string) => s.replace('{n}', String(stations.length));
     </aside>
   </section>
 </Base>
+
+<script>
+  // Plays like a moving picture: no controls, only while it is on screen.
+  const film = document.querySelector<HTMLVideoElement>('[data-swap-film]');
+  if (film && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    film.controls = false;
+    film.preload = 'auto';
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) film.play().catch(() => { film.controls = true; });
+      else film.pause();
+    }, { threshold: 0.25 }).observe(film);
+  }
+</script>
