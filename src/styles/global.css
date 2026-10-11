@@ -624,6 +624,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .menu-top { width: 100%; display: flex; align-items: center; gap: 12px; padding-block: 14px; }
 .menu-top .logo { margin-right: auto; }
 .menu-top .langs a { color: var(--soft); text-decoration: none; }
+.menu-top .langs a[aria-current='true'] { color: var(--ink); }
 .menu-close { width: 40px; height: 40px; margin-right: -8px; font: 300 34px/1 var(--f); color: #fff; }
 .menu-list { width: 100%; display: flex; flex-direction: column; padding-block: 12px 28px; }
 .menu-list a { display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid var(--line-dark);
