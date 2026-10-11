@@ -405,6 +405,12 @@ export const ru = {
     label: '{n} отзывов в Google',
     cta: 'Читать отзывы',
   },
+  // The page for an address that does not exist (404.html).
+  notFound: {
+    title: 'Такой страницы нет',
+    text: 'Возможно, адрес изменился. Начни с главной или загляни в гараж.',
+    home: 'На главную',
+  },
   footer: { address: 'Тбилиси, ул. Шалвы Нуцубидзе, 65', hours: 'пн–пт 10:00–20:00' },
 };
 
