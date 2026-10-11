@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
 const BASE = process.env.QA_BASE || 'https://test.ops.ev8.ge/garage/site/';
-const PAGES = ['', 'models/', 'subscription/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/'];
+const PAGES = ['', 'models/', 'subscription/', 'queue/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/', 'privacy/'];
 const LOCALES = ['', 'en/'];
 const VIEWS = [{ name: 'phone', width: 375, height: 812 }, { name: 'laptop', width: 1366, height: 800 }];
 const OUT = 'qa-shots';
@@ -99,12 +99,12 @@ for (const loc of LOCALES) {
   const page = await ctx.newPage();
   await page.goto(BASE + loc, { waitUntil: 'networkidle' });
 
-  // carousel: turns by itself, five slides, the third dot brings the third slide
+  // carousel: turns by itself, four slides, the third dot brings the third slide
   await page.waitForTimeout(6600);
   const auto = await page.evaluate(() => { const t = document.querySelector('.promo-track'); return Math.round(t.scrollLeft / t.clientWidth); });
   if (auto !== 1) note(where, `carousel did not turn by itself: after 6 s it shows slide ${auto + 1}`);
   const slides = await page.locator('.promo .slide').count();
-  if (slides !== 5) note(where, `carousel has ${slides} slides, expected 5`);
+  if (slides !== 4) note(where, `carousel has ${slides} slides, expected 4`);
   await page.locator('.promo-dots button').nth(2).click();
   await page.waitForTimeout(1600);
   const at = await page.evaluate(() => { const t = document.querySelector('.promo-track'); return Math.round(t.scrollLeft / t.clientWidth); });
@@ -154,13 +154,13 @@ for (const loc of LOCALES) {
   await page.waitForLoadState('networkidle');
   const model = await page.locator('input[name="model"]:checked').getAttribute('value');
   if (model !== picked) note(where, `the builder opened with ${model}, garage had ${picked}`);
-  // add the helmet and the insurance, 60 hours: weekly = rent + 5 + 12
-  await page.locator('label.row:has(input[value="helmet"])').click();
-  await page.locator('label.row:has(input[value="care"])').click();
+  // gear is out of stock and cannot be chosen; 60 hours: weekly = rent, first payment = rent + 180
+  if (!(await page.locator('input[value="helmet"]').isDisabled())) note(where, 'gear out of stock can be chosen');
+  if (await page.locator('input[name="service"]').count()) note(where, 'services are back on the builder');
   await page.locator('[data-hours="60"]').click();
   const num = async (k) => Number((await page.locator(`[data-out="${k}"]`).first().textContent()).replace(/[^\d-]/g, ''));
   const rent = await num('rent'), weekly = await num('weekly'), today = await num('today');
-  if (weekly !== rent + 5 + 12) note(where, `weekly ${weekly} != rent ${rent} + 5 + 12`);
+  if (weekly !== rent) note(where, `weekly ${weekly} != rent ${rent}`);
   if (today !== weekly + 180) note(where, `first payment ${today} != weekly ${weekly} + 180`);
   await page.screenshot({ path: `${OUT}/flow-${lang}-subscription.png`, fullPage: true });
   // a returning visitor: the saved choice is in place when the page is drawn, nothing animates into it
@@ -168,71 +168,69 @@ for (const loc of LOCALES) {
   const saved = await page.evaluate(() => ({
     moving: document.getAnimations().filter((x) => x.effect && x.effect.target && x.effect.target.closest && x.effect.target.closest('[data-sub], .sub-bar')).length,
     model: document.querySelector('input[name="model"]:checked').value,
-    helmet: document.querySelector('input[value="helmet"]').checked,
-    weekly: Number(document.querySelector('[data-out="weekly"]').textContent.replace(/[^\d-]/g, '')),
+    hours: document.querySelector('#hours').value,
   }));
   if (saved.moving) note(where, `the request page animates ${saved.moving} things into the saved choice on load`);
-  if (saved.model !== picked || !saved.helmet || saved.weekly !== weekly) note(where, `the saved choice did not come back: ${JSON.stringify(saved)}`);
+  if (saved.model !== picked || saved.hours !== '60') note(where, `the saved choice did not come back: ${JSON.stringify(saved)}`);
   await page.waitForLoadState('networkidle');
-  // the bar at the bottom of a phone brings the form itself on screen: name, phone and the button
+  // the bar at the bottom of a phone leads to the waiting list, which knows the moped
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await page.locator('.sub-bar a.btn').click();
-  await page.waitForTimeout(1500);
-  const formSeen = await page.evaluate(() => ['#q-name', '#q-phone', '[data-sub-send]'].map((q) => { const b = document.querySelector(q).getBoundingClientRect(); const bar = document.querySelector('.sub-bar').getBoundingClientRect(); return b.top >= 0 && b.bottom <= bar.top; }));
-  if (formSeen.includes(false)) note(where, `the bar's button does not bring the whole form on screen (name, phone, button: ${formSeen.join(', ')})`);
-  await page.screenshot({ path: `${OUT}/flow-${lang}-bar-to-form.png` });
-  // The request goes to the queue (POST /api/site/queue) with the name and the phone. The server is
-  // played here: it never gets a real request from the check, and WhatsApp is never opened.
+  await Promise.all([page.waitForURL(/queue\//), page.locator('.sub-bar a.btn').click()]);
+  await page.waitForLoadState('networkidle');
+  const wlModel = await page.locator('input[name="model"]:checked').getAttribute('value');
+  if (wlModel !== picked) note(where, `the waiting list opened with ${wlModel}, garage had ${picked}`);
+  // The waiting list goes to the queue (POST /api/site/queue). The server is played here: it
+  // never gets a real request from the check, and WhatsApp is never opened.
   // 1) an empty form does not go anywhere
   let posted = null, answer = { status: 202, body: { ok: true } };
   await ctx.route('**/api/site/queue', (route) => { posted = JSON.parse(route.request().postData() || '{}'); route.fulfill({ status: answer.status, contentType: 'application/json', body: JSON.stringify(answer.body) }); });
-  await page.locator('[data-sub-send]').click();
+  await page.locator('[data-wl-send]').click();
   await page.waitForTimeout(400);
-  if (posted || sent) note(where, 'a request without a name and a phone was sent');
-  // 2) the server names the phone as wrong: the field says so, nothing else happens
-  await page.locator('#q-name').fill('Test Courier');
-  await page.locator('#q-phone').fill('12345');
+  if (posted || sent) note(where, 'an empty waiting-list form was sent');
+  if (!(await page.locator('#wl-name-err').isVisible()) || !(await page.locator('#wl-consent-err').isVisible())) note(where, 'an empty form does not say what is missing');
+  // 2) filled in; the server names the phone as wrong: the field says so, nothing else happens
+  await page.locator('#wl-name').fill('Test');
+  await page.locator('#wl-surname').fill('Courier');
+  await page.locator('#wl-phone').fill('+995 555 12 34 56');
+  await page.locator('#wl-email').fill('test@example.test');
+  for (const g of ['licence', 'courier', 'company']) await page.locator(`[data-group="${g}"] .wl-choice`).first().click();
+  await page.locator('#wl-consent').check();
   answer = { status: 400, body: { error: 'bad_site_request', field: 'phone' } };
-  await page.locator('[data-sub-send]').click();
+  await page.locator('[data-wl-send]').click();
   await page.waitForTimeout(700);
-  if (!(await page.locator('#q-phone-err').isVisible())) note(where, 'a phone the server refuses is not marked on the form');
+  if (!(await page.locator('#wl-phone-err').isVisible())) note(where, 'a phone the server refuses is not marked on the form');
   if (sent) note(where, 'a refused phone opened WhatsApp');
-  // 3) the server takes it: "Request received", with the choice, the sum and the answers inside
-  await page.locator('#q-phone').fill('+995 555 12 34 56');
+  // 3) the server takes it: "You are in the queue", with the answers inside
   answer = { status: 202, body: { ok: true } }; posted = null;
-  await page.locator('[data-sub-send]').click();
+  await page.locator('[data-wl-send]').click();
   await page.waitForTimeout(900);
-  if (!posted) note(where, 'the request did not go to the queue');
+  if (!posted) note(where, 'the waiting list did not go to the queue');
   else {
     if (posted.name !== 'Test Courier' || posted.phone !== '+995 555 12 34 56' || posted.lang !== lang || posted.website !== '') note(where, `the queue got wrong fields: ${JSON.stringify(posted).slice(0, 200)}`);
-    if (!String(posted.text).includes(String(weekly)) || !picked3.every((p) => String(posted.text).includes(p))) note(where, `the queue request lacks the sum or the answers: ${String(posted.text).slice(0, 200)}`);
+    if (!String(posted.text).includes('test@example.test') || !String(posted.text).includes('Wolt')) note(where, `the queue request lacks the answers: ${String(posted.text).slice(0, 200)}`);
   }
-  if (!(await page.locator('[data-sub-status]').isVisible())) note(where, 'no "request received" after the server took it');
+  if (!(await page.locator('[data-wl-status]').isVisible())) note(where, 'no "you are in the queue" after the server took it');
   if (sent) note(where, 'WhatsApp opened although the server took the request');
-  await page.locator('[data-sub-status]').scrollIntoViewIfNeeded();
-  await page.screenshot({ path: `${OUT}/flow-${lang}-request-sent.png` });
+  await page.screenshot({ path: `${OUT}/flow-${lang}-queue-sent.png`, fullPage: true });
   await ctx.close();
 
-  // a visitor who opens the builder first, and a server that is off (503, as before the mailbox
-  // is set up): the three questions are asked, then the same message opens in WhatsApp
+  // a server that is off (503, as before the mailbox is set up): the same message opens in WhatsApp
   const ctx2 = await browser.newContext({ viewport: { width: 375, height: 812 }, hasTouch: true });
   let sent2 = null, posted2 = null;
   await ctx2.route('https://wa.me/**', (route) => { sent2 = route.request().url(); route.fulfill({ status: 200, contentType: 'text/html', body: '<title>wa</title>' }); });
   await ctx2.route('**/api/site/queue', (route) => { posted2 = JSON.parse(route.request().postData() || '{}'); route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"site_mail_off"}' }); });
   const page2 = await ctx2.newPage();
-  await page2.goto(BASE + loc + 'subscription/', { waitUntil: 'networkidle' });
-  await page2.locator('#q-name').fill('Test Courier');
-  await page2.locator('#q-phone').fill('+995555123456');
-  await page2.screenshot({ path: `${OUT}/flow-${lang}-request-form.png`, fullPage: true });
-  await page2.locator('[data-sub-send]').click();
-  if (!(await page2.locator('.ask-panel').isVisible())) note(where, 'the request did not open the three questions');
-  await page2.waitForTimeout(500);
-  await page2.screenshot({ path: `${OUT}/flow-${lang}-request-ask.png` });
-  for (const j of [1, 3, 0]) { await page2.locator('.ask-panel [data-step]:not([hidden]) .ask-opt').nth(j).click(); await page2.waitForTimeout(800); }
-  await page2.waitForTimeout(600);
-  if (!posted2) note(where, 'the request did not try the queue after the three answers');
-  if (!sent2) note(where, 'with the server off the request did not go to WhatsApp');
-  else if (text(sent2).split('\n').length < 5 || text(sent2) !== posted2?.text) note(where, `WhatsApp got a different message than the queue: ${text(sent2).slice(0, 200)}`);
+  await page2.goto(BASE + loc + 'queue/', { waitUntil: 'networkidle' });
+  await page2.locator('#wl-name').fill('Test Courier');
+  await page2.locator('#wl-phone').fill('+995555123456');
+  for (const g of ['licence', 'courier', 'company']) await page2.locator(`[data-group="${g}"] .wl-choice`).nth(1).click();
+  await page2.locator('#wl-consent').check();
+  await page2.screenshot({ path: `${OUT}/flow-${lang}-queue-form.png`, fullPage: true });
+  await page2.locator('[data-wl-send]').click();
+  await page2.waitForTimeout(1200);
+  if (!posted2) note(where, 'the waiting list did not try the queue');
+  if (!sent2) note(where, 'with the server off the waiting list did not go to WhatsApp');
+  else if (!text(sent2).startsWith(posted2?.text ?? '\u0000')) note(where, `WhatsApp got a different message than the queue: ${text(sent2).slice(0, 200)}`);
   await ctx2.close();
 }
 
