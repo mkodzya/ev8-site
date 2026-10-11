@@ -9,6 +9,8 @@
 // Nothing is added that the book does not have: an item without a price is
 // shown as "to be confirmed", cannot be chosen and never enters a sum.
 
+import fuel from './fuel.json';
+
 export const DEPOSIT = 18000; // handbook business/pricing.md, Mika 21.09.2026
 
 // There is no term to choose: the weekly price does not depend on it
@@ -63,5 +65,11 @@ export const calc = {
   // Kilometres in a working day: 120 (Mika, 01.10.2026; the ev8.ge calculator's default was 80).
   // Oil and the extra repairs a petrol scooter needs: about 100 GEL a month
   // (Mika, 01.10.2026: "ещё лари 100 в месяц точно") — his estimate, not a measurement.
-  petrol: { litresPer100km: 4, perLitre: 305, rentPerWeek: 17000, kmPerDay: 120, upkeepPerMonth: 10000 },
+  // A litre of petrol is not typed in: ./fuel.json is written when the site is
+  // built — the median of the chains' regular petrol that day
+  // (scripts/fuel-price.mjs; Kardu, 11.10.2026). It was 3.05 GEL until then.
+  petrol: { litresPer100km: 4, perLitre: fuel.perLitreTetri, rentPerWeek: 17000, kmPerDay: 120, upkeepPerMonth: 10000 },
 };
+
+/** The petrol price the comparison counts with, and the day it is of. */
+export const petrolPrice = { tetri: fuel.perLitreTetri, asOf: fuel.asOf };

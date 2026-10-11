@@ -41,6 +41,8 @@ Talk to whoever runs the session in the language they write in.
    that, Mika's only). A push to `main` is what moves it: the deploy workflow ships `main` to
    the server's production folder, which ev8.ge serves once its DNS points there. A session
    merges into `main` only when the person running it says to release, never on its own.
+   The daily rebuild is not a release: it ships the released `main` again as it is, with the
+   day's petrol price and nothing else.
    The server, its secrets and the DNS of ev8.ge stay Mika's; the edge on the server (Caddy,
    in `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
 3. **No secrets in the repository.** The Kommo key and anything like it are registered and
@@ -86,6 +88,22 @@ sends it to the company mailbox by email and stores nothing (`apps/api/src/route
 the mailbox up), down or unreachable opens WhatsApp with the same message, as before. On the
 production address the edge has to send `/api/site/*` to the production stack — part of the
 launch. `scripts/qa.sh` plays the server: it never sends a real request.
+
+The petrol price and the visit counter are the site's own, not EV8 Ops's (Mika, 11.10.2026:
+«это были правки для сайта»). A session of Kardu's had built both into EV8 Ops that day and
+they were taken out the same day: `/api/site/fuel` and `/api/site/hit` do not exist — do not
+call them, and do not ask EV8 Ops for a screen of the site's numbers. The request form's
+`/api/site/queue` above is the one thing of the site's that lives there.
+- **Petrol price** (Kardu, 11.10.2026: always today's, by itself). Read when the site is
+  built: `scripts/fuel-price.mjs` takes the regular petrol (92/93) of each chain on
+  priceshub.ge and writes their median to `src/data/fuel.json`; the comparison counts with it
+  and the note under it prints the price with its date. The deploy workflow builds both
+  branches again every day at 09:30 Tbilisi for this one number; a day the page cannot be
+  read ships nothing, and the site keeps the price it has. Never type the price in by hand.
+- **Visit counter** (the owner's decision of 01.10.2026: our own anonymous counter, no names,
+  no phones, no third-party analytics; book register, item 64). Not built yet: it needs a
+  small program of the site's own on the server, which Mika's session sets up. Until it
+  exists the site sends no events.
 
 ## How to build
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
