@@ -286,7 +286,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .arrow.prev { left: 12px; } .arrow.next { right: 12px; }
 .g1:checked ~ .stage .a1, .g2:checked ~ .stage .a2, .g3:checked ~ .stage .a3 { display: grid; }
 .g-body { max-width: 520px; margin-inline: auto; padding-inline: var(--gutter); padding-bottom: 24px; }
-.names { position: relative; height: 172px; }
+.names { position: relative; height: 184px; }
 .name { position: absolute; inset: 0; opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform var(--ease); }
 .name i { font-style: normal; font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
 .name b { display: block; margin-top: 6px; font: 500 34px/1 var(--f); letter-spacing: -0.03em; }
@@ -303,7 +303,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .g3:checked ~ .g-body .stat u::after { width: 92%; }
 .stat em { font-style: normal; text-align: right; text-transform: none; letter-spacing: 0; color: var(--lime); font-weight: 400; }
 .stat em span { display: none; }
-.stat.spec { grid-template-columns: auto 1fr; }
+.stat.spec { grid-template-columns: auto 1fr; margin-top: 6px; }
 .stat.spec em { color: #fff; font-size: 14px; }
 .g1:checked ~ .g-body .stat em .l1, .g2:checked ~ .g-body .stat em .l2, .g3:checked ~ .g-body .stat em .l3 { display: inline; }
 .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
@@ -700,7 +700,7 @@ html[data-page='garage'] .garage.page { min-height: calc(100svh - 64px); }
   .garage.page .arrow.prev { left: calc(50% - 62px); }
   .garage.page .arrow.next { right: calc(50% - 62px); }
   .garage.page .name b { font-size: 60px; }
-  .garage.page .names { height: 176px; }
+  .garage.page .names { height: 188px; }
   .garage.page .g-body { max-width: 460px; }
 }
 
