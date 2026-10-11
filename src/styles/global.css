@@ -273,7 +273,7 @@ details p { margin-top: 8px; color: var(--muted); }
 .arrow.prev { left: 12px; } .arrow.next { right: 12px; }
 .g1:checked ~ .stage .a1, .g2:checked ~ .stage .a2, .g3:checked ~ .stage .a3 { display: grid; }
 .g-body { max-width: 520px; margin-inline: auto; padding-inline: var(--gutter); padding-bottom: 24px; }
-.names { position: relative; height: 136px; }
+.names { position: relative; height: 172px; }
 .name { position: absolute; inset: 0; opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform var(--ease); }
 .name i { font-style: normal; font: 500 12px/1 var(--f); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
 .name b { display: block; margin-top: 6px; font: 500 34px/1 var(--f); letter-spacing: -0.03em; }
@@ -693,8 +693,8 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
    builder; gear out of stock. */
 .moped-note { font-style: normal; font-size: 11px; line-height: 1.25; color: var(--muted); }
 .moped:has(input:checked) .moped-note { color: var(--ink); }
-.row-pr .oos { color: var(--ink); font-weight: 500; text-transform: lowercase; }
-.row.off .row-pr .oos { color: var(--muted); }
+.row-pr .oos { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: var(--lime); font-weight: 500; font-size: 11px; text-transform: lowercase; white-space: nowrap; }
+.row.off .row-pr .oos { color: var(--lime); }
 
 /* The waiting list (queue/, Kardu 11.10.2026): the builder's fields and pills, on one column. */
 .wl { display: grid; gap: 16px; padding-block: 28px 56px; }
