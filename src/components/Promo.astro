@@ -77,10 +77,16 @@ const hero = models[models.length - 1];
 
     // The carousel glides: an eased scroll the script drives itself, so it is
     // slow and even in every browser. Scroll-snap is off while it moves.
-    let frame = 0, swap = 0;
+    let frame = 0, swap = 0, target = 0;
     const settle = () => { cancelAnimationFrame(frame); frame = 0; track.style.scrollSnapType = ''; };
+    // A touch in the middle of a glide (a finger scrolling the page down,
+    // say) used to stop the track between two slides, and phones do not snap
+    // it back by themselves: the slide sat shifted to the side (Kardu,
+    // 12.10.2026). Now the glide lands on its slide at once.
+    const interrupt = () => { if (frame) { cancelAnimationFrame(frame); frame = 0; track.scrollLeft = target; } track.style.scrollSnapType = ''; };
     const glide = (to: number) => {
       settle();
+      target = to;
       const from = track.scrollLeft, t0 = performance.now(), ms = 1100;
       track.style.scrollSnapType = 'none';
       const step = (now: number) => {
@@ -113,7 +119,18 @@ const hero = models[models.length - 1];
     const pause = () => { window.clearInterval(timer); timer = 0; };
     const play = () => { if (!timer && visible && !document.hidden) timer = window.setInterval(() => go(index() + 1), 5000); };
     const stop = () => { pause(); window.clearTimeout(wait); wait = window.setTimeout(play, 8000); };
-    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((ev) => track.addEventListener(ev, () => { settle(); stop(); }, { passive: true }));
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((ev) => track.addEventListener(ev, () => { interrupt(); stop(); }, { passive: true }));
+    // And whatever leaves the track off a slide, it comes back to the nearest
+    // one once the scrolling has stopped.
+    let rest = 0;
+    track.addEventListener('scroll', () => {
+      window.clearTimeout(rest);
+      rest = window.setTimeout(() => {
+        if (frame) return;
+        const w = track.clientWidth, near = Math.round(track.scrollLeft / w) * w;
+        if (Math.abs(track.scrollLeft - near) > 2) track.scrollTo({ left: near, behavior: reduce ? 'auto' : 'smooth' });
+      }, 180);
+    }, { passive: true });
 
     dots.forEach((d, i) => d.addEventListener('click', () => { stop(); go(i); }));
     root.querySelector('[data-promo-prev]')?.addEventListener('click', () => { stop(); go(index() - 1); });
