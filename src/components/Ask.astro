@@ -8,6 +8,7 @@
 // out keeps what was typed and shows the phone number instead.
 // On a phone the panel is a sheet from the bottom, on a laptop a card in the
 // corner. Without JavaScript the buttons lead to the contacts page.
+// A link ending in #ask (https://ev8.ge/#ask) opens the panel on arrival.
 import Icon from './Icon.astro';
 import { dict, href, type Locale } from '../i18n';
 import { models, contact } from '../data/models';
@@ -230,6 +231,12 @@ const tel = `tel:${contact.phone.replace(/\s/g, '')}`;
       }
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    // A link straight to the panel (Kardu, 11.10.2026): https://ev8.ge/#ask, for the
+    // Google card's posts, Instagram, Facebook and ads. Any page with #ask opens it.
+    const fromLink = () => { if (location.hash === '#ask') open(); };
+    fromLink();
+    window.addEventListener('hashchange', fromLink);
 
     // The form: checked here first, then mailed through the queue's address.
     const fieldErr = (input: HTMLInputElement, on: boolean) => {
