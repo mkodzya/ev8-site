@@ -77,9 +77,11 @@ Structure of the home page (Mika, 03.10.2026): it sells first. A carousel of the
 benefits (`Promo.astro`), the garage, the queue for new mopeds with the way onto the waiting
 list. The papers block (licence, registration, tax) and the common questions are off the home
 page for now (Kardu, 11.10.2026); the questions stay on `faq/`. The quiz is not a
-gate any more: its three questions live in a panel (`Ask.astro`); every WhatsApp link
-carries `data-ask` and opens it, so each message says who is writing. There is no floating "Write to us" button (removed by Mika, 07.10.2026):
-the request form is the way in. The queue is shown without numbers.
+gate any more: its three questions live in the "Ask us" panel (`Ask.astro`), which every
+"Ask a question" button opens (`data-ask`). There is no WhatsApp anywhere on the site
+(Kardu, 11.10.2026): after the three answers the panel asks for name, phone and the
+question and sends them by email through the same `/api/site/queue` as the waiting list.
+There is no floating "Write to us" button (removed by Mika, 07.10.2026). The queue is shown without numbers.
 
 The waiting list (Kardu, 11.10.2026): `queue/` is the one form on the site — the fields of the
 old ev8.ge/waitlist/ (name, surname, phone, email, licence, courier experience, company,
@@ -89,8 +91,8 @@ gear is out of stock and its services are off (Kardu, 11.10.2026). Before that (
 06.10.2026; accepted by Mika, 07.10.2026) the builder itself asked for a name and a phone.
 The form posts to `POST /api/site/queue` on its own host — EV8 Ops, which
 sends it to the company mailbox by email and stores nothing (`apps/api/src/routes/site.ts` in
-`mkodzya/ev8-ops`). 202 shows "Request received"; a server that is off (503 until Mika sets
-the mailbox up), down or unreachable opens WhatsApp with the same message, as before. On the
+`mkodzya/ev8-ops`). 202 shows "Request received"; a server that is off (503), down or unreachable keeps
+what was typed and shows the phone number to call — no WhatsApp (Kardu, 11.10.2026). On the
 production address the edge has to send `/api/site/*` to the production stack — part of the
 launch. `scripts/qa.sh` plays the server: it never sends a real request.
 

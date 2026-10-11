@@ -88,8 +88,8 @@ for (const view of VIEWS) {
 }
 
 // ---- flows, on a phone, in both languages
-// WhatsApp is never opened: the request to wa.me is caught and read.
-const text = (url) => decodeURIComponent(String(url).split('?text=')[1] || '');
+// The site has no WhatsApp any more (Kardu, 11.10.2026): a request to wa.me is caught
+// and reported as a problem.
 for (const loc of LOCALES) {
   const lang = loc ? 'en' : 'ka';
   const where = `flow /${loc}`;
@@ -111,8 +111,12 @@ for (const loc of LOCALES) {
   if (at !== 2) note(where, `carousel dot 3 shows slide ${at + 1}`);
   await page.screenshot({ path: `${OUT}/flow-${lang}-promo.png` });
 
-  // the questions panel, opened from a WhatsApp button: yes -> petrol moped -> AM, then the message carries the answers
+  // the "Ask us" panel: yes -> petrol moped -> AM, then name, phone and a question go
+  // to the queue's address with the answers. The server is played here.
   if (await page.locator('.ask-fab, [data-ask-hint]').count()) note(where, 'the floating "Write to us" button is back');
+  if (await page.locator('a[href*="wa.me"]').count()) note(where, 'a WhatsApp link is on the page');
+  let askPosted = null;
+  await ctx.route('**/api/site/queue', (route) => { askPosted = JSON.parse(route.request().postData() || '{}'); route.fulfill({ status: 202, contentType: 'application/json', body: '{"ok":true}' }); });
   await page.locator('.lead-cta [data-ask]').scrollIntoViewIfNeeded();
   await page.locator('.lead-cta [data-ask]').click();
   await page.waitForTimeout(500);
@@ -126,14 +130,27 @@ for (const loc of LOCALES) {
   }
   const offer = await page.locator('.ask-panel [data-offer]:not([hidden])').getAttribute('data-offer');
   if (offer !== 'petrol') note(where, `widget gave "${offer}", expected petrol`);
-  const waHref = await page.locator('[data-ask-send]').getAttribute('href');
-  if (!waHref.startsWith('https://wa.me/995595165588?text=')) note(where, `widget link goes to ${waHref.slice(0, 60)}`);
-  if (!picked3.every((p) => text(waHref).includes(p))) note(where, `widget message lacks the answers: ${text(waHref).slice(0, 120)}`);
-  await page.waitForTimeout(600);
-  const fits = await page.evaluate(() => { const p = document.querySelector('.ask-panel'); return p.scrollHeight <= p.clientHeight + 1; });
-  if (!fits) note(where, 'the answer in the widget does not fit one screen');
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${OUT}/flow-${lang}-offer.png` });
+  // an empty form goes nowhere; a filled one carries the answers and the question
+  await page.locator('[data-ask-send]').click();
+  await page.waitForTimeout(300);
+  if (askPosted) note(where, 'an empty question form was sent');
+  if (!(await page.locator('#ask-name-err').isVisible())) note(where, 'an empty question form does not say what is missing');
+  await page.locator('#ask-name').fill('Test');
+  await page.locator('#ask-phone').fill('+995 555 12 34 56');
+  await page.locator('#ask-question').fill('QA question');
+  await page.locator('#ask-consent').check();
+  await page.locator('[data-ask-send]').click();
+  await page.waitForTimeout(900);
+  if (!askPosted) note(where, 'the question did not go to the queue address');
+  else {
+    if (askPosted.name !== 'Test' || askPosted.phone !== '+995 555 12 34 56' || askPosted.lang !== lang) note(where, `the question went with wrong fields: ${JSON.stringify(askPosted).slice(0, 200)}`);
+    if (!picked3.every((p) => String(askPosted.text).includes(p)) || !String(askPosted.text).includes('QA question')) note(where, `the question lacks the answers: ${String(askPosted.text).slice(0, 200)}`);
+  }
+  if (!(await page.locator('[data-ask-status]').isVisible())) note(where, 'no "question received" after the server took it');
+  await page.screenshot({ path: `${OUT}/flow-${lang}-ask-sent.png` });
+  await ctx.unroute('**/api/site/queue');
   await page.locator('.ask-panel [data-ask-close]').click();
   await page.waitForTimeout(500);
   if (await page.locator('.ask-panel').isVisible()) note(where, 'the widget did not close');
@@ -180,7 +197,7 @@ for (const loc of LOCALES) {
   const wlModel = await page.locator('input[name="model"]:checked').getAttribute('value');
   if (wlModel !== picked) note(where, `the waiting list opened with ${wlModel}, garage had ${picked}`);
   // The waiting list goes to the queue (POST /api/site/queue). The server is played here: it
-  // never gets a real request from the check, and WhatsApp is never opened.
+  // never gets a real request from the check.
   // 1) an empty form does not go anywhere
   let posted = null, answer = { status: 202, body: { ok: true } };
   await ctx.route('**/api/site/queue', (route) => { posted = JSON.parse(route.request().postData() || '{}'); route.fulfill({ status: answer.status, contentType: 'application/json', body: JSON.stringify(answer.body) }); });
@@ -199,7 +216,7 @@ for (const loc of LOCALES) {
   await page.locator('[data-wl-send]').click();
   await page.waitForTimeout(700);
   if (!(await page.locator('#wl-phone-err').isVisible())) note(where, 'a phone the server refuses is not marked on the form');
-  if (sent) note(where, 'a refused phone opened WhatsApp');
+  if (sent) note(where, 'WhatsApp opened');
   // 3) the server takes it: "You are in the queue", with the answers inside
   answer = { status: 202, body: { ok: true } }; posted = null;
   await page.locator('[data-wl-send]').click();
@@ -210,11 +227,11 @@ for (const loc of LOCALES) {
     if (!String(posted.text).includes('test@example.test') || !String(posted.text).includes('Wolt')) note(where, `the queue request lacks the answers: ${String(posted.text).slice(0, 200)}`);
   }
   if (!(await page.locator('[data-wl-status]').isVisible())) note(where, 'no "you are in the queue" after the server took it');
-  if (sent) note(where, 'WhatsApp opened although the server took the request');
+  if (sent) note(where, 'WhatsApp opened');
   await page.screenshot({ path: `${OUT}/flow-${lang}-queue-sent.png`, fullPage: true });
   await ctx.close();
 
-  // a server that is off (503, as before the mailbox is set up): the same message opens in WhatsApp
+  // a server that is off (503): what was typed stays and the phone number is shown, no WhatsApp
   const ctx2 = await browser.newContext({ viewport: { width: 375, height: 812 }, hasTouch: true });
   let sent2 = null, posted2 = null;
   await ctx2.route('https://wa.me/**', (route) => { sent2 = route.request().url(); route.fulfill({ status: 200, contentType: 'text/html', body: '<title>wa</title>' }); });
@@ -229,8 +246,9 @@ for (const loc of LOCALES) {
   await page2.locator('[data-wl-send]').click();
   await page2.waitForTimeout(1200);
   if (!posted2) note(where, 'the waiting list did not try the queue');
-  if (!sent2) note(where, 'with the server off the waiting list did not go to WhatsApp');
-  else if (!text(sent2).startsWith(posted2?.text ?? '\u0000')) note(where, `WhatsApp got a different message than the queue: ${text(sent2).slice(0, 200)}`);
+  if (sent2) note(where, 'with the server off the waiting list opened WhatsApp');
+  if (!(await page2.locator('[data-wl-status] a[href^="tel:"]').isVisible())) note(where, 'with the server off the waiting list does not show the number to call');
+  if ((await page2.locator('#wl-name').inputValue()) !== 'Test Courier') note(where, 'with the server off the waiting list lost what was typed');
   await ctx2.close();
 }
 
