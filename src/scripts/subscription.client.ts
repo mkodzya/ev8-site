@@ -4,7 +4,7 @@
 //
 // This file is NOT loaded as a module. The request page bundles it with
 // esbuild and puts it into the page as a plain inline script (see
-// pages/[...locale]/subscription/index.astro): it must run before the page is
+// pages/[...locale]/rent/index.astro): it must run before the page is
 // first drawn. As a module it ran after the first paint, and a visitor with a
 // saved choice saw the page open on the first moped and then jump to his own
 // (measured in the Safari engine, 03.10.2026).

@@ -1,151 +1,22 @@
 ---
-// The subscription builder and the earnings calculator. Every option is plain
-// HTML (radios, checkboxes, a range), rendered with the default choice already
-// counted, so the page reads without JavaScript; the script (src/scripts/
-// subscription.client.ts, inlined at the end) recounts on change.
-// Phone: one column and a bar with the weekly price at the bottom.
-// Laptop: options on the left, the summary and the calculator stay on the right.
-// The request itself is not sent from here any more (Kardu, 11.10.2026): the
-// page counts, and "Join the queue" leads to the waiting list (queue/), which
-// reads the choice saved here. Services are off the site for now; all gear is
-// shown out of stock.
-import Base from '../../../layouts/Base.astro';
-import Icon from '../../../components/Icon.astro';
-import { dict, href, localePaths, asset, type Locale } from '../../../i18n';
-import { models } from '../../../data/models';
-import { gear, calc, petrolPrice, DEPOSIT, choosable } from '../../../data/subscription';
-import { compute, gel } from '../../../lib/calc';
-import { buildSync } from 'esbuild';
+// The calculator lived here until 11.10.2026; it is "rent/" now (Kardu: the word
+// "subscription" confused couriers). Old links and the edge's redirects from the
+// WordPress site still land here, so the page sends them on at once.
+import { href, localePaths, type Locale } from '../../../i18n';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
-const d = dict(locale);
-const t = d.sub;
-const fill = (s: string, n: number | string) => s.replace('{n}', String(n));
-// The petrol price is read when the site is built (scripts/fuel-price.mjs), so
-// the note under the comparison says the price and the day it is of.
-const petrolShown = (petrolPrice.tetri / 100).toFixed(2).replace('.', locale === 'en' ? '.' : ',');
-const petrolDate = petrolPrice.asOf.split('-').reverse().join('.');
-const vsNote = t.vsNote.replace('{petrol}', petrolShown).replace('{petrolDate}', petrolDate);
-
-const initial = compute({ modelId: models[0].id, gear: [], services: [], hours: calc.hoursDefault });
-const gearText = t.gear as Record<string, string[]>;
-const queue = href(locale, 'queue/');
-const g = d.garage;
-const modelNote = (m: (typeof models)[number]) => (m.from ? g.soonShort : m.licence === 'none' ? g.noLicence : g.licenceAM);
-
-// The page's script is bundled here and inlined below as a plain script, so it
-// runs while the page is being parsed — before the first paint. Why: see the
-// head of src/scripts/subscription.client.ts.
-const client = buildSync({
-  entryPoints: ['src/scripts/subscription.client.ts'], bundle: true, minify: true, format: 'iife', target: 'es2019', write: false,
-}).outputFiles[0].text;
+const to = href(locale, 'rent/');
+const canonical = new URL(to, Astro.site);
 ---
-<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="subscription/">
-  <section class="dark sub-head">
-    <div class="wrap">
-      <h1>{t.title1} <em>{t.title2}</em></h1>
-    </div>
-  </section>
-
-  <form class="wrap sub init" data-sub data-lang={locale} action={queue} method="get">
-    <div class="sub-opts">
-      <fieldset>
-        <legend>{t.moped}</legend>
-        <div class="mopeds">
-          {models.map((m, i) => (
-            <label class="moped">
-              <input type="radio" name="model" value={m.id} checked={i === 0} data-label={m.name} />
-              <span class="moped-img" style={`background-image:url(${asset(m.thumb)})`}></span>
-              <b>{m.name}</b>
-              <small>{m.weeklyGel} {d.garage.perWeekShort}</small>
-              <em class="moped-note">{modelNote(m)}</em>
-            </label>
-          ))}
-        </div>
-        <p class="hint"><Icon name="battery" size={18} /> {t.included}</p>
-      </fieldset>
-
-      <fieldset>
-        <legend>{t.gearTitle}</legend>
-        <p class="hint intro">{t.gearLead}</p>
-        {gear.map((item) => (
-          <label class={`row ${choosable(item) ? '' : 'off'}`}>
-            <input type="checkbox" name="gear" value={item.id} disabled={!choosable(item)} data-label={gearText[item.id][0]} />
-            <span class="row-ic"><Icon name={item.icon} size={28} /></span>
-            <span class="row-tx"><b>{gearText[item.id][0]}</b><small>{gearText[item.id][1]}</small></span>
-            <span class="row-pr">
-              {item.perWeek === null ? t.priceTbc : fill(t.plusWeek, gel(item.perWeek))}
-              {item.perWeek !== null && <small>{item.season ? t.yoursSeason : fill(t.yoursAfter, item.weeks ?? 0)}</small>}
-              {!item.inStock && <small class="oos">{t.outOfStock}</small>}
-            </span>
-          </label>
-        ))}
-      </fieldset>
-
-      <fieldset>
-        <legend>{t.calcTitle}</legend>
-        <div class="hours">
-          <label for="hours">{t.hours}</label>
-          <output for="hours"><b data-out="hours">{calc.hoursDefault}</b> {t.hoursUnit}</output>
-          <input type="range" id="hours" name="hours" min={calc.hoursMin} max={calc.hoursMax} step="5" value={calc.hoursDefault} />
-        </div>
-        <div class="pills">
-          {calc.presets.map((h, i) => <button type="button" class="pill-btn" data-hours={h}>{t.presets[i]}</button>)}
-        </div>
-      </fieldset>
-    </div>
-
-    <aside class="sub-sum" id="summary">
-      <div class="sum-card">
-        <p class="eyebrow">{t.sumTitle}</p>
-        <p class="big"><b data-out="weekly">{gel(initial.weekly)}</b> ₾ <span>{t.weekly}</span></p>
-        <dl>
-          <div><dt>{t.lineRent}</dt><dd><span data-out="rent">{gel(initial.rent)}</span> ₾</dd></div>
-          <div data-line="gear" hidden><dt>{t.lineGear}</dt><dd><span data-out="gear">0</span> ₾</dd></div>
-        </dl>
-        <div class="today">
-          <div><b>{t.today}</b><small>{t.todayHint}</small></div>
-          <b class="num"><span data-out="today">{gel(initial.today)}</span> ₾</b>
-        </div>
-        <dl>
-          <div><dt>{t.deposit}</dt><dd>{gel(DEPOSIT)} ₾</dd></div>
-        </dl>
-      </div>
-
-      <div class="sum-card net">
-        <p class="eyebrow">{t.netTitle}</p>
-        <p class="big lime"><b data-out="netMonth">{gel(initial.netMonth)}</b> ₾</p>
-        <dl>
-          <div><dt>{t.lineIncome}</dt><dd><span data-out="incomeMonth">{gel(initial.incomeWeek * 52 / 12)}</span> ₾</dd></div>
-          <div><dt>{t.lineSub}</dt><dd>−<span data-out="subMonth">{gel(initial.weekly * 52 / 12)}</span> ₾</dd></div>
-          <div><dt>{t.lineTax}</dt><dd>−<span data-out="taxMonth">{gel(initial.taxWeek * 52 / 12)}</span> ₾</dd></div>
-        </dl>
-        <p class="fine">{t.disclaimer}</p>
-      </div>
-
-      <div class="sum-card vs">
-        <p class="eyebrow">{t.vsTitle}</p>
-        <div class="vs-row">
-          <span><Icon name="fuel" size={22} /> {t.vsPetrol}</span><b><span data-out="petrolCost">{gel(initial.petrolCostMonth)}</span> ₾</b>
-          <i class="vs-bar petrol" data-bar="petrol"></i>
-        </div>
-        <div class="vs-row">
-          <span><Icon name="bolt" size={22} /> {t.vsEv8}</span><b><span data-out="ev8Cost">{gel(initial.ev8CostMonth)}</span> ₾</b>
-          <i class="vs-bar ev8" data-bar="ev8" style={`width:${Math.round((initial.ev8CostMonth / initial.petrolCostMonth) * 100)}%`}></i>
-        </div>
-        <p class="vs-save" data-save hidden={initial.saveMonth <= 0}>{t.vsSave} <b><span data-out="save">{gel(initial.saveMonth)}</span> ₾</b></p>
-        <p class="fine">{vsNote}</p>
-      </div>
-
-      <a class="btn btn-lime btn-block" href={queue} id="reach">{t.cta} →</a>
-      <p class="fine center">{t.ctaNote}</p>
-    </aside>
-  </form>
-
-  <div class="sub-bar init">
-    <div><b><span data-out="weekly">{gel(initial.weekly)}</span> ₾</b> <span>{t.weekly}</span><small>{t.today}: <span data-out="today">{gel(initial.today)}</span> ₾</small></div>
-    <a class="btn btn-lime" href={queue}>{t.bar}</a>
-  </div>
-  <script is:inline set:html={client}></script>
-</Base>
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <title>EV8</title>
+  </head>
+  <body><a href={to}>{to}</a></body>
+</html>

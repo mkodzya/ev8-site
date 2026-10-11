@@ -6,6 +6,7 @@ import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { asset, dict, href, localePaths, type Locale } from '../../../i18n';
 import { stations, directions } from '../../../data/stations';
+import { swapStations } from '../../../lib/seo';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -13,7 +14,7 @@ const d = dict(locale);
 const t = d.stationsPage;
 const n = (s: string) => s.replace('{n}', String(stations.length));
 ---
-<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="stations/">
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="stations/" jsonLd={[swapStations(locale)]}>
   <section class="dark page-head">
     <div class="wrap">
       <h1>{t.title1} <em>{t.title2}</em></h1>
