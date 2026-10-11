@@ -18,27 +18,31 @@ Two people work on the site, each with their own Claude on their own machine: **
 Actions builds it and ships it to the test host within a couple of minutes
 (`.github/workflows/deploy.yml`; the receiving side is `deploy/site-receive.sh` in
 `mkodzya/ev8-ops`), so nobody copies files to the server by hand. A merge into `main` is the
-release of the site: the same workflow ships it to production. In a session run by Kardu:
-never push `main` or a tag, never touch the server (`.githooks/pre-push` refuses the first
-two). The production address moves only on Mika's word. Kardu's work is this repository
+release of the site: the same workflow ships it to production. Either of them releases it:
+Kardu may release the site whenever he decides (Mika, 11.10.2026: «Карду может выпустить
+сайт когда захочет»; before that `main` was Mika's alone). A session never releases on its
+own — only when the person running it says so. In a session run by Kardu: never touch the
+server. Kardu's work is this repository
 and nothing else (Mika, 11.10.2026): EV8 Ops (`mkodzya/ev8-ops`, the company's ERP) and its
 two stands, test and prod, are changed by Mika's session only. What the site needs from
 there — an address of the API, the edge, the server — a session run by Kardu does not build
 itself: it writes down what is needed, and Kardu asks Mika. Decisions about the site are made by Mika and
 Kardu together, and neither needs the other's permission to change the site (Kardu's
 proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
-Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the production
-address are not part of that: they stay as written. Kardu's setup: `README.md`, "Для Kardu".
+Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the DNS of
+ev8.ge are not part of that: they stay as written. Kardu's setup: `README.md`, "Для Kardu".
 Talk to whoever runs the session in the language they write in.
 
 ## Non-negotiable rules (from the owner)
 1. **Never invent data.** A price, a figure or a claim appears on the site only if the book
    has it with a source. No data — the block stays closed and the open item is in the
    book's `register.md`. Prices and model order live in `src/data/models.ts`, with the source.
-2. **Production moves only on Mika's word.** A push to `main` is what moves it: the deploy
-   workflow ships `main` to the server's production folder, which ev8.ge serves once its DNS
-   points there. So `main` is pushed by Mika only. The edge on the server (Caddy, in
-   `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
+2. **Production moves only on a person's word — Kardu's or Mika's** (Mika, 11.10.2026; before
+   that, Mika's only). A push to `main` is what moves it: the deploy workflow ships `main` to
+   the server's production folder, which ev8.ge serves once its DNS points there. A session
+   merges into `main` only when the person running it says to release, never on its own.
+   The server, its secrets and the DNS of ev8.ge stay Mika's; the edge on the server (Caddy,
+   in `mkodzya/ev8-ops`) is restarted only when Mika says so: it fronts prod.
 3. **No secrets in the repository.** The Kommo key and anything like it are registered and
    stored by Mika; code reads them from the server.
 4. **No customer data in the repository.**
@@ -97,6 +101,11 @@ Verify by doing: open the preview at phone width, click through, then report.
 
 ## Branches
 GitFlow as in EV8 Ops: `develop` is the default and the working branch, `main` holds
-releases tagged with bare semver. `feature/<topic>` from develop. Commit and push as you go;
+releases tagged with bare semver. `feature/<topic>` from develop. A release, on Kardu's or
+Mika's word: merge `develop` into `main` (`--no-ff`), tag the merge with the next bare
+semver, push `main` and the tag — the workflow builds it and ships it, and the run under
+Actions says whether it arrived. Until the A record of ev8.ge points at the server (Mika's
+step: `deploy/README.md` in `mkodzya/ev8-ops`), a release lands in the production folder and
+visitors still see the WordPress site. Commit and push as you go;
 commit titles are a verdict sentence. End commit messages with
 `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.

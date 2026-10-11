@@ -32,19 +32,20 @@
 ## Для Kardu: как начать
 
 1. Принять приглашение: <https://github.com/mkodzya/ev8-site/invitations>.
-2. Склонировать и включить защиту от случайной отправки в `main`:
+2. Склонировать:
 
 ```bash
-git clone git@github.com:mkodzya/ev8-site.git && cd ev8-site && git config core.hooksPath .githooks
+git clone git@github.com:mkodzya/ev8-site.git && cd ev8-site
 ```
 
-3. Работать в ветке `feature/<тема>` от `develop`, готовое сливать в `develop`. В `main` и теги —
-   не отправлять: релизы выпускает Mika.
+3. Работать в ветке `feature/<тема>` от `develop`, готовое сливать в `develop`.
 4. Посмотреть сайт у себя: с Docker — `scripts/build.sh preview`; с Node 22 — `npm install`, затем
    `npm run dev`.
 5. На тестовый адрес правки выкладываются сами: через минуту-две после слияния в `develop`
-   (ход видно на GitHub, вкладка Actions, «Deploy»). На боевой адрес сайт попадает, только когда
-   Mika сливает `develop` в `main`.
+   (ход видно на GitHub, вкладка Actions, «Deploy»).
+   Выпуск на боевой адрес — слияние `develop` в `main`. Выпускать можно самому, когда готово
+   (решение Mika, 11.10.2026): сказать Claude «выпусти сайт». Пока DNS ev8.ge не переключён на
+   наш сервер (это делает Mika), посетители видят старый сайт на WordPress.
 6. Менять нужно только этот репозиторий. EV8 Ops (`mkodzya/ev8-ops`) и его стенды меняет сессия
    Mika: если сайту что-то требуется от сервера, как счётчик или цена бензина, — написать Mika.
 
