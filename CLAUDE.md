@@ -20,7 +20,11 @@ Actions builds it and ships it to the test host within a couple of minutes
 `mkodzya/ev8-ops`), so nobody copies files to the server by hand. A merge into `main` is the
 release of the site: the same workflow ships it to production. In a session run by Kardu:
 never push `main` or a tag, never touch the server (`.githooks/pre-push` refuses the first
-two). The production address moves only on Mika's word. Decisions about the site are made by Mika and
+two). The production address moves only on Mika's word. Kardu's work is this repository
+and nothing else (Mika, 11.10.2026): EV8 Ops (`mkodzya/ev8-ops`, the company's ERP) and its
+two stands, test and prod, are changed by Mika's session only. What the site needs from
+there — an address of the API, the edge, the server — a session run by Kardu does not build
+itself: it writes down what is needed, and Kardu asks Mika. Decisions about the site are made by Mika and
 Kardu together, and neither needs the other's permission to change the site (Kardu's
 proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
 Mika, Kardu proposes"). The owner's rules below, the server, the secrets and the production
