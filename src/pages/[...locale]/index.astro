@@ -9,7 +9,7 @@ import Base from '../../layouts/Base.astro';
 import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
 import { dict, href, localePaths, type Locale } from '../../i18n';
-import { models } from '../../data/models';
+import { models, fromGel } from '../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -17,7 +17,7 @@ const t = dict(locale);
 const queue = href(locale, 'queue/');
 
 ---
-<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc} path="" preloadImage={models[models.length - 1].image}>
+<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDesc.replace('{n}', String(fromGel))} path="" preloadImage={models[models.length - 1].image}>
   <Promo locale={locale} />
 
   <section class="dark garage-screen">

@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { faq } from '../../../lib/seo';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -9,7 +10,7 @@ const t = d.faqPage;
 // The five questions of the home page first, then the rest.
 const items = [...d.faq.items, ...t.more];
 ---
-<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/">
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/" jsonLd={[faq(items)]}>
   <section class="dark page-head">
     <div class="wrap"><h1>{t.title1} <em>{t.title2}</em></h1></div>
   </section>

@@ -1,8 +1,9 @@
 # CLAUDE.md — EV8 site
 
 ## What this is
-The public site of EV8 (E-Motion Motors LLC, Tbilisi): an electric moped subscription for
-couriers. It replaces the WordPress site at ev8.ge. Owner: Mika. Director on site: Kardu.
+The public site of EV8 (E-Motion Motors LLC, Tbilisi): electric moped rental for couriers.
+The site says "rent" (ქირა, аренда), never "subscription": the word confused couriers
+(Kardu, 11.10.2026). The calculator lives at `rent/`; `subscription/` only redirects there. It replaces the WordPress site at ev8.ge. Owner: Mika. Director on site: Kardu.
 Business rules, decisions and open questions live in the project book
 (`~/Developer/ev8/handbook`, GitHub `mkodzya/ev8-handbook`):
 @~/Developer/ev8/handbook/CLAUDE.md
@@ -111,6 +112,17 @@ call them, and do not ask EV8 Ops for a screen of the site's numbers. The reques
   no phones, no third-party analytics; book register, item 64). Not built yet: it needs a
   small program of the site's own on the server, which Mika's session sets up. Until it
   exists the site sends no events.
+
+## Search (Kardu, 11.10.2026)
+Target searches: moped rental in Tbilisi, a moped for couriers (Wolt, Glovo, Bolt Food),
+electric moped, the AM licence and battery swaps. Page titles and descriptions carry these
+words in Georgian and English. `src/lib/seo.ts` gives every page its canonical address and
+language pair (always the production ev8.ge address), the share card (`public/img/og.jpg`,
+a frame of the swap film) and structured data built only from the site's own data: the
+business (AutoRental) on every page, the mopeds with their weekly price on `models/`, the
+questions on `faq/`, the stations on `stations/`. `sitemap.xml` is generated from
+`PAGES` there; robots.txt points to it. The showroom's address, hours and phone must match
+the Google Maps card.
 
 ## How to build
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).

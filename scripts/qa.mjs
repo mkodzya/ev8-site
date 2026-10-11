@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
 const BASE = process.env.QA_BASE || 'https://test.ops.ev8.ge/garage/site/';
-const PAGES = ['', 'models/', 'subscription/', 'queue/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/', 'privacy/'];
+const PAGES = ['', 'models/', 'rent/', 'queue/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/', 'privacy/'];
 const LOCALES = ['', 'en/'];
 const VIEWS = [{ name: 'phone', width: 375, height: 812 }, { name: 'laptop', width: 1366, height: 800 }];
 const OUT = 'qa-shots';
@@ -167,7 +167,7 @@ for (const loc of LOCALES) {
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}/flow-${lang}-garage.png` });
   // "I take this one" -> the request builder with the same moped
-  await Promise.all([page.waitForURL(/subscription/), page.locator('#garage [data-take]').click()]);
+  await Promise.all([page.waitForURL(/rent\//), page.locator('#garage [data-take]').click()]);
   await page.waitForLoadState('networkidle');
   const model = await page.locator('input[name="model"]:checked').getAttribute('value');
   if (model !== picked) note(where, `the builder opened with ${model}, garage had ${picked}`);

@@ -7,6 +7,7 @@ import '../styles/global.css';
 import { dict, href, asset, locales, type Locale } from '../i18n';
 import { contact } from '../data/models';
 import Ask from '../components/Ask.astro';
+import { prodUrl, business, ogLocale, ogAlternates, ORIGIN } from '../lib/seo';
 import latin400 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff2?url';
 import latin500 from '@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-500-normal.woff2?url';
 import georgian400 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-400-normal.woff2?url';
@@ -14,8 +15,12 @@ import georgian500 from '@fontsource/noto-sans-georgian/files/noto-sans-georgian
 import logoOnLight from '../../public/img/brand/logo.svg?raw';
 import logoOnDark from '../../public/img/brand/logo-light.svg?raw';
 
-interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; }
-const { locale, title, description, path, preloadImage } = Astro.props;
+interface Props { locale: Locale; title: string; description: string; path: string; preloadImage?: string; jsonLd?: object[]; }
+const { locale, title, description, path, preloadImage, jsonLd = [] } = Astro.props;
+// Search: one address per page, the other language beside it, and the business
+// described on every page (src/lib/seo.ts).
+const canonical = prodUrl(locale, path);
+const structured = [business(locale), ...jsonLd];
 const t = dict(locale);
 // Previews are never indexed; the production build drops this flag.
 const noindex = process.env.PREVIEW === '1';
@@ -49,10 +54,21 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content={lightTop ? 'default' : 'black-translucent'} />
     <meta name="apple-mobile-web-app-title" content="EV8" />
+    <link rel="canonical" href={canonical} />
+    {locales.map((l) => <link rel="alternate" hreflang={l} href={prodUrl(l, path)} />)}
+    <link rel="alternate" hreflang="x-default" href={prodUrl('ka', path)} />
+    <meta property="og:site_name" content="EV8" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    {locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(href(l, path), Astro.site)} />)}
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${ORIGIN}/img/og.jpg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    {ogAlternates(locale).map((l) => <meta property="og:locale:alternate" content={l} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    {structured.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
   <body data-warm-fonts={JSON.stringify(warmFonts)}>
     <header class="top" data-tone={lightTop ? 'light' : 'dark'}>
@@ -60,7 +76,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
         <a class="logo" href={href(locale)} aria-label={t.nav.home}><Fragment set:html={lightTop ? logoOnLight : logoOnDark} /></a>
         <nav>
           <a href={href(locale, 'models/')} aria-current={cur('models/')}>{t.nav.garage}</a>
-          <a href={href(locale, 'subscription/')} aria-current={cur('subscription/')}>{t.sub.nav}</a>
+          <a href={href(locale, 'rent/')} aria-current={cur('rent/')}>{t.sub.nav}</a>
           <a class="wide" href={href(locale, 'stations/')} aria-current={cur('stations/')}>{t.stationsPage.nav}</a>
           <a class="wide" href={href(locale, 'am-licence/')} aria-current={cur('am-licence/')}>{t.licence.nav}</a>
           <a class="wide" href={href(locale, 'how-it-works/')} aria-current={cur('how-it-works/')}>{t.how.nav}</a>
@@ -78,7 +94,7 @@ const cur = (p: string) => (path === p ? 'page' : undefined);
     <footer class="dark">
       <nav class="wrap foot-nav">
         <a href={href(locale, 'models/')}>{t.nav.garage}</a>
-        <a href={href(locale, 'subscription/')}>{t.sub.nav}</a>
+        <a href={href(locale, 'rent/')}>{t.sub.nav}</a>
         <a href={href(locale, 'stations/')}>{t.stationsPage.nav}</a>
         <a href={href(locale, 'am-licence/')}>{t.licence.nav}</a>
         <a href={href(locale, 'how-it-works/')}>{t.how.nav}</a>
