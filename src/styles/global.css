@@ -83,7 +83,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    svh. Nothing inside the carousel reads the viewport height on a phone: the
    figure panel takes what is left with flex. Never dvh or a resize listener. */
 .promo { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; padding-top: 72px; }
-.promo-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
+.promo-track { flex: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline-offset: -2px; }
 .promo-track::-webkit-scrollbar { display: none; }
 .slide { flex: 0 0 100%; min-width: 0; display: flex; scroll-snap-align: start; scroll-snap-stop: always; }
 .slide-in { width: 100%; display: flex; flex-direction: column; gap: 20px; padding-block: 16px 4px; }
@@ -213,6 +213,19 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .ask-form .btn-line { min-height: 52px; font-size: 16px; }
 .field textarea { width: 100%; min-height: 84px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line-control); resize: vertical;
                   background: var(--surface); color: var(--ink); font: 400 16px/1.4 var(--f); }
+/* the window after a form went through (components/Done.astro) */
+.done-veil { position: fixed; inset: 0; z-index: 30; background: rgba(11, 11, 11, 0.6); animation: done-fade 0.3s ease both; }
+.done { position: fixed; z-index: 31; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(360px, calc(100vw - 32px));
+        padding: 28px 22px 22px; border-radius: 24px; background: var(--lime); color: var(--ink); text-align: center;
+        box-shadow: 0 24px 64px rgba(11, 11, 11, 0.35); animation: done-in 0.35s ease both; }
+.done h2 { font: 500 24px/1.15 var(--f); margin: 10px 0 6px; }
+.done p { margin-bottom: 18px; }
+.done-mark { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: var(--lime); font-size: 26px; }
+.done-x { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; line-height: 1; color: var(--ink); }
+@keyframes done-fade { from { opacity: 0; } }
+@keyframes done-in { from { opacity: 0; transform: translate(-50%, -46%); } }
+@media (prefers-reduced-motion: reduce) { .done, .done-veil { animation: none; } }
+@media (max-width: 599px) { html.done-open { overflow: hidden; } }
 .again { display: block; margin: 2px auto 0; font-size: 13px; color: var(--grey); text-decoration: underline; }
 @media (max-width: 599px) { html.ask-open { overflow: hidden; } }
 @media (min-width: 600px) {
