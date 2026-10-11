@@ -1,0 +1,83 @@
+# ev8.ge's own settings for the server's door: where an old address leads and
+# how long a browser keeps what it was given. They travel with the site — the
+# release puts this file at /_edge/site.caddy, and the door (Caddy, in
+# mkodzya/ev8-ops) takes it into the ev8.ge block within half a minute of a
+# release to main. Nobody has to touch the server (Mika, 11.10.2026: "по сайту
+# все задачи он должен без меня делать").
+#
+# The door tries new settings first and takes them only if its whole config
+# still validates with them. Settings with a mistake are refused, the ones in
+# force stay, and the release fails at "The door took the site's settings" —
+# fix the file and release again.
+#
+# Rules of the house:
+#   - only `redir` and `header` lines, with their matchers. This is not the
+#     place for anything else; the API's door and the certificate are the
+#     server's side;
+#   - every matcher's name starts with @site_ or @wp_ — a name the door
+#     already uses is a mistake the door refuses;
+#   - an address written here is an address of ev8.ge: starts with /, and the
+#     English one with /en/.
+# The preview on test.ops.ev8.ge does not read this file: it lives under a
+# folder, and these addresses are the root's.
+
+# Which release the door is running with. The release checks it, so do not
+# remove the line; __REV__ is filled in when the site is built.
+header X-Site-Edge "__REV__"
+
+# How long a browser keeps what it was given (Kardu, 11.10.2026).
+# Astro puts a hash in every asset's name, so an asset never changes under its
+# name: a year. Pictures and video keep their names between builds: a week, so
+# a picture replaced under the same name reaches a returning visitor within
+# seven days. A page has no hash and must not be kept, or a release leaves
+# people on the previous text until they hard-refresh.
+@site_hashed path /_astro/*
+header @site_hashed Cache-Control "public, max-age=31536000, immutable"
+@site_media path /img/* /video/*
+header @site_media Cache-Control "public, max-age=604800"
+@site_page not path /_astro/* /img/* /video/*
+header @site_page Cache-Control "no-cache"
+
+# Addresses of the WordPress site (its sitemap of 11.10.2026: 27 addresses)
+# that links, bookmarks and search engines still hold, each sent to the page
+# that took its place. Permanent (301), so a search engine moves the page's
+# standing with it — except where there is no such page yet: temporary (302),
+# to be pointed at the real page once it exists.
+@wp_models path /catalog /catalog/ /product-card /product-card/*
+redir @wp_models /models/ permanent
+@wp_models_en path /en/catalog-en /en/catalog-en/ /en/product-card /en/product-card/*
+redir @wp_models_en /en/models/ permanent
+
+@wp_stations path /svap-sadgurebi /svap-sadgurebi/
+redir @wp_stations /stations/ permanent
+@wp_stations_en path /en/swap-stations /en/swap-stations/
+redir @wp_stations_en /en/stations/ permanent
+
+@wp_am path /am-kategoriis-migheba /am-kategoriis-migheba/
+redir @wp_am /am-licence/ permanent
+@wp_am_en path /en/am-category-license /en/am-category-license/
+redir @wp_am_en /en/am-licence/ permanent
+
+# The waiting list has its own page, and the courier calculator is on rent/.
+@wp_queue path /waitlist /waitlist/
+redir @wp_queue /queue/ permanent
+@wp_queue_en path /en/waiting-list /en/waiting-list/
+redir @wp_queue_en /en/queue/ permanent
+@wp_calc path /kurieris-ekonomiis-kalku /kurieris-ekonomiis-kalku/
+redir @wp_calc /rent/ permanent
+@wp_calc_en path /en/courier-savings-calculator /en/courier-savings-calculator/
+redir @wp_calc_en /en/rent/ permanent
+
+@wp_faq_en path /en/faq-en /en/faq-en/
+redir @wp_faq_en /en/faq/ permanent
+@wp_contacts_en path /en/where-to-find-us /en/where-to-find-us/
+redir @wp_contacts_en /en/contacts/ permanent
+
+@wp_privacy path /privacy-policy /privacy-policy/
+redir @wp_privacy /privacy/ permanent
+@wp_privacy_en path /en/privacy-policy-en /en/privacy-policy-en/
+redir @wp_privacy_en /en/privacy/ permanent
+
+# No page on the site yet: "bring a friend". Temporary on purpose.
+@wp_friend_en path /en/bring-a-friend-en /en/bring-a-friend-en/
+redir @wp_friend_en /en/ temporary

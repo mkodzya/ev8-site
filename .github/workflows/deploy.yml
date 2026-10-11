@@ -8,6 +8,10 @@
 # So a merge into main IS the release of the site: made on Kardu's or Mika's
 # word, never by a session on its own (CLAUDE.md, rule 2).
 #
+# A release also carries the site's own settings for the server's door —
+# old addresses, how long a browser keeps what (edge/site.caddy) — and the
+# last step checks that the door took them.
+#
 # Once a day both are built again as they are, for one number: the price of
 # petrol in the calculator's comparison, read while the site is built
 # (scripts/fuel-price.mjs). That run changes no code and releases nothing new;
@@ -99,6 +103,16 @@ jobs:
           STRICT: ${{ github.event_name == 'schedule' && '--strict' || '' }}
         run: node scripts/fuel-price.mjs $STRICT
       - run: npm run build
+      - name: The site's settings for the server's door
+        run: |
+          # edge/site.caddy travels inside the release as /_edge/site.caddy,
+          # stamped with the commit it was built from: the door answers with
+          # the stamp of the settings it runs (checked below, after shipping).
+          rev=$(git rev-parse --short HEAD)
+          install -d dist/_edge
+          sed "s/^header X-Site-Edge \"__REV__\"/header X-Site-Edge \"$rev\"/" edge/site.caddy > dist/_edge/site.caddy
+          grep -q "X-Site-Edge \"$rev\"" dist/_edge/site.caddy || { echo "edge/site.caddy has lost its X-Site-Edge line."; exit 1; }
+          echo "EDGE_REV=$rev" >> "$GITHUB_ENV"
       - name: A production build must be indexable
         if: matrix.branch == 'main'
         run: |
@@ -122,3 +136,22 @@ jobs:
           echo "$CHECK_URL → $code"
           # 401: the preview is behind its login (deploy/set-site-password.sh).
           case "$code" in 200 | 401) ;; *) exit 1 ;; esac
+      - name: The door took the site's settings
+        if: matrix.branch == 'main'
+        run: |
+          # The door looks at the release every fifteen seconds, tries its
+          # settings together with its whole config, and takes them only if
+          # that validates. Two minutes is ample.
+          for i in $(seq 1 12); do
+            got=$(curl -sI https://ev8.ge/ | tr -d '\r' | awk 'tolower($1)=="x-site-edge:"{print $2}')
+            if [ "$got" = "$EDGE_REV" ]; then echo "The door runs the settings of $EDGE_REV."; exit 0; fi
+            sleep 10
+          done
+          if [ -z "$got" ]; then
+            echo "::warning::The door does not read the site's settings yet: no X-Site-Edge in its answer."
+            exit 0
+          fi
+          echo "The door still runs the settings of $got, not of $EDGE_REV:"
+          echo "edge/site.caddy has a mistake and the door refused it. The pages of this release are live;"
+          echo "the door's previous settings stay in force. Fix edge/site.caddy and release again."
+          exit 1
