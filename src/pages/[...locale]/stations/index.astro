@@ -5,7 +5,6 @@
 import Base from '../../../layouts/Base.astro';
 import Icon from '../../../components/Icon.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
-import { contact } from '../../../data/models';
 import { stations, directions } from '../../../data/stations';
 
 export const getStaticPaths = localePaths;
@@ -44,9 +43,8 @@ const n = (s: string) => s.replace('{n}', String(stations.length));
       <div class="offer">
         <h2>{t.ctaTitle}</h2>
         <p>{t.ctaText}</p>
-        <a class="btn btn-ink btn-block" href={href(locale, 'subscription/')}>{t.cta} →</a>
+        <a class="btn btn-ink btn-block" href={href(locale, 'queue/')}>{t.cta} →</a>
       </div>
-      <a class="btn btn-line btn-block" data-ask href={`https://wa.me/${contact.whatsapp}`} rel="noopener">{d.contacts.wa}</a>
     </aside>
   </section>
 </Base>
