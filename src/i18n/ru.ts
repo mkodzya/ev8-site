@@ -12,7 +12,7 @@ export const ru = {
     modelsTitle: 'Электромопеды в аренду: {models} — EV8',
     modelsDesc: 'Три электромопеда со съёмной батареей в аренду от {n} ₾ в неделю. Каким нужны права AM, а каким нет.',
   },
-  nav: { garage: 'Гараж', home: 'На главную' },
+  nav: { garage: 'Гараж', home: 'На главную', menu: 'Меню', close: 'Закрыть меню', call: 'Позвонить' },
   // The carousel on the first screen of the home page. {n} is a number from
   // the data files, {h} the default hours of the calculator.
   promo: {
