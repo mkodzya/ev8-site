@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { faq } from '../../../lib/seo';
-import { models } from '../../../data/models';
+import { models, DEPOSIT_GEL } from '../../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -13,7 +13,7 @@ const t = d.faqPage;
 const range = models.map((m) => t.rangeLine.replace('{model}', m.name).replace('{km}', String(m.rangeKm))).join(' ');
 const num = (x: number) => (locale === 'en' ? String(x) : String(x).replace('.', ','));
 const charge = models.map((m) => t.chargeLine.replace('{model}', m.name).replace('{h}', num(m.chargeHours))).join(' ');
-const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range).replace('{charge}', charge)]);
+const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range).replace('{charge}', charge).replace('{deposit}', String(DEPOSIT_GEL))]);
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/" jsonLd={[faq(items)]}>
   <section class="dark page-head">

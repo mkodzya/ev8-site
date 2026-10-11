@@ -3,8 +3,10 @@
 // Every fact about the licence is the text of the live ev8.ge page
 // /am-kategoriis-migheba/ (changed 21.09.2026): what AM covers, the exam, the
 // age, the documents, the steps and the fees. Kardu has not confirmed it yet
-// (handbook register, item 59). Not carried over: "first week free with a new
-// licence" — there are no discounts (Mika, 01.10.2026). The paid help with the
+// (handbook register, item 59). The old page's "first week free with a new
+// licence" was left out on 01.10.2026 (Mika: no discounts) and is back as a
+// promo with no end date (Kardu, 12.10.2026): a licence of any category from the
+// last 3 months, the first week free, the deposit paid as usual. The paid help with the
 // licence is off the site with the other services (Kardu, 11.10.2026): the
 // card opens the question form. Which licence each moped needs is
 // models.ts (Kardu, same day), listed under it. The old page's claim that the
@@ -12,7 +14,7 @@
 // title (Kardu, 11.10.2026): no source for it.
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
-import { models } from '../../../data/models';
+import { models, DEPOSIT_GEL } from '../../../data/models';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -34,6 +36,15 @@ const study = [
     <div class="wrap">
       <h1>{t.title1} <em>{t.title2}</em></h1>
       <p class="head-sub">{intro}</p>
+    </div>
+  </section>
+
+  <section class="wrap licence-promo">
+    <div class="offer">
+      <p class="tag">{t.promoTag}</p>
+      <h2>{t.promoTitle}</h2>
+      <p>{t.promoText.replace('{deposit}', String(DEPOSIT_GEL))}</p>
+      <a class="btn btn-ink" href={href(locale, 'queue/')}>{t.promoCta} →</a>
     </div>
   </section>
 
