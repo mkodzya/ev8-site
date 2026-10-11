@@ -26,11 +26,12 @@ own — only when the person running it says so. Kardu does everything about the
 its pages, its releases, the DNS of ev8.ge (he holds its login) — and the one thing that is
 not his is changing EV8 Ops (Mika, 11.10.2026: «пускай он всё сам делает; единственное ему
 нельзя менять ERP»): EV8 Ops (`mkodzya/ev8-ops`, the company's ERP) and its two stands, test
-and prod, are changed by Mika's session only. Two things of the site's still pass through
-there, and so through Mika, until the site has its own: the server's door for ev8.ge
-(redirects, caching, the certificate — `Caddyfile.edge`; a change there takes a restart of the
-door) and the mail of the request forms (`/api/site/queue`). A session run by Kardu has no way
-onto the server: it writes down what it needs of those two, and Kardu asks Mika. Decisions about the site are made by Mika and
+and prod, are changed by Mika's session only. Where an old address leads and how long a
+browser keeps a picture is the site's own to decide, in `edge/site.caddy` (see "The server's
+door" below) — no need to ask anybody. One thing of the site's still passes through EV8 Ops,
+and so through Mika, until the site has its own: the mail of the request forms
+(`/api/site/queue`). A session run by Kardu has no way onto the server: what it needs there
+it writes down, and Kardu asks Mika. Decisions about the site are made by Mika and
 Kardu together, and neither needs the other's permission to change the site (Kardu's
 proposal of 06.10.2026, accepted by Mika on 07.10.2026; before that: "decisions stay with
 Mika, Kardu proposes"). The owner's rules below, the server and its secrets are not part of
@@ -127,6 +128,19 @@ business (AutoRental) on every page, the mopeds with their weekly price on `mode
 questions on `faq/`, the stations on `stations/`. `sitemap.xml` is generated from
 `PAGES` there; robots.txt points to it. The showroom's address, hours and phone must match
 the Google Maps card.
+
+## The server's door
+Redirects and cache headers are not in the pages: the server's door (Caddy) applies them
+before a file is read. Since 12.10.2026 they are this repository's: `edge/site.caddy`. Change
+it like any other file — branch, merge into `develop`, release. Every release carries it, and
+the door takes it within half a minute; the last step of the release run ("The door took the
+site's settings") says so. The door tries new settings first and refuses a file with a
+mistake: the pages of that release are live, the previous settings stay, the run fails with
+the reason — fix the file and release again. The head of the file has the rules of the house
+(only `redir` and `header` lines; matcher names start with `@site_` or `@wp_`). The preview on
+the test host does not use the file, so a new redirect is first seen on ev8.ge: check it
+there right after the release. What stays the server's side, not changed from here: the
+certificate, the API's door, the 404 mechanics (the site only supplies `404.html`).
 
 ## How to build
 This Mac has no Node: everything runs in Docker, one heavy task at a time (8 GB).
