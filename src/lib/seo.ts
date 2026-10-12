@@ -61,33 +61,38 @@ export function business(l: Locale) {
   };
 }
 
-/** The three mopeds with their weekly rent (the garage). */
+/**
+ * The three mopeds with their weekly rent (the garage), as a rental service of the business.
+ * Not Product: EV8 sells no mopeds (Kardu, 12.10.2026), and a Product with a price makes
+ * Google read the page as a shop and ask for shipping, returns, reviews and ratings
+ * (Search Console, 12.10.2026). A rented moped is a Service in the business's offer catalog.
+ */
 export function offers(l: Locale) {
   const d = dict(l);
   return {
     '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: d.meta.modelsTitle.replace('{models}', models.map((m) => m.name).join(', ')),
-    itemListElement: models.map((m, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      item: {
-        '@type': 'Product',
-        name: `EV8 ${m.name}`,
-        image: `${ORIGIN}/${m.image}`,
-        brand: { '@type': 'Brand', name: 'EV8' },
-        offers: {
-          '@type': 'Offer',
-          url: prodUrl(l, 'models/'),
-          priceCurrency: 'GEL',
-          price: m.weeklyGel,
-          priceSpecification: { '@type': 'UnitPriceSpecification', price: m.weeklyGel, priceCurrency: 'GEL', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'WEE' } },
-          availability: m.from ? 'https://schema.org/PreOrder' : 'https://schema.org/InStock',
-          businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
-          seller: { '@id': `${ORIGIN}/#business` },
+    '@type': 'AutoRental',
+    '@id': `${ORIGIN}/#business`,
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: d.meta.modelsTitle.replace('{models}', models.map((m) => m.name).join(', ')),
+      itemListElement: models.map((m) => ({
+        '@type': 'Offer',
+        url: prodUrl(l, 'models/'),
+        priceCurrency: 'GEL',
+        priceSpecification: { '@type': 'UnitPriceSpecification', price: m.weeklyGel, priceCurrency: 'GEL', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'WEE' } },
+        availability: m.from ? 'https://schema.org/PreOrder' : 'https://schema.org/InStock',
+        businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
+        itemOffered: {
+          '@type': 'Service',
+          name: `EV8 ${m.name}`,
+          serviceType: l === 'ka' ? 'ელექტრო მოპედის ქირა' : 'Electric moped rental',
+          image: `${ORIGIN}/${m.image}`,
+          areaServed: { '@type': 'City', name: l === 'ka' ? 'თბილისი' : 'Tbilisi' },
+          provider: { '@id': `${ORIGIN}/#business` },
         },
-      },
-    })),
+      })),
+    },
   };
 }
 
