@@ -4,7 +4,7 @@
 // the site's own data: the showroom, hours, phone and mail of the footer, the
 // models and their weekly prices, the swap stations of ev8.ge.
 import { dict, defaultLocale, locales, type Locale } from '../i18n';
-import { contact, models, fromGel } from '../data/models';
+import { contact, models, fullName, fromGel } from '../data/models';
 import { stations } from '../data/stations';
 
 /** Production address of the site. Previews are noindex, so links always point here. */
@@ -75,7 +75,7 @@ export function offers(l: Locale) {
     '@id': `${ORIGIN}/#business`,
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: d.meta.modelsTitle.replace('{models}', models.map((m) => m.name).join(', ')),
+      name: d.meta.modelsTitle.replace('{models}', models.map(fullName).join(', ')),
       itemListElement: models.map((m) => ({
         '@type': 'Offer',
         url: prodUrl(l, 'models/'),
@@ -85,7 +85,8 @@ export function offers(l: Locale) {
         businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
         itemOffered: {
           '@type': 'Service',
-          name: `EV8 ${m.name}`,
+          name: `EV8 ${fullName(m)}`,
+          ...(m.brand ? { brand: { '@type': 'Brand', name: m.brand } } : {}),
           serviceType: l === 'ka' ? 'ელექტრო მოპედის ქირა' : 'Electric moped rental',
           image: `${ORIGIN}/${m.image}`,
           areaServed: { '@type': 'City', name: l === 'ka' ? 'თბილისი' : 'Tbilisi' },

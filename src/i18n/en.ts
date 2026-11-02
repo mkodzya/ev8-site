@@ -5,7 +5,7 @@ export const en: Dict = {
   langName: 'EN',
   meta: {
     homeTitle: 'Electric moped rental in Tbilisi for couriers — EV8',
-    homeDesc: 'Electric moped rental for Wolt, Glovo and Bolt Food couriers in Tbilisi. From {n} ₾ a week: moped, two batteries and service. Battery swaps 24/7.',
+    homeDesc: 'Electric moped and scooter rental for Wolt, Glovo and Bolt Food couriers in Tbilisi. From {n} ₾ a week: moped, two batteries and service. Battery swaps 24/7.',
     modelsTitle: 'Electric mopeds for rent: {models} — EV8',
     modelsDesc: 'Three electric mopeds with a removable battery, for rent from {n} ₾ a week. Which need an AM licence and which do not.',
   },
@@ -244,6 +244,7 @@ export const en: Dict = {
     title1: 'Questions',
     title2: 'and answers',
     more: [
+      ['Which moped can I ride without a licence?', '{nolicence} — no licence needed. The AM category is needed for: {am}.'],
       ['What if the moped breaks down during a shift?', 'Call us: +995 595 16 55 88. We fix the malfunction — it is included in the rent.'],
       ['Is there insurance?', 'The compulsory insurance is included in the S70 Pro weekly price. The XL1200 and the Eagle have no insurance for now.'],
       ['Can I rent a helmet and gear?', 'No, we sell gear by instalments: you pay weekly with the rent and the item stays yours.'],
@@ -387,7 +388,7 @@ export const en: Dict = {
   },
   about: {
     title: 'Electric moped rental in Tbilisi for couriers',
-    text: 'EV8 rents electric mopeds by the week to Wolt, Glovo and Bolt Food couriers — from {n} ₾ a week. The rent covers the moped, two batteries and two chargers, consumables and repairs of breakdowns. You charge the battery at home from a regular socket or swap it for a charged one for 3.49 ₾ — at the Agrohub stations and the showroom at 65 Nutsubidze St, around the clock. The XL1200 needs no licence; the Eagle and S70 Pro need the AM category.',
+    text: 'EV8 rents electric mopeds (scooters) by the week to Wolt, Glovo and Bolt Food couriers — from {n} ₾ a week. The rent covers the moped, two batteries and two chargers, consumables and repairs of breakdowns. You charge the battery at home from a regular socket or swap it for a charged one for 3.49 ₾ — at the Agrohub stations and the showroom at 65 Nutsubidze St, around the clock. The XL1200 needs no licence; the Eagle and Luyuan S70 Pro need the AM category.',
   },
   reviews: {
     label: '{n} reviews on Google',
