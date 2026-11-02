@@ -81,3 +81,20 @@ redir @wp_privacy_en /en/privacy/ permanent
 # No page on the site yet: "bring a friend". Temporary on purpose.
 @wp_friend_en path /en/bring-a-friend-en /en/bring-a-friend-en/
 redir @wp_friend_en /en/ temporary
+@wp_friend path /bring-a-friend /bring-a-friend/
+redir @wp_friend / temporary
+
+# Old addresses Google still showed in October 2026 that had no rule here
+# (Search Console, 1-31 Oct 2026; Kardu, 02.11.2026). "About us" is a block on
+# the home page now; the driving-school offer was not carried over (Kardu,
+# 12.10.2026), and the licence page is the nearest one.
+@wp_about path /about /about/
+redir @wp_about / permanent
+@wp_about_en path /en/about-us /en/about-us/
+redir @wp_about_en /en/ permanent
+@wp_school path /motorschool /motorschool/
+redir @wp_school /am-licence/ permanent
+@wp_school_en path /en/motorschool-en /en/motorschool-en/
+redir @wp_school_en /en/am-licence/ permanent
+@wp_contact_en path /en/contact-us-en /en/contact-us-en/
+redir @wp_contact_en /en/contacts/ permanent
