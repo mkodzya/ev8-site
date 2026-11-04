@@ -238,12 +238,16 @@ export const en: Dict = {
   faqPage: {
     chargeLine: '{model}: {h} h.',
     rangeLine: '{model}: {km} km on one battery.',
+    priceLine: '{model}: {gel} ₾ a week{soon}.',
     metaTitle: 'Electric moped rental: questions and answers — EV8',
     metaDesc: 'First payment, deposit, batteries, maintenance, gear and returning the moped.',
     nav: 'Questions',
     title1: 'Questions',
     title2: 'and answers',
     more: [
+      ['How much does it cost to rent an electric moped in Tbilisi?', '{prices} The deposit is {deposit} ₾. The weekly price includes two batteries, two chargers, consumables and fixing malfunctions.'],
+      ['Can I deliver for Wolt, Glovo or Bolt Food on an EV8 moped?', 'Yes, we rent mopeds to couriers: each one has a delivery box, two batteries come with it, and a flat one is swapped for a charged one at a station, 24/7.'],
+      ['Where can I swap an electric moped battery in Tbilisi?', 'At the EV8 showroom, 65 Nutsubidze St, and at the stations in Agrohub — {stations} stations in all. They work 24/7; a swap takes 15 seconds and costs 3.49 ₾.'],
       ['Which moped can I ride without a licence?', '{nolicence} — no licence needed. The AM category is needed for: {am}.'],
       ['What if the moped breaks down during a shift?', 'Call us: +995 595 16 55 88. We fix the malfunction — it is included in the rent.'],
       ['Is there insurance?', 'The compulsory insurance is included in the S70 Pro weekly price. The XL1200 and the Eagle have no insurance for now.'],
