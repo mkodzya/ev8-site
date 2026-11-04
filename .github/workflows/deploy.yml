@@ -136,6 +136,21 @@ jobs:
           echo "$CHECK_URL → $code"
           # 401: the preview is behind its login (deploy/set-site-password.sh).
           case "$code" in 200 | 401) ;; *) exit 1 ;; esac
+      - name: Tell Bing and other search engines what a release changed
+        # IndexNow (Bing, Yandex, Seznam, Naver; ChatGPT searches through Bing):
+        # every page of the release is announced the moment it is live, instead
+        # of waiting for the next crawl. The key is public by design: it is the
+        # file public/7b1e6e4f48c164bf6d5d54a0d5b203eb.txt, which proves the site is ours. A release only —
+        # the daily petrol rebuild changes one number and announces nothing.
+        # Never fails the release.
+        if: matrix.branch == 'main' && github.event_name == 'push'
+        continue-on-error: true
+        run: |
+          urls=$(grep -o '<loc>[^<]*</loc>' dist/sitemap.xml | sed 's/<[^>]*>//g' | jq -R . | jq -sc .)
+          body=$(jq -cn --argjson u "$urls" '{host:"ev8.ge",key:"7b1e6e4f48c164bf6d5d54a0d5b203eb",keyLocation:"https://ev8.ge/7b1e6e4f48c164bf6d5d54a0d5b203eb.txt",urlList:$u}')
+          code=$(curl -s -o /tmp/indexnow.out -w '%{http_code}' -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' -d "$body")
+          echo "IndexNow: $(echo "$urls" | jq length) addresses → HTTP $code"; cat /tmp/indexnow.out; echo
+          case "$code" in 200 | 202) ;; *) echo "::warning::IndexNow answered $code: search engines were not told about this release." ;; esac
       - name: The door took the site's settings
         if: matrix.branch == 'main'
         run: |

@@ -6,6 +6,7 @@
 import { dict, defaultLocale, locales, type Locale } from '../i18n';
 import { contact, models, fullName, fromGel } from '../data/models';
 import { stations } from '../data/stations';
+import { googleReviews } from '../data/reviews';
 
 /** Production address of the site. Previews are noindex, so links always point here. */
 export const ORIGIN = 'https://ev8.ge';
@@ -57,6 +58,8 @@ export function business(l: Locale) {
     }],
     // EV8's own pages, as its Google business profile lists them (Kardu's profile, 11.10.2026).
     sameAs: [contact.instagram, contact.facebook],
+    // The showroom's Google Maps card: assistants and maps match the business to it.
+    hasMap: googleReviews.url,
     inLanguage: d.htmlLang,
   };
 }
