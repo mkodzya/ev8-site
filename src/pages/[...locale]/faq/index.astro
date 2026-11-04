@@ -2,21 +2,13 @@
 import Base from '../../../layouts/Base.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { faq } from '../../../lib/seo';
-import { models, fullName, DEPOSIT_GEL } from '../../../data/models';
+import { faqItems } from '../../../lib/faq';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
 const d = dict(locale);
 const t = d.faqPage;
-// The five questions of the home page first, then the rest.
-// The range answer is built from the models' own figures.
-const range = models.map((m) => t.rangeLine.replace('{model}', m.name).replace('{km}', String(m.rangeKm))).join(' ');
-const num = (x: number) => (locale === 'en' ? String(x) : String(x).replace('.', ','));
-const charge = models.map((m) => t.chargeLine.replace('{model}', m.name).replace('{h}', num(m.chargeHours))).join(' ');
-// Which mopeds need no licence and which need AM, from the models' own data.
-const noLicence = models.filter((m) => m.licence === 'none').map(fullName).join(', ');
-const needAM = models.filter((m) => m.licence === 'AM').map(fullName).join(', ');
-const items = [...d.faq.items, ...t.more].map(([q, a]) => [q, a.replace('{range}', range).replace('{charge}', charge).replace('{deposit}', String(DEPOSIT_GEL)).replace('{nolicence}', noLicence).replace('{am}', needAM)]);
+const items = faqItems(locale);
 ---
 <Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="faq/" jsonLd={[faq(items)]}>
   <section class="dark page-head">
