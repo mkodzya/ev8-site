@@ -23,6 +23,7 @@ export const GET: APIRoute = () => {
       'am-licence/': en.licence.metaTitle,
       'how-it-works/': en.how.metaTitle,
       'faq/': en.faqPage.metaTitle,
+      'news/': en.news.metaTitle,
       'contacts/': en.contacts.metaTitle,
       'queue/': en.waitlist.metaTitle,
       'privacy/': en.privacy.metaTitle,

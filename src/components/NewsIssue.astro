@@ -1,0 +1,20 @@
+---
+// One weekly issue: each item with its source, its day and the link to it.
+import { dict, type Locale } from '../i18n';
+import type { Issue } from '../data/news';
+import { dmy } from '../lib/news';
+
+interface Props { locale: Locale; issue: Issue; }
+const { locale, issue } = Astro.props;
+const t = dict(locale).news;
+---
+<ol class="news-list">
+  {issue.items.map((it) => (
+    <li class="news-item">
+      <p class="news-meta"><time datetime={it.date}>{dmy(it.date)}</time> · {it.source}</p>
+      <h3>{it[locale].title}</h3>
+      <p>{it[locale].text}</p>
+      <a class="news-src" href={it.url} rel="noopener" target="_blank">{t.read} →</a>
+    </li>
+  ))}
+</ol>

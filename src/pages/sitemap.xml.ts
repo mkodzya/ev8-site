@@ -4,9 +4,11 @@
 import type { APIRoute } from 'astro';
 import { locales } from '../i18n';
 import { PAGES, prodUrl } from '../lib/seo';
+import { issues } from '../data/news';
 
 export const GET: APIRoute = () => {
-  const urls = PAGES.flatMap((p) => locales.map((l) => {
+  // Every page, then every weekly issue of the news (news/<date>/).
+  const urls = [...PAGES, ...issues.map((i) => `news/${i.date}/`)].flatMap((p) => locales.map((l) => {
     const alt = locales.map((x) => `    <xhtml:link rel="alternate" hreflang="${x}" href="${prodUrl(x, p)}"/>`).join('\n');
     return `  <url>\n    <loc>${prodUrl(l, p)}</loc>\n${alt}\n    <xhtml:link rel="alternate" hreflang="x-default" href="${prodUrl('ka', p)}"/>\n  </url>`;
   }));
