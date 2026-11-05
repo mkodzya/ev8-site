@@ -1,0 +1,46 @@
+---
+// One weekly issue on its own address, news/<date>/, so it can be shared and
+// found. The list of issues: src/data/news.ts.
+import Base from '../../../layouts/Base.astro';
+import NewsIssue from '../../../components/NewsIssue.astro';
+import { dict, href, locales, defaultLocale, type Locale } from '../../../i18n';
+import { fromGel } from '../../../data/models';
+import type { Issue } from '../../../data/news';
+import { issues, range, issuePath, issueLd } from '../../../lib/news';
+
+export function getStaticPaths() {
+  return locales.flatMap((l) => issues.map((i) => ({
+    params: { locale: l === defaultLocale ? undefined : l, issue: i.date },
+    props: { locale: l, issue: i },
+  })));
+}
+const { locale, issue } = Astro.props as { locale: Locale; issue: Issue };
+const d = dict(locale);
+const t = d.news;
+const week = t.week.replace('{range}', range(issue));
+const title = t.issueTitle.replace('{range}', range(issue));
+const description = issue.items.map((it) => it[locale].title).join('. ');
+---
+<Base locale={locale} title={title} description={description} path={issuePath(issue)} jsonLd={[issueLd(locale, issue, week)]}>
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{week}</p>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      <NewsIssue locale={locale} issue={issue} />
+      <p class="honest">{t.note}</p>
+      <p class="news-back"><a href={href(locale, 'news/')}>← {t.all}</a></p>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaText.replace('{n}', String(fromGel))}</p>
+        <a class="btn btn-ink btn-block" href={href(locale, 'queue/')}>{d.promo.cta} →</a>
+      </div>
+    </aside>
+  </section>
+</Base>

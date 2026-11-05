@@ -15,7 +15,7 @@ export const ORIGIN = 'https://ev8.ge';
 export const prodUrl = (l: Locale, path = '') => `${ORIGIN}/${l === defaultLocale ? '' : `${l}/`}${path}`;
 
 /** Every page of the site that should be found (the old subscription/ only redirects). */
-export const PAGES = ['', 'models/', 'rent/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'contacts/', 'queue/', 'privacy/'];
+export const PAGES = ['', 'models/', 'rent/', 'stations/', 'am-licence/', 'how-it-works/', 'faq/', 'news/', 'contacts/', 'queue/', 'privacy/'];
 
 const OG_LOCALE: Record<Locale, string> = { ka: 'ka_GE', en: 'en_US' };
 export const ogLocale = (l: Locale) => OG_LOCALE[l];

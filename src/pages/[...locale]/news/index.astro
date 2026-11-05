@@ -1,0 +1,50 @@
+---
+// News for couriers, once a week (Kardu, 05.11.2026). The newest issue in
+// full, the earlier ones as a list. The items and their rules: src/data/news.ts.
+import Base from '../../../layouts/Base.astro';
+import NewsIssue from '../../../components/NewsIssue.astro';
+import { dict, href, localePaths, type Locale } from '../../../i18n';
+import { fromGel } from '../../../data/models';
+import { issues, latest, range, issuePath, issueLd } from '../../../lib/news';
+
+export const getStaticPaths = localePaths;
+const { locale } = Astro.props as { locale: Locale };
+const d = dict(locale);
+const t = d.news;
+const earlier = issues.slice(1);
+---
+<Base locale={locale} title={t.metaTitle} description={t.metaDesc} path="news/" jsonLd={latest ? [issueLd(locale, latest, t.week.replace('{range}', range(latest)))] : []}>
+  <section class="dark page-head">
+    <div class="wrap">
+      <h1>{t.title1} <em>{t.title2}</em></h1>
+      <p class="head-sub">{t.sub}</p>
+    </div>
+  </section>
+
+  <section class="wrap info">
+    <div>
+      {latest && (
+        <>
+          <h2 class="h2 news-week"><a href={href(locale, issuePath(latest))}>{t.week.replace('{range}', range(latest))}</a></h2>
+          <NewsIssue locale={locale} issue={latest} />
+        </>
+      )}
+      {earlier.length > 0 && (
+        <>
+          <h2 class="h2 news-week">{t.archive}</h2>
+          <ul class="news-archive">
+            {earlier.map((i) => <li><a href={href(locale, issuePath(i))}>{t.week.replace('{range}', range(i))}</a><span>{t.count.replace('{n}', String(i.items.length))}</span></li>)}
+          </ul>
+        </>
+      )}
+      <p class="honest">{t.note}</p>
+    </div>
+    <aside class="info-side">
+      <div class="offer">
+        <h2>{t.ctaTitle}</h2>
+        <p>{t.ctaText.replace('{n}', String(fromGel))}</p>
+        <a class="btn btn-ink btn-block" href={href(locale, 'queue/')}>{d.promo.cta} →</a>
+      </div>
+    </aside>
+  </section>
+</Base>
