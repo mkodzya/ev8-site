@@ -12,6 +12,7 @@
 //   - the text is our own short retelling — facts and figures of the source,
 //     never its sentences copied. No names of private people (a victim, a
 //     courier), only what was public and official;
+//   - a number keeps its digits on one line: a no-break space in 16 839;
 //   - Georgian and English say the same thing. Georgian is a draft until a
 //     native speaker reads it (book register, item 15);
 //   - an issue reaches ev8.ge with a release, on Kardu's or Mika's word.
@@ -67,8 +68,8 @@ export const issues: Issue[] = [
         source: 'Crystalauto (BM.GE)',
         url: 'https://www.crystalauto.ge/news/8871-17-20-tslis-akhalgazrdebze-pirveladi-martvis-motsmobebis-468-modis--statistika',
         ka: {
-          title: 'ივლის–სექტემბერში 16 839 ადამიანმა პირველად აიღო მართვის მოწმობა',
-          text: 'შსს-ის მონაცემებით, 2026 წლის მესამე კვარტალში საქართველოში 16 839 პირველადი მართვის მოწმობა გაიცა. 46,8% — 17–20 წლის ახალგაზრდებზე მოდის, თბილისზე — 4 805 (28,5%). კატეგორიების მიხედვით მონაცემები არ გამოქვეყნებულა, ამიტომ ახალი AM მოწმობების რაოდენობა უცნობია.',
+          title: 'ივლის–სექტემბერში 16 839 ადამიანმა პირველად აიღო მართვის მოწმობა',
+          text: 'შსს-ის მონაცემებით, 2026 წლის მესამე კვარტალში საქართველოში 16 839 პირველადი მართვის მოწმობა გაიცა. 46,8% — 17–20 წლის ახალგაზრდებზე მოდის, თბილისზე — 4 805 (28,5%). კატეგორიების მიხედვით მონაცემები არ გამოქვეყნებულა, ამიტომ ახალი AM მოწმობების რაოდენობა უცნობია.',
         },
         en: {
           title: '16,839 people got their first driving licence in July–September',
