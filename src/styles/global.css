@@ -826,6 +826,14 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 .news-archive li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
 .news-archive span { color: var(--muted); font-size: 14px; }
 .news-back { margin-top: 18px; }
+/* the newest issue on the home page, under the queue (Kardu, 05.11.2026) */
+.news-home .h2 em { font-style: normal; color: var(--accent); }
+.news-home-week { margin: 6px 0 10px; color: var(--muted); font-size: 14px; }
+.news-home-week a { color: inherit; }
+.news-home-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 10px; }
+.news-home-list a { display: grid; gap: 4px; padding: 14px 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+.news-home-list b { font-weight: 500; font-size: 17px; line-height: 1.3; }
+@media (min-width: 900px) { .news-home-list { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); } }
 .news-back a { text-decoration: none; font-weight: 500; }
 
 /* ===== motion (Mika, 03.10.2026): every change is smooth, small and unhurried =====
