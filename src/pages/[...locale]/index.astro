@@ -4,13 +4,15 @@
 // (queue/). The papers block (licence, registration and tax) and the common
 // questions are off the home page for now (Kardu, 11.10.2026); the questions
 // stay on faq/. The quiz is no longer a gate: it lives in the "Write to us"
-// widget (components/Ask.astro), on every page.
+// widget (components/Ask.astro), on every page. Under the queue, the newest
+// issue of the news for couriers, so the news is seen (Kardu, 05.11.2026).
 import Base from '../../layouts/Base.astro';
 import Promo from '../../components/Promo.astro';
 import Garage from '../../components/Garage.astro';
 import Reviews from '../../components/Reviews.astro';
 import { dict, href, localePaths, type Locale } from '../../i18n';
 import { models, fromGel } from '../../data/models';
+import { latest, range, issuePath, dmy } from '../../lib/news';
 
 export const getStaticPaths = localePaths;
 const { locale } = Astro.props as { locale: Locale };
@@ -42,6 +44,26 @@ const queue = href(locale, 'queue/');
       </div>
     </div>
   </section>
+
+  {latest && (
+    <section class="section news-home" id="news">
+      <div class="wrap">
+        <h2 class="h2">{t.news.title1} <em>{t.news.title2}</em></h2>
+        <p class="news-home-week"><a href={href(locale, issuePath(latest))}>{t.news.week.replace('{range}', range(latest))}</a></p>
+        <ul class="news-home-list">
+          {latest.items.map((it) => (
+            <li>
+              <a href={href(locale, issuePath(latest))}>
+                <span class="news-meta">{dmy(it.date)} · {it.source}</span>
+                <b>{it[locale].title}</b>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a class="more" href={href(locale, 'news/')}>{t.news.all} →</a>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="wrap two">
