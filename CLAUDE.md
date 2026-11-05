@@ -129,6 +129,16 @@ questions on `faq/`, the stations on `stations/`. `sitemap.xml` is generated fro
 `PAGES` there; robots.txt points to it. The showroom's address, hours and phone must match
 the Google Maps card.
 
+## News for couriers (Kardu, 05.11.2026)
+`news/` holds a weekly issue: what changed for couriers in Georgia — electric mopeds and scooters,
+traffic rules, licences, petrol prices, Wolt, Glovo and Bolt Food (the scope Kardu chose on
+05.11.2026). Issues live in `src/data/news.ts`, newest first; each issue also has its own address,
+`news/<date>/`, and goes into the sitemap. Every item is a real piece of news with its outlet, its
+address and its day; the text is our short retelling in Georgian and English, never the source's
+sentences, and no private person's name. A week without news has no issue — it is skipped, never
+filled. A weekly scheduled task drafts the issue and puts it on the preview; it reaches ev8.ge with a
+release, on Kardu's word.
+
 ## The server's door
 Redirects and cache headers are not in the pages: the server's door (Caddy) applies them
 before a file is read. Since 12.10.2026 they are this repository's: `edge/site.caddy`. Change
