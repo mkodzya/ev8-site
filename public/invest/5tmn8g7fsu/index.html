@@ -161,6 +161,15 @@ footer p{color:var(--band-muted);margin-top:8px}
 
 :lang(ka) .eyebrow,:lang(ka) .sub,:lang(ka) .term .l{text-transform:none;letter-spacing:0}
 :lang(ka) .hero h1{font-size:clamp(30px,4.6vw,50px);letter-spacing:-.02em}
+/* swap network */
+.infra-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}
+.itile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.itile b{display:block;font:800 30px/1 var(--display);color:var(--accent);letter-spacing:-.03em}
+.itile span{display:block;margin-top:8px;font-size:13.5px;color:var(--muted);line-height:1.35}
+.netline{margin-top:14px;font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+.netline i{flex-shrink:0;width:12px;height:12px;border-radius:50%;background:var(--lime);border:2px solid var(--accent);margin-top:4px}
+h3.why{font:700 20px/1.25 var(--body);margin-top:36px;text-wrap:balance}
+.faq.why-grid{margin-top:16px}
 /* team, what-if, process */
 .team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}
 .person{display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
@@ -176,6 +185,7 @@ footer p{color:var(--band-muted);margin-top:8px}
 .cell .s{font-size:12px;color:var(--faint);margin-top:4px}
 @media (max-width:860px){
   .steps.three{grid-template-columns:1fr}
+  .infra-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
   .hero-grid{grid-template-columns:1fr}
   .batch{justify-self:start;max-width:380px}
   .batch figcaption{justify-content:flex-start;text-align:left}
@@ -249,6 +259,26 @@ footer p{color:var(--band-muted);margin-top:8px}
         <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M7 37h30M10 31l8-8 6 5 11-12"/><path d="M29 16h6v6"/></svg>
         <h3 data-i="s4h"></h3><p data-i="s4p"></p></li>
     </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="infEy"></div>
+    <h2 data-i="infH"></h2>
+    <p class="sec-lede" data-i="infLede"></p>
+    <div class="infra-tiles">
+      <div class="itile"><b>4</b><span data-i="i1l"></span></div>
+      <div class="itile"><b>24/7</b><span data-i="i2l"></span></div>
+      <div class="itile"><b data-i="i3v"></b><span data-i="i3l"></span></div>
+      <div class="itile"><b data-i="i4v"></b><span data-i="i4l"></span></div>
+    </div>
+    <p class="netline"><i></i><span data-i="infMap"></span></p>
+    <h3 class="why" data-i="whyH"></h3>
+    <div class="faq why-grid">
+      <div class="qa"><h3 data-i="w1h"></h3><p data-i="w1p"></p></div>
+      <div class="qa"><h3 data-i="w2h"></h3><p data-i="w2p"></p></div>
+      <div class="qa"><h3 data-i="w3h"></h3><p data-i="w3p"></p></div>
+      <div class="qa"><h3 data-i="w4h"></h3><p data-i="w4p"></p></div>
+    </div>
   </section>
 
   <section>
@@ -368,7 +398,16 @@ footer p{color:var(--band-muted);margin-top:8px}
 
 <script>
 const T={
-ru:{mLowS:"январь 2027, до возврата НДС",
+ru:{infEy:"Наше преимущество",infH:"Своя сеть замены батарей — мопеды партии сделаны под неё",
+infLede:"Мы заказали S70 у завода сразу под наши станции: батарея снимается за секунды и подходит к станциям EV8. Курьер не ждёт зарядку 3,5 часа — меняет батарею за 15 секунд и едет дальше.",
+i1l:"точки замены с января 2027",i2l:"работают станции",i3v:"15 сек",i3l:"замена вместо 3,5 ч зарядки",i4v:"~150 км",i4l:"в день вместо ~75 км на одной батарее",
+infMap:"Нуцубидзе 65 (сервис-центр) · Геловани 22 · наб. Гамсахурдия 80 · Чиладзе 9 — в гипермаркетах Agrohub¹",
+whyH:"Почему это делает заём надёжнее",
+w1h:"Залог зарабатывает каждый день",w1p:"Мопеды, батареи и станции — одна система. Она не стоит на складе, а приносит выручку, из которой идут ваши выплаты.",
+w2h:"Курьеру выгодно оставаться с нами",w2p:"С заменой курьер проезжает ~150 км в день — вдвое больше, чем на одной зарядке. Больше заказов — меньше причин уходить.",
+w3h:"Конкурентам это сложно повторить",w3p:"Конкуренты в Тбилиси дают электровелосипеды или мопеды с тяжёлыми батареями до 35 кг, которые заряжают часами. Своя сеть станций отличает EV8.",
+w4h:"Станции и батареи тоже в залоге",w4p:"В залог входят не только 50 мопедов, но и 50 доп. батарей и 3 станции замены из этой партии.",
+mLowS:"январь 2027, до возврата НДС",
 teamEy:"Команда",teamH:"Кто стоит за EV8",tm1n:"Карду",tm1r:"Операционная работа и автоматизация: парк, курьеры, сервис, партнёры",tm2n:"Мика",tm2r:"Приложение и софт: ERP, сайт и учёт",
 faqEy:"Что если…",faqH:"Что будет, если что-то пойдёт не так",
 q1:"Мопед угнали или разбили?",a1:"На каждом мопеде стоит GPS с удалённой блокировкой. S70 застрахованы по CASCO, франшиза $80.",
@@ -412,7 +451,16 @@ months:["Дек","Янв","Фев","Мар","Апр","Май","Июн","Июл",
 verdictFmt:(m,y)=>`в ${m} ${y}`,notYet:"не раньше августа 2028",backFmt:(m,y)=>`${m} ${y}`,
 monthsNom:["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],
 chartAria:"Деньги на счёте EV8 по месяцам и сумма займа",nf:"ru-RU"},
-ka:{mLowS:"2027 წლის იანვარი, დღგ-ს დაბრუნებამდე",
+ka:{infEy:"ჩვენი უპირატესობა",infH:"საკუთარი ბატარეის გაცვლის ქსელი — პარტიის მოპედები სწორედ მისთვისაა",
+infLede:"S70 ქარხანას პირდაპირ ჩვენი სადგურებისთვის შევუკვეთეთ: ბატარეა წამებში იხსნება და EV8-ის სადგურებს ერგება. კურიერი 3,5 საათი დამუხტვას არ ელოდება — ბატარეას 15 წამში ცვლის და გზას აგრძელებს.",
+i1l:"გაცვლის წერტილი 2027 წლის იანვრიდან",i2l:"სადგურების სამუშაო რეჟიმი",i3v:"15 წმ",i3l:"გაცვლა 3,5 საათიანი დამუხტვის ნაცვლად",i4v:"~150 კმ",i4l:"დღეში — ერთ ბატარეაზე ~75 კმ-ის ნაცვლად",
+infMap:"ნუცუბიძის 65 (სერვის-ცენტრი) · გელოვანის 22 · გამსახურდიას სანაპირო 80 · ჭილაძის 9 — Agrohub¹-ის ჰიპერმარკეტებში",
+whyH:"რატომ ხდის ეს სესხს უფრო საიმედოს",
+w1h:"გირაო ყოველდღე შემოსავალს მოაქვს",w1p:"მოპედები, ბატარეები და სადგურები ერთიანი სისტემაა. ის საწყობში კი არ დგას, არამედ შემოსავალი მოაქვს, საიდანაც თქვენი გადახდები მოდის.",
+w2h:"კურიერისთვის ჩვენთან დარჩენა მომგებიანია",w2p:"გაცვლით კურიერი დღეში ~150 კმ-ს გადის — ორჯერ მეტს, ვიდრე ერთი დამუხტვით. მეტი შეკვეთა — წასვლის ნაკლები მიზეზი.",
+w3h:"კონკურენტებისთვის ამის გამეორება რთულია",w3p:"თბილისში კონკურენტები ელექტროველოსიპედებს ან 35 კგ-მდე მძიმე ბატარეიან მოპედებს გასცემენ, რომლებიც საათობით იმუხტება. საკუთარი სადგურების ქსელი EV8-ს განასხვავებს.",
+w4h:"სადგურები და ბატარეებიც გირაოშია",w4p:"გირაოში შედის არა მხოლოდ 50 მოპედი, არამედ ამ პარტიის 50 დამატებითი ბატარეა და 3 გაცვლის სადგურიც.",
+mLowS:"2027 წლის იანვარი, დღგ-ს დაბრუნებამდე",
 teamEy:"გუნდი",teamH:"ვინ დგას EV8-ის უკან",tm1n:"კარდუ",tm1r:"ოპერაციები და ავტომატიზაცია: ფლოტი, კურიერები, სერვისი, პარტნიორები",tm2n:"მიკა",tm2r:"აპლიკაცია და პროგრამები: ERP, საიტი და აღრიცხვა",
 faqEy:"რა მოხდება, თუ…",faqH:"რა ხდება, თუ რამე ისე არ წავა",
 q1:"მოპედი მოიპარეს ან დაზიანდა?",a1:"ყველა მოპედზე დგას GPS დისტანციური ბლოკირებით. S70 დაზღვეულია CASCO-თი, ფრანშიზა $80.",
@@ -456,7 +504,16 @@ months:["დეკ","იან","თებ","მარ","აპრ","მაი",
 verdictFmt:(m,y)=>`${y} წლის ${m}`,notYet:"არა უადრეს 2028 წლის აგვისტოსი",backFmt:(m,y)=>`${m} ${y}`,
 monthsNom:["იანვარი","თებერვალი","მარტი","აპრილი","მაისი","ივნისი","ივლისი","აგვისტო","სექტემბერი","ოქტომბერი","ნოემბერი","დეკემბერი"],
 chartAria:"EV8-ის ანგარიში თვეების მიხედვით და სესხის თანხა",nf:"ru-RU"},
-en:{mLowS:"January 2027, before the VAT refund",
+en:{infEy:"Our edge",infH:"Our own battery swap network — the batch is built for it",
+infLede:"We ordered the S70 from the factory for our stations: the battery comes out in seconds and fits EV8's stations. A courier doesn't wait 3.5 hours to charge — they swap the battery in 15 seconds and ride on.",
+i1l:"swap points from January 2027",i2l:"stations open",i3v:"15 sec",i3l:"a swap instead of a 3.5 h charge",i4v:"~150 km",i4l:"a day instead of ~75 km on one battery",
+infMap:"Nutsubidze 65 (service centre) · Gelovani 22 · Gamsakhurdia Embankment 80 · Chiladze 9 — in Agrohub¹ hypermarkets",
+whyH:"Why this makes the loan safer",
+w1h:"The collateral earns every day",w1p:"Mopeds, batteries and stations are one system. It doesn't sit in a warehouse — it brings in the revenue your payments come from.",
+w2h:"Couriers have a reason to stay",w2p:"With swaps a courier rides ~150 km a day — twice what one charge gives. More orders, fewer reasons to leave.",
+w3h:"Hard for competitors to copy",w3p:"Competitors in Tbilisi hand out e-bikes or mopeds with heavy batteries of up to 35 kg that charge for hours. Our own station network sets EV8 apart.",
+w4h:"Stations and batteries are pledged too",w4p:"The collateral covers not only the 50 mopeds but also the batch's 50 extra batteries and 3 swap stations.",
+mLowS:"January 2027, before the VAT refund",
 teamEy:"Team",teamH:"Who runs EV8",tm1n:"Kardu",tm1r:"Operations and automation: fleet, couriers, service, partners",tm2n:"Mika",tm2r:"App and software: ERP, website and accounting",
 faqEy:"What if…",faqH:"What happens if something goes wrong",
 q1:"A moped is stolen or damaged?",a1:"Every moped has GPS with remote lock. The S70s are insured under CASCO with an $80 deductible.",
