@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>EV8 · заём $90 000</title>
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: dark thesis band, then a light scroll of working sections; numbers set in the site's display face, text in Inter (the site's second face, which carries Cyrillic). */
+:root{
+  --bg:#fbfbfb; --surface:#ffffff; --surface-2:#f3f3f3; --ink:#0b0b0b; --muted:#5d5d5d; --faint:#989898;
+  --line:#e6ebe7; --brand:#819481; --accent:#557553; --accent-soft:#e3ebe3; --lime:#e0ffa2; --on-lime:#0b0b0b;
+  --band:#0b0b0b; --band-ink:#ffffff; --band-muted:#a9aea9; --band-line:#262b26;
+  --grid:#ebebeb; --ghost:#c3c8c3; --warn:#c8402f;
+  --display:"Be Vietnam Pro","Inter","Noto Sans Georgian",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Inter","Noto Sans Georgian",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e110e; --surface:#151a15; --surface-2:#1b211b; --ink:#eef1ee; --muted:#a5b0a5; --faint:#7d877d;
+  --line:#263026; --brand:#a2b9a2; --accent:#a2b9a2; --accent-soft:#1f2b20; --lime:#e0ffa2; --on-lime:#0b0b0b;
+  --band:#050605; --band-ink:#ffffff; --band-muted:#a9aea9; --band-line:#232923;
+  --grid:#232923; --ghost:#4a544a; --warn:#ef6b5a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e110e; --surface:#151a15; --surface-2:#1b211b; --ink:#eef1ee; --muted:#a5b0a5; --faint:#7d877d;
+  --line:#263026; --brand:#a2b9a2; --accent:#a2b9a2; --accent-soft:#1f2b20; --lime:#e0ffa2; --on-lime:#0b0b0b;
+  --band:#050605; --band-ink:#ffffff; --band-muted:#a9aea9; --band-line:#232923;
+  --grid:#232923; --ghost:#4a544a; --warn:#ef6b5a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.bar img{height:22px;display:block}
+.bar-r{display:flex;align-items:center;gap:10px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:99px;padding:3px}
+.seg button{font:600 13px var(--body);border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:99px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.site{font:600 13px var(--body);text-decoration:none;color:var(--accent);padding:6px 4px}
+.site:hover{text-decoration:underline}
+
+/* hero band */
+.hero{background:var(--band);color:var(--band-ink)}
+.hero .wrap{padding-block:48px 36px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:28px;align-items:center}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.tag{font:600 12.5px var(--body);padding:5px 12px;border-radius:99px;background:var(--lime);color:var(--on-lime)}
+.tag.ghost{background:transparent;color:var(--lime);border:1px solid #557553}
+.hero h1{font:800 clamp(34px,5.4vw,58px)/1.02 var(--body);letter-spacing:-.035em}
+.hero h1 em{font-style:normal;color:var(--lime)}
+.lede{margin-top:18px;font-size:17px;color:var(--band-muted);max-width:56ch}
+.lede b{color:var(--lime);font-weight:700}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--body);text-decoration:none;padding:12px 20px;border-radius:12px;border:1px solid transparent;cursor:pointer}
+.btn.primary{background:#819481;color:#fff}
+.btn.primary:hover{background:#628767}
+.btn.line{border-color:#3a423a;color:var(--band-ink)}
+.btn.line:hover{border-color:#819481}
+.batch{margin:0;justify-self:end;width:100%;max-width:440px}
+.batch img{display:block;width:100%;height:auto;-webkit-mask-image:radial-gradient(ellipse 58% 60% at 50% 52%,#000 38%,transparent 76%);mask-image:radial-gradient(ellipse 58% 60% at 50% 52%,#000 38%,transparent 76%)}
+.batch figcaption{display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:-6px;text-align:right}
+.batch .cap{color:var(--band-muted);font-size:13.5px;line-height:1.35}
+.batch .x{font:800 clamp(40px,5vw,56px)/1 var(--display);color:#819481;letter-spacing:-.04em}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:40px;padding-top:24px;border-top:1px solid var(--band-line)}
+.kpi b{display:block;font:700 clamp(28px,3.6vw,40px)/1 var(--display);color:var(--lime);letter-spacing:-.03em}
+.kpi span{display:block;margin-top:8px;font-size:13.5px;color:var(--band-muted);line-height:1.35}
+
+/* sections */
+section{padding-block:56px 8px}
+.eyebrow{font:600 12px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:10px}
+section h2{font:800 clamp(24px,3vw,34px)/1.1 var(--body);letter-spacing:-.025em;max-width:22ch}
+.sec-lede{margin-top:10px;color:var(--muted);max-width:60ch}
+
+/* how it works */
+.steps{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;position:relative;min-width:0}
+.step svg{width:44px;height:44px;display:block;margin-bottom:14px}
+.step .n{position:absolute;top:18px;right:20px;font:700 13px var(--display);color:var(--faint)}
+.step h3{font:700 16px/1.25 var(--body);margin-bottom:6px}
+.step p{font-size:14px;color:var(--muted)}
+
+/* calculator */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;margin-top:28px}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:32px;align-items:center}
+.amount{font:800 clamp(40px,6vw,64px)/1 var(--display);letter-spacing:-.04em}
+.amount-sub{color:var(--muted);font-size:14px;margin-top:6px}
+input[type=range]{width:100%;margin-top:22px;accent-color:#557553;height:28px}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.out{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cell{background:var(--surface-2);border-radius:14px;padding:16px}
+.cell .l{font-size:12.5px;color:var(--muted)}
+.cell .v{font:700 26px/1.1 var(--display);letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+.cell.hi{background:var(--lime);color:var(--on-lime)}
+.cell.hi .l{color:#3d4a3d}
+
+/* stress */
+.stress-head{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:end;justify-content:space-between}
+.util label{display:block;font-size:13px;color:var(--muted);margin-bottom:2px}
+.util .pct{font:800 40px/1 var(--display);letter-spacing:-.03em}
+.util{min-width:min(320px,100%);flex:1}
+.verdict{background:var(--accent-soft);border-radius:14px;padding:14px 18px;min-width:min(260px,100%)}
+.verdict .l{font-size:12.5px;color:var(--muted)}
+.verdict .v{font:700 24px/1.15 var(--display);letter-spacing:-.02em;margin-top:4px}
+.chartbox{margin-top:22px;overflow-x:auto}
+.chartbox svg{display:block;width:100%;min-width:560px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.mini .cell .v{font-size:21px}
+
+/* status + funds */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:28px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;min-width:0}
+.card h3{font:700 18px var(--body);margin-bottom:14px}
+.sub{font:600 11.5px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:16px 0 8px}
+.sub:first-of-type{margin-top:0}
+ul.dots{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.dots li{padding-left:16px;position:relative}
+ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.fbar{display:flex;height:14px;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.fbar div{height:100%}
+ul.funds{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+ul.funds li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center}
+ul.funds i{width:12px;height:12px;border-radius:4px}
+ul.funds b{font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;font-weight:700}
+.note{font-size:12.5px;color:var(--faint);margin-top:10px}
+
+/* terms */
+.terms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px}
+.term{background:var(--accent-soft);border-radius:18px;padding:20px;min-width:0}
+.term .l{font:600 11.5px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.term .v{font:700 24px/1.15 var(--display);letter-spacing:-.02em;margin:8px 0 6px}
+.term p{font-size:14px;color:var(--muted)}
+
+/* footer */
+footer{margin-top:64px;background:var(--band);color:var(--band-ink)}
+footer .wrap{padding-block:40px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center}
+footer h2{font:800 clamp(24px,3vw,32px)/1.1 var(--body);letter-spacing:-.025em}
+footer p{color:var(--band-muted);margin-top:8px}
+.contacts{display:grid;gap:10px}
+.crow{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--band-line);border-radius:12px;padding:10px 12px}
+.crow span{font:600 16px var(--body);user-select:all;overflow-wrap:anywhere}
+.crow .acts{display:flex;gap:6px;flex-shrink:0}
+.mini-btn{font:600 12.5px var(--body);background:#1c221c;color:var(--band-ink);border:1px solid #2e362e;border-radius:8px;padding:6px 10px;cursor:pointer;text-decoration:none}
+.mini-btn:hover{border-color:#819481}
+.fn{max-width:1080px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 28px max(16px,env(safe-area-inset-left,0px));color:#7d877d;font-size:12.5px}
+
+:lang(ka) .eyebrow,:lang(ka) .sub,:lang(ka) .term .l{text-transform:none;letter-spacing:0}
+:lang(ka) .hero h1{font-size:clamp(30px,4.6vw,50px);letter-spacing:-.02em}
+/* team, what-if, process */
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}
+.person{display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.av{width:52px;height:52px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:700 20px var(--display);flex-shrink:0}
+.person b{font:700 18px var(--body)}
+.person p{color:var(--muted);font-size:14px;margin-top:2px}
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.qa h3{font:700 16px/1.3 var(--body);margin-bottom:6px}
+.qa p{color:var(--muted);font-size:14px}
+.steps.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.steps.three .step h3{padding-right:20px}
+.cell .s{font-size:12px;color:var(--faint);margin-top:4px}
+@media (max-width:860px){
+  .steps.three{grid-template-columns:1fr}
+  .hero-grid{grid-template-columns:1fr}
+  .batch{justify-self:start;max-width:380px}
+  .batch figcaption{justify-content:flex-start;text-align:left}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .calc,.two{grid-template-columns:1fr}
+  .terms{grid-template-columns:repeat(2,minmax(0,1fr))}
+  footer .wrap{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .team,.faq{grid-template-columns:1fr}
+  .steps,.terms,.mini{grid-template-columns:1fr}
+  .out{grid-template-columns:1fr 1fr}
+  .panel{padding:20px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .line-path{transition:d .35s ease}
+}
+</style>
+
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <img src="../../img/brand/logo.svg" alt="EV8">
+  <div class="bar-r">
+    <div class="seg" role="group" aria-label="Language">
+      <button type="button" id="lang-ka" data-lang="ka" aria-pressed="false">KA</button>
+      <button type="button" id="lang-ru" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <a class="site" href="https://ev8.ge/" target="_blank" rel="noopener">ev8.ge ↗</a>
+  </div>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="hero-grid">
+    <div>
+      <div class="tags"><span class="tag" data-i="tag1"></span><span class="tag ghost" data-i="tag2"></span></div>
+      <h1 data-i="h1" data-html></h1>
+      <p class="lede" data-i="lede" data-html></p>
+      <div class="cta">
+        <a class="btn primary" href="https://wa.me/33650828807" target="_blank" rel="noopener" data-i="ctaWa"></a>
+        <a class="btn line" href="https://ev8.ge/" target="_blank" rel="noopener" data-i="ctaSite"></a>
+      </div>
+    </div>
+    <figure class="batch"><img src="../../img/models/s70-pro.webp" alt="Luyuan S70 Pro" width="960" height="868"><figcaption><span class="x">×50</span><span class="cap" data-i="batch" data-html></span></figcaption></figure>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><b>18</b><span data-i="k1"></span></div>
+    <div class="kpi"><b>250+</b><span data-i="k2"></span></div>
+    <div class="kpi"><b>78</b><span data-i="k3"></span></div>
+    <div class="kpi"><b data-i="k4v"></b><span data-i="k4"></span></div>
+  </div>
+</div></div>
+
+<main class="wrap">
+  <section>
+    <div class="eyebrow" data-i="howEy"></div>
+    <h2 data-i="howH"></h2>
+    <ol class="steps">
+      <li class="step"><span class="n">1</span>
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><circle cx="10" cy="32" r="5"/><circle cx="35" cy="32" r="5"/><path d="M5 27c1-4 5-7 11-7h7l2 8"/><rect x="9" y="14" width="13" height="3" rx="1.5"/><path d="M15 28h19"/><path d="M30 10l5 22"/><path d="M27 10h6"/><path d="M34 20c-3.5 0-6 3-7 8"/></svg>
+        <h3 data-i="s1h"></h3><p data-i="s1p"></p></li>
+      <li class="step"><span class="n">2</span>
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><rect x="7" y="10" width="30" height="27" rx="4"/><path d="M7 18h30M15 6v8M29 6v8M15 26h6M15 31h12"/></svg>
+        <h3 data-i="s2h"></h3><p data-i="s2p"></p></li>
+      <li class="step"><span class="n">3</span>
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><rect x="12" y="9" width="20" height="30" rx="3"/><path d="M18 5h8M23 17l-4 7h6l-4 7"/></svg>
+        <h3 data-i="s3h"></h3><p data-i="s3p"></p></li>
+      <li class="step"><span class="n">4</span>
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M7 37h30M10 31l8-8 6 5 11-12"/><path d="M29 16h6v6"/></svg>
+        <h3 data-i="s4h"></h3><p data-i="s4p"></p></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="calcEy"></div>
+    <h2 data-i="calcH"></h2>
+    <div class="panel calc">
+      <div>
+        <div class="amount" id="amt">$90 000</div>
+        <div class="amount-sub" id="amt-sub"></div>
+        <label for="ticket" class="sr" style="position:absolute;left:-9999px" data-i="ticketLbl"></label>
+        <input type="range" id="ticket" min="30000" max="90000" step="10000" value="90000">
+        <div class="ticks"><span>$30K</span><span>$60K</span><span>$90K</span></div>
+      </div>
+      <div class="out">
+        <div class="cell hi"><div class="l" data-i="oMonth"></div><div class="v" id="o-month"></div></div>
+        <div class="cell"><div class="l" data-i="oMin"></div><div class="v" id="o-min"></div></div>
+        <div class="cell"><div class="l" data-i="o18"></div><div class="v" id="o-18"></div></div>
+        <div class="cell"><div class="l" data-i="oBack"></div><div class="v" id="o-back"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="stEy"></div>
+    <h2 data-i="stH"></h2>
+    <p class="sec-lede" data-i="stLede"></p>
+    <div class="panel">
+      <div class="stress-head">
+        <div class="util"><label for="util" data-i="utilLbl"></label><div class="pct" id="util-out">90%</div>
+          <input type="range" id="util" min="70" max="100" step="5" value="90">
+          <div class="ticks"><span>70%</span><span>85%</span><span>100%</span></div></div>
+        <div class="verdict"><div class="l" data-i="verdictL"></div><div class="v" id="verdict"></div></div>
+      </div>
+      <div class="chartbox"><svg id="chart" viewBox="0 0 760 300" role="img"></svg></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i><span data-i="lgCash"></span></span><span><i style="background:var(--ink);height:0;border-top:2px dashed var(--ink)"></i><span data-i="lgRef"></span></span></div>
+      <div class="mini">
+        <div class="cell"><div class="l" data-i="mOp"></div><div class="v" id="m-op"></div></div>
+        <div class="cell"><div class="l" data-i="mCov"></div><div class="v" id="m-cov"></div></div>
+        <div class="cell"><div class="l" data-i="mLow"></div><div class="v" id="m-low"></div><div class="s" data-i="mLowS"></div></div>
+      </div>
+      <p class="note" data-i="stNote"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="faqEy"></div>
+    <h2 data-i="faqH"></h2>
+    <div class="faq">
+      <div class="qa"><h3 data-i="q1"></h3><p data-i="a1"></p></div>
+      <div class="qa"><h3 data-i="q2"></h3><p data-i="a2"></p></div>
+      <div class="qa"><h3 data-i="q3"></h3><p data-i="a3"></p></div>
+      <div class="qa"><h3 data-i="q4"></h3><p data-i="a4"></p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="nowEy"></div>
+    <h2 data-i="nowH"></h2>
+    <div class="two">
+      <div class="card">
+        <div class="sub" data-i="done"></div>
+        <ul class="dots"><li data-i="d1"></li><li data-i="d2"></li><li data-i="d3"></li><li data-i="d4"></li></ul>
+        <div class="sub" data-i="doing"></div>
+        <ul class="dots"><li data-i="p1"></li><li data-i="p2"></li><li data-i="p3"></li></ul>
+      </div>
+      <div class="card">
+        <h3 data-i="fundsH"></h3>
+        <div class="fbar" id="fbar"></div>
+        <ul class="funds" id="funds"></ul>
+        <div class="total"><span data-i="total"></span><span id="ftotal"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="teamEy"></div>
+    <h2 data-i="teamH"></h2>
+    <div class="team">
+      <div class="person"><div class="av">K</div><div><b data-i="tm1n"></b><p data-i="tm1r"></p></div></div>
+      <div class="person"><div class="av">M</div><div><b data-i="tm2n"></b><p data-i="tm2r"></p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="tEy"></div>
+    <h2 data-i="tH"></h2>
+    <div class="terms">
+      <div class="term"><div class="l" data-i="t1l"></div><div class="v" data-i="t1v"></div><p data-i="t1p"></p></div>
+      <div class="term"><div class="l" data-i="t2l"></div><div class="v" data-i="t2v"></div><p data-i="t2p"></p></div>
+      <div class="term"><div class="l" data-i="t3l"></div><div class="v" data-i="t3v"></div><p data-i="t3p"></p></div>
+      <div class="term"><div class="l" data-i="t4l"></div><div class="v" data-i="t4v"></div><p data-i="t4p"></p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" data-i="prEy"></div>
+    <h2 data-i="prH"></h2>
+    <ol class="steps three">
+      <li class="step"><span class="n">1</span><h3 data-i="pr1h"></h3><p data-i="pr1p"></p></li>
+      <li class="step"><span class="n">2</span><h3 data-i="pr2h"></h3><p data-i="pr2p"></p></li>
+      <li class="step"><span class="n">3</span><h3 data-i="pr3h"></h3><p data-i="pr3p"></p></li>
+    </ol>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><h2 data-i="fH"></h2><p data-i="fP"></p></div>
+    <div class="contacts">
+      <div class="crow"><span id="c-phone">+33 6 50 82 88 07</span><div class="acts"><a class="mini-btn" href="https://wa.me/33650828807" target="_blank" rel="noopener">WhatsApp</a><button type="button" class="mini-btn" data-copy="c-phone" data-i="copy"></button></div></div>
+      <div class="crow"><span id="c-mail">info@ev8.ge</span><div class="acts"><button type="button" class="mini-btn" data-copy="c-mail" data-i="copy"></button></div></div>
+      <div class="crow"><span>ev8.ge</span><div class="acts"><a class="mini-btn" href="https://ev8.ge/" target="_blank" rel="noopener" data-i="open"></a></div></div>
+    </div>
+  </div>
+  <div class="fn" data-i="fn"></div>
+</footer>
+
+<script>
+const T={
+ru:{mLowS:"январь 2027, до возврата НДС",
+teamEy:"Команда",teamH:"Кто стоит за EV8",tm1n:"Карду",tm1r:"Операционная работа и автоматизация: парк, курьеры, сервис, партнёры",tm2n:"Мика",tm2r:"Приложение и софт: ERP, сайт и учёт",
+faqEy:"Что если…",faqH:"Что будет, если что-то пойдёт не так",
+q1:"Мопед угнали или разбили?",a1:"На каждом мопеде стоит GPS с удалённой блокировкой. S70 застрахованы по CASCO, франшиза $80.",
+q2:"Курьер перестал платить?",a2:"Если курьер 12 часов не выходит на связь, блокируем мопед через GPS. Депозит 180 ₾ остаётся у нас, а мопед уходит следующему из очереди — в ней 250+ курьеров.",
+q3:"Лари подешевеет?",a3:"Аренда в лари, выплаты — в долларах. Даже если лари подешевеет на 15%, при загрузке 90% вернём $90 000 к ноябрю 2027.",
+q4:"Мопеды будут простаивать?",a4:"Сейчас в аренде около 95% исправных мопедов, в очереди 250+ курьеров. Даже при загрузке 70% возвращаем $90 000 к декабрю 2027 — это видно в стресс-тесте выше.",
+prEy:"Как оформляем",prH:"Два договора и выплаты каждый месяц",
+pr1h:"Договор займа",pr1p:"Подписываем с E-Motion Motors LLC (EV8): сумма, 18% годовых, график выплат.",
+pr2h:"Договор залога",pr2p:"Мопеды партии в залоге у инвесторов пропорционально сумме; регистрируем залог в Публичном реестре Грузии.",
+pr3h:"Выплаты",pr3p:"Каждый месяц с марта 2027 переводим проценты на ваш счёт в долларах.",
+title:"EV8 · заём $90 000",tag1:"Заём под залог мопедов",tag2:"Станции замены батарей в Agrohub¹ — с января 2027",
+h1:"$90 000 на 50 новых электромопедов. <em>18%</em> годовых.",
+lede:"<b>$1 350 в месяц</b> — выплаты инвестору с марта 2027 года, 18 месяцев. Заём обеспечен самими мопедами. $90 000 возвращаем из выручки от аренды — по плану в сентябре 2027.",
+ctaWa:"Написать в WhatsApp",ctaSite:"Сайт ev8.ge ↗",batch:"Luyuan S70 Pro<br>приедут в Тбилиси в январе 2027",
+k1:"мопедов в аренде сейчас",k2:"курьеров в очереди на мопед",k3:"мопедов будет в аренде с новой партией",k4v:"$60 000",k4:"вложено собственных средств",
+howEy:"Как работает EV8",howH:"Курьер платит за мопед раз в неделю и меняет батарею за 15 секунд",
+s1h:"Берёт мопед в аренду",s1p:"Вносит депозит 180 ₾ и забирает S70 Pro.",
+s2h:"Платит раз в неделю",s2p:"185 ₾ в неделю, страховка включена. После 52 платежей мопед становится его.",
+s3h:"Меняет батарею за 15 секунд",s3p:"Станции замены работают 24/7: на Нуцубидзе, а с января — и в гипермаркетах Agrohub. Одна замена — 3,49 ₾.",
+s4h:"Работает каждый день",s4p:"Курьер проезжает ~150 км в день — без бензина и без ожидания зарядки. В аренде около 95% парка.",
+calcEy:"Калькулятор",calcH:"Сколько получит инвестор",ticketLbl:"Сумма инвестиции",
+oMonth:"Выплата в месяц",oMin:"Минимум, даже если вернём раньше",o18:"Доход за 18 месяцев",oBack:"Сумма вернётся",
+amtSub:(n)=>`доля в общем залоге — ${n}% партии`,
+stEy:"Стресс-тест",stH:"Когда EV8 сможет вернуть $90 000",stLede:"Двигайте ползунок: сколько мопедов в аренде — и когда на счёте хватит денег, чтобы вернуть $90 000. Выплаты инвестору 18% уже вычтены.",
+utilLbl:"Доля мопедов в аренде",verdictL:"$90 000 можно вернуть",lgCash:"деньги на счёте EV8 после выплат инвестору",lgRef:"$90 000 + запас $5 000",
+mOp:"Чистый доход EV8 в месяц",mCov:"Доход / выплата",mLow:"Минимальный остаток на счёте",
+stNote:"Как считали: аренда 150 ₾ (старые мопеды) и 185 ₾ (S70) в неделю — цены с НДС, в расчёте без НДС; замена батареи 3,49 ₾; расходы $3 500 в месяц, обслуживание $15 на мопед, страховка S70; курс 2,70 ₾ за $1.",
+nowEy:"Где мы сейчас",nowH:"Бизнес уже работает. Деньги — на рост.",done:"Сделано",doing:"Делаем сейчас",
+d1:"Апрель 2026 — запуск в Тбилиси на свои $50 000",d2:"Купили 60 мопедов, 29 продали и перешли на аренду",d3:"Из 31 оставшегося 18 в аренде, 10 ждут батарей",d4:"Своя станция замены, сервис и ERP-система",
+p1:"Заказали у завода Luyuan партию на $67 480 — 15% уже оплатили сами",p2:"Эти 10 мопедов выйдут в аренду, как только приедут батареи",p3:"Станции замены в гипермаркетах Agrohub¹ — с января 2027",
+fundsH:"Куда пойдут $90 000",total:"Итого",vatNote:"* Импортный НДС возвращается в следующем месяце после растаможки.",
+funds:["85% инвойса Luyuan","Импортный НДС 18% — вернётся в феврале, это наш запас","Доставка и логистика","Экспертиза, регистрация, установка станций","Батареи для 10 мопедов, которые сейчас не сданы"],
+tEy:"Условия",tH:"Что получает инвестор",
+t1l:"Проценты",t1v:"18% годовых",t1p:"$1 350 в месяц с марта 2027, 18 месяцев",
+t2l:"Возврат суммы",t2v:"до августа 2028",t2p:"одним платежом; по плану — в сентябре 2027",
+t3l:"Минимальный доход",t3v:"$16 200",t3p:"если вернём деньги раньше, всё равно выплатим проценты минимум за 12 месяцев",
+t4l:"Залог",t4v:"вся партия",t4p:"50 мопедов S70 Pro, 50 доп. батарей, 3 станции; GPS, страховка CASCO",
+fH:"Обсудим?",fP:"Напишите в WhatsApp или на почту — пришлём проект договора и ответим на вопросы.",copy:"Копировать",copied:"Скопировано",open:"Открыть ↗",
+fn:"¹ Agrohub — сеть гипермаркетов в Грузии, 9 магазинов 24/7. Заёмщик — E-Motion Motors LLC (EV8), Грузия; суммы займа в USD.",
+months:["Дек","Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя"],monthsLong:["январе","феврале","марте","апреле","мае","июне","июле","августе","сентябре","октябре","ноябре","декабре"],
+verdictFmt:(m,y)=>`в ${m} ${y}`,notYet:"не раньше августа 2028",backFmt:(m,y)=>`${m} ${y}`,
+monthsNom:["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],
+chartAria:"Деньги на счёте EV8 по месяцам и сумма займа",nf:"ru-RU"},
+ka:{mLowS:"2027 წლის იანვარი, დღგ-ს დაბრუნებამდე",
+teamEy:"გუნდი",teamH:"ვინ დგას EV8-ის უკან",tm1n:"კარდუ",tm1r:"ოპერაციები და ავტომატიზაცია: ფლოტი, კურიერები, სერვისი, პარტნიორები",tm2n:"მიკა",tm2r:"აპლიკაცია და პროგრამები: ERP, საიტი და აღრიცხვა",
+faqEy:"რა მოხდება, თუ…",faqH:"რა ხდება, თუ რამე ისე არ წავა",
+q1:"მოპედი მოიპარეს ან დაზიანდა?",a1:"ყველა მოპედზე დგას GPS დისტანციური ბლოკირებით. S70 დაზღვეულია CASCO-თი, ფრანშიზა $80.",
+q2:"კურიერმა გადახდა შეწყვიტა?",a2:"თუ კურიერი 12 საათის განმავლობაში არ გამოდის კავშირზე, მოპედს GPS-ით ვბლოკავთ. 180 ₾ დეპოზიტი ჩვენთან რჩება, მოპედი კი რიგში მომდევნოს გადაეცემა — რიგში 250+ კურიერია.",
+q3:"ლარი გაუფასურდება?",a3:"ქირა ლარშია, გადახდები — დოლარში. ლარი 15%-ით რომც გაუფასურდეს, 90%-იანი დატვირთვისას $90 000-ს 2027 წლის ნოემბრისთვის დავაბრუნებთ.",
+q4:"მოპედები უქმად დადგება?",a4:"ახლა მუშა მოპედების დაახლოებით 95% ქირაშია, რიგში კი 250+ კურიერია. 70%-იანი დატვირთვის დროსაც $90 000-ს 2027 წლის დეკემბრისთვის ვაბრუნებთ — ეს ზემოთ, სტრეს-ტესტში ჩანს.",
+prEy:"როგორ ვაფორმებთ",prH:"ორი ხელშეკრულება და ყოველთვიური გადახდები",
+pr1h:"სესხის ხელშეკრულება",pr1p:"ვაფორმებთ შპს E-Motion Motors-თან (EV8): თანხა, 18% წლიური, გადახდების გრაფიკი.",
+pr2h:"გირაოს ხელშეკრულება",pr2p:"პარტიის მოპედები გირაოშია ინვესტორებთან, თანხის პროპორციულად; გირაოს ვარეგისტრირებთ საჯარო რეესტრში.",
+pr3h:"გადახდები",pr3p:"2027 წლის მარტიდან ყოველთვე ვრიცხავთ პროცენტს თქვენს ანგარიშზე დოლარში.",
+title:"EV8 · სესხი $90 000",tag1:"სესხი მოპედების გირაოთი",tag2:"ბატარეის გაცვლის სადგურები Agrohub¹-ში — 2027 წლის იანვრიდან",
+h1:"$90 000 50 ახალი ელექტრომოპედისთვის. <em>18%</em> წლიური.",
+lede:"<b>$1 350 თვეში</b> — ინვესტორს 2027 წლის მარტიდან, 18 თვის განმავლობაში. სესხი უზრუნველყოფილია თავად მოპედებით. $90 000-ს ვაბრუნებთ ქირის შემოსავლიდან — გეგმით 2027 წლის სექტემბერში.",
+ctaWa:"მოგვწერეთ WhatsApp-ში",ctaSite:"საიტი ev8.ge ↗",batch:"Luyuan S70 Pro<br>თბილისში ჩამოვა 2027 წლის იანვარში",
+k1:"მოპედი ახლა ქირაშია",k2:"კურიერი რიგში ელოდება მოპედს",k3:"მოპედი იქნება ქირაში ახალი პარტიით",k4v:"$60 000",k4:"ჩადებული საკუთარი სახსრები",
+howEy:"როგორ მუშაობს EV8",howH:"კურიერი მოპედის ქირას კვირაში ერთხელ იხდის, ბატარეას კი 15 წამში ცვლის",
+s1h:"იღებს მოპედს ქირით",s1p:"იხდის 180 ₾ დეპოზიტს და იღებს S70 Pro-ს.",
+s2h:"იხდის კვირაში ერთხელ",s2p:"185 ₾ კვირაში, დაზღვევის ჩათვლით. 52 გადახდის შემდეგ მოპედი მისი ხდება.",
+s3h:"ბატარეას 15 წამში ცვლის",s3p:"გაცვლის სადგურები 24/7 მუშაობს: ნუცუბიძეზე, იანვრიდან კი Agrohub-ის ჰიპერმარკეტებშიც. ერთი გაცვლა — 3,49 ₾.",
+s4h:"ყოველდღე მუშაობს",s4p:"კურიერი დღეში ~150 კმ-ს გადის — ბენზინისა და დამუხტვის ლოდინის გარეშე. ფლოტის დაახლოებით 95% ქირაშია.",
+calcEy:"კალკულატორი",calcH:"რამდენს მიიღებს ინვესტორი",ticketLbl:"ინვესტიციის თანხა",
+oMonth:"გადახდა თვეში",oMin:"მინიმუმი, ადრე დაბრუნების შემთხვევაშიც",o18:"შემოსავალი 18 თვეში",oBack:"თანხა დაბრუნდება",
+amtSub:(n)=>`წილი საერთო გირაოში — პარტიის ${n}%`,
+stEy:"სტრეს-ტესტი",stH:"როდის შეძლებს EV8 $90 000-ის დაბრუნებას",stLede:"გადაწიეთ სლაიდერი: რამდენი მოპედია ქირაში — და როდის ეყოფა ანგარიშზე ფული $90 000-ის დასაბრუნებლად. ინვესტორის 18%-იანი გადახდები უკვე გამოკლებულია.",
+utilLbl:"ქირაში მყოფი მოპედების წილი",verdictL:"$90 000-ის დაბრუნება შესაძლებელია",lgCash:"EV8-ის ანგარიში ინვესტორის გადახდების შემდეგ",lgRef:"$90 000 + რეზერვი $5 000",
+mOp:"EV8-ის წმინდა შემოსავალი თვეში",mCov:"შემოსავალი / გადახდა",mLow:"ანგარიშის მინიმალური ნაშთი",
+stNote:"როგორ დავთვალეთ: ქირა 150 ₾ (ძველი მოპედები) და 185 ₾ (S70) კვირაში — ფასები დღგ-ს ჩათვლით, გაანგარიშებაში დღგ-ს გარეშე; ბატარეის გაცვლა 3,49 ₾; ხარჯები $3 500 თვეში, მომსახურება $15 მოპედზე, S70-ის დაზღვევა; კურსი 2,70 ₾ = $1.",
+nowEy:"სად ვართ ახლა",nowH:"ბიზნესი უკვე მუშაობს. ფული — ზრდისთვის.",done:"გაკეთებულია",doing:"ახლა ვაკეთებთ",
+d1:"2026 წლის აპრილი — გაშვება თბილისში საკუთარი $50 000-ით",d2:"ვიყიდეთ 60 მოპედი, 29 გავყიდეთ და გადავედით ქირაზე",d3:"დარჩენილი 31-დან 18 ქირაშია, 10 ბატარეებს ელოდება",d4:"საკუთარი გაცვლის სადგური, სერვისი და ERP სისტემა",
+p1:"Luyuan-ის ქარხანაში შევუკვეთეთ პარტია $67 480-ად — 15% უკვე გადავიხადეთ",p2:"ეს 10 მოპედი ქირაში გავა, როგორც კი ბატარეები ჩამოვა",p3:"გაცვლის სადგურები Agrohub¹-ის ჰიპერმარკეტებში — 2027 წლის იანვრიდან",
+fundsH:"სად წავა $90 000",total:"სულ",vatNote:"* იმპორტის დღგ განბაჟებიდან მომდევნო თვეში ბრუნდება.",
+funds:["Luyuan-ის ინვოისის 85%","იმპორტის დღგ 18% — თებერვალში დაბრუნდება, ეს ჩვენი რეზერვია","ტრანსპორტირება და ლოჯისტიკა","ექსპერტიზა, რეგისტრაცია, სადგურების მონტაჟი","ბატარეები 10 მოპედისთვის, რომლებიც ჯერ ქირაში არ არის"],
+tEy:"პირობები",tH:"რას იღებს ინვესტორი",
+t1l:"პროცენტი",t1v:"18% წლიური",t1p:"$1 350 თვეში 2027 წლის მარტიდან, 18 თვე",
+t2l:"თანხის დაბრუნება",t2v:"2028 წლის აგვისტომდე",t2p:"ერთი გადახდით; გეგმით — 2027 წლის სექტემბერში",
+t3l:"მინიმალური შემოსავალი",t3v:"$16 200",t3p:"თუ თანხას ადრე დავაბრუნებთ, პროცენტს მაინც გადავიხდით მინიმუმ 12 თვისთვის",
+t4l:"გირაო",t4v:"მთელი პარტია",t4p:"50 მოპედი S70 Pro, 50 დამატებითი ბატარეა, 3 სადგური; GPS, CASCO დაზღვევა",
+fH:"ვისაუბროთ?",fP:"მოგვწერეთ WhatsApp-ში ან ელფოსტაზე — გამოგიგზავნით ხელშეკრულების პროექტს და ვუპასუხებთ კითხვებს.",copy:"კოპირება",copied:"დაკოპირდა",open:"გახსნა ↗",
+fn:"¹ Agrohub — ჰიპერმარკეტების ქსელი საქართველოში, 9 მაღაზია 24/7. მსესხებელი — შპს E-Motion Motors (EV8), საქართველო; სესხის თანხები USD-ში.",
+months:["დეკ","იან","თებ","მარ","აპრ","მაი","ივნ","ივლ","აგვ","სექ","ოქტ","ნოე"],monthsLong:["იანვარში","თებერვალში","მარტში","აპრილში","მაისში","ივნისში","ივლისში","აგვისტოში","სექტემბერში","ოქტომბერში","ნოემბერში","დეკემბერში"],
+verdictFmt:(m,y)=>`${y} წლის ${m}`,notYet:"არა უადრეს 2028 წლის აგვისტოსი",backFmt:(m,y)=>`${m} ${y}`,
+monthsNom:["იანვარი","თებერვალი","მარტი","აპრილი","მაისი","ივნისი","ივლისი","აგვისტო","სექტემბერი","ოქტომბერი","ნოემბერი","დეკემბერი"],
+chartAria:"EV8-ის ანგარიში თვეების მიხედვით და სესხის თანხა",nf:"ru-RU"},
+en:{mLowS:"January 2027, before the VAT refund",
+teamEy:"Team",teamH:"Who runs EV8",tm1n:"Kardu",tm1r:"Operations and automation: fleet, couriers, service, partners",tm2n:"Mika",tm2r:"App and software: ERP, website and accounting",
+faqEy:"What if…",faqH:"What happens if something goes wrong",
+q1:"A moped is stolen or damaged?",a1:"Every moped has GPS with remote lock. The S70s are insured under CASCO with an $80 deductible.",
+q2:"A courier stops paying?",a2:"If a courier is unreachable for 12 hours, we lock the moped via GPS. We keep the 180 ₾ deposit and the moped goes to the next courier in line — 250+ are waiting.",
+q3:"The lari weakens?",a3:"Rent is in lari, payments are in dollars. Even if the lari loses 15%, at 90% we repay the $90,000 by November 2027.",
+q4:"Mopeds sit idle?",a4:"Today about 95% of working mopeds are on rent and 250+ couriers are waiting. Even at 70% we repay the $90,000 by December 2027 — see the stress test above.",
+prEy:"How we sign",prH:"Two agreements and monthly payments",
+pr1h:"Loan agreement",pr1p:"Signed with E-Motion Motors LLC (EV8): amount, 18% a year, payment schedule.",
+pr2h:"Pledge agreement",pr2p:"The batch's mopeds are pledged to investors in proportion to their amount; we register the pledge in Georgia's Public Registry.",
+pr3h:"Payments",pr3p:"Every month from March 2027 we transfer the interest to your account in US dollars.",
+title:"EV8 · $90,000 loan",tag1:"Loan secured by the mopeds",tag2:"Battery swap stations in Agrohub¹ from January 2027",
+h1:"$90,000 for 50 new electric mopeds. <em>18%</em> a year.",
+lede:"<b>$1,350 a month</b> to the investor from March 2027, for 18 months. The loan is secured by the mopeds themselves. We repay the $90,000 from rental income — planned for September 2027.",
+ctaWa:"Message us on WhatsApp",ctaSite:"Visit ev8.ge ↗",batch:"Luyuan S70 Pro<br>arriving in Tbilisi, January 2027",
+k1:"mopeds on rent today",k2:"couriers on the waiting list",k3:"mopeds on rent with the new batch",k4v:"$60,000",k4:"of our own money invested",
+howEy:"How EV8 works",howH:"Couriers pay for a moped once a week and swap batteries in 15 seconds",
+s1h:"Rents a moped",s1p:"Pays a 180 ₾ deposit and takes an S70 Pro.",
+s2h:"Pays weekly",s2p:"185 ₾ a week, insurance included. After 52 payments the moped is theirs.",
+s3h:"Swaps the battery in 15 seconds",s3p:"Swap stations open 24/7: on Nutsubidze St, and from January in Agrohub hypermarkets too. One swap costs 3.49 ₾.",
+s4h:"Works every day",s4p:"A courier rides ~150 km a day — no petrol, no waiting for a charge. About 95% of the fleet is on rent.",
+calcEy:"Calculator",calcH:"What the investor receives",ticketLbl:"Investment amount",
+oMonth:"Monthly payment",oMin:"Minimum, even if we repay early",o18:"Income over 18 months",oBack:"Money returned",
+amtSub:(n)=>`share of the joint collateral — ${n}% of the batch`,
+stEy:"Stress test",stH:"When EV8 can repay the $90,000",stLede:"Move the slider: how many mopeds are on rent, and when there is enough cash to repay $90,000. The 18% payments to the investor are already deducted.",
+utilLbl:"Share of fleet on rent",verdictL:"$90,000 can be repaid",lgCash:"EV8 cash after paying the investor",lgRef:"$90,000 + $5,000 buffer",
+mOp:"EV8 net income per month",mCov:"Income / payment",mLow:"Lowest cash balance",
+stNote:"How we calculated: rent of 150 ₾ (older mopeds) and 185 ₾ (S70) a week — prices include VAT, the model excludes it; battery swap 3.49 ₾; costs $3,500 a month, service $15 per moped, S70 insurance; 2.70 ₾ per $1.",
+nowEy:"Where we are",nowH:"The business already works. The money is for growth.",done:"Done",doing:"Doing now",
+d1:"April 2026 — launched in Tbilisi with $50,000 of our own money",d2:"Bought 60 mopeds, sold 29 and switched to rentals",d3:"Of the remaining 31, 18 are on rent, 10 are waiting for batteries",d4:"Our own swap station, service shop and ERP system",
+p1:"Ordered a $67,480 batch from the Luyuan factory — 15% already paid by us",p2:"Those 10 mopeds go on rent as soon as the batteries arrive",p3:"Swap stations in Agrohub¹ hypermarkets from January 2027",
+fundsH:"Where the $90,000 goes",total:"Total",vatNote:"* Import VAT is refunded the month after customs clearance.",
+funds:["85% of the Luyuan invoice","Import VAT 18% — refunded in February, our buffer","Shipping and logistics","Inspection, registration, station installation","Batteries for the 10 mopeds not yet on rent"],
+tEy:"Terms",tH:"What the investor gets",
+t1l:"Interest",t1v:"18% a year",t1p:"$1,350 a month from March 2027, for 18 months",
+t2l:"Repayment",t2v:"by August 2028",t2p:"in one payment; planned for September 2027",
+t3l:"Minimum income",t3v:"$16,200",t3p:"if we repay early, you still get at least 12 months of interest",
+t4l:"Collateral",t4v:"the whole batch",t4p:"50 S70 Pro mopeds, 50 extra batteries, 3 stations; GPS, CASCO insurance",
+fH:"Let's talk",fP:"Message us on WhatsApp or by email — we'll send the draft agreement and answer your questions.",copy:"Copy",copied:"Copied",open:"Open ↗",
+fn:"¹ Agrohub — a Georgian hypermarket chain, 9 stores open 24/7. Borrower: E-Motion Motors LLC (EV8), Georgia; all loan amounts in USD.",
+months:["Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"],monthsLong:["January","February","March","April","May","June","July","August","September","October","November","December"],
+verdictFmt:(m,y)=>`in ${m} ${y}`,notYet:"no earlier than August 2028",backFmt:(m,y)=>`${m} ${y}`,
+monthsNom:["January","February","March","April","May","June","July","August","September","October","November","December"],
+chartAria:"EV8 cash balance by month and the loan amount",nf:"en-US"}};
+
+let lang="ru";
+try{const q=new URLSearchParams(location.search).get("lang");const h=location.hash.replace("#","");const s=localStorage.getItem("ev8-lang");const ok=v=>v==="en"||v==="ru"||v==="ka";lang=ok(h)?h:ok(q)?q:ok(s)?s:"ru"}catch(e){}
+
+const $=id=>document.getElementById(id);
+const fmt=(v)=>"$"+Math.round(v).toLocaleString(T[lang].nf).replace(/ | /g," ");
+
+/* ---- cash-flow model (USD, months Dec 2026 … Aug 2028) ---- */
+const RATE=2.70, perM=g=>g*52/12/1.18/RATE;
+const OLD=perM(150), S70=perM(185), SWAP=30*3.49/1.18*0.8/RATE;
+const N=21, RAISE=90000, COUPON=RAISE*0.18/12, REF=95000;
+function model(u){
+  let cash=RAISE, rows=[], low=Infinity;
+  for(let i=0;i<N;i++){
+    const old = i===0?18 : i===1?Math.min(23,28*u) : 28*u;
+    const s70 = i===0?0 : i===1?Math.min(12,50*u) : i===2?Math.min(40,50*u) : 50*u;
+    const rev = old*OLD + s70*(S70+SWAP);
+    const opex = 3500 + (i>0?11235/12:0) + 15*(old+s70);
+    const capex = i===0?71058 : i===1?18900 : i===2?-13900 : 0;
+    const cpn = i>=3?COUPON:0;
+    cash += rev-opex-capex-cpn;
+    rows.push({i,cash,op:rev-opex});
+    if(i<3) low=Math.min(low,cash);
+  }
+  const hit=rows.find(r=>r.i>=3&&r.cash>=REF);
+  return {rows,hit,op:rows[N-1].op,low};
+}
+function monthOf(i){const m=(11+i)%12, y=2026+Math.floor((11+i)/12);return {m,y}}
+
+/* ---- chart ---- */
+function drawChart(u){
+  const t=T[lang], svg=$("chart"), W=760,H=300,L=58,R=730,TOP=20,B=258, YMAX=250000;
+  const x=i=>L+i*(R-L)/(N-1), y=v=>B-Math.max(v,0)/YMAX*(B-TOP);
+  const base=model(0.9), cur=model(u);
+  const ln=rows=>rows.map((r,k)=>(k?"L":"M")+x(r.i).toFixed(1)+" "+y(r.cash).toFixed(1)).join(" ");
+  let g="";
+  for(const v of [0,50000,100000,150000,200000,250000]){g+=`<line x1="${L}" x2="${R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--faint)">${v?v/1000+"K":"0"}</text>`}
+  for(let i=0;i<N;i+=3){const {m,y:yy}=monthOf(i);g+=`<text x="${x(i)}" y="${B+22}" text-anchor="middle" font-size="12" fill="var(--faint)">${t.months[(m+1)%12]} ${String(yy).slice(2)}</text>`}
+  g+=`<line x1="${L}" x2="${R}" y1="${y(REF)}" y2="${y(REF)}" stroke="var(--ink)" stroke-dasharray="5 5" opacity=".7"/>`;
+  if(Math.abs(u-0.9)>1e-9) g+=`<path d="${ln(base.rows)}" fill="none" stroke="var(--ghost)" stroke-width="2"/><text x="${R-4}" y="${y(base.rows[N-1].cash)-8}" text-anchor="end" font-size="12" fill="var(--faint)">90%</text>`;
+  g+=`<path class="line-path" d="${ln(cur.rows)}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>`;
+  cur.rows.forEach(r=>{g+=`<circle cx="${x(r.i)}" cy="${y(r.cash)}" r="2.6" fill="var(--accent)"><title>${t.months[(monthOf(r.i).m+1)%12]} ${monthOf(r.i).y}: ${fmt(r.cash)}</title></circle>`});
+  if(cur.hit){const hx=x(cur.hit.i),hy=y(cur.hit.cash);const {m,y:yy}=monthOf(cur.hit.i);
+    const label=`${t.monthsNom[m]} ${yy}`;const right=hx<R-170;
+    g+=`<circle cx="${hx}" cy="${hy}" r="7" fill="var(--lime)" stroke="var(--accent)" stroke-width="2.5"/><text x="${right?hx+12:hx-12}" y="${hy-12}" text-anchor="${right?"start":"end"}" font-size="13" font-weight="700" fill="var(--ink)">${label}</text>`}
+  svg.setAttribute("aria-label",t.chartAria);svg.innerHTML=g;
+  const p=$("util-out");p.textContent=Math.round(u*100)+"%";
+  if(cur.hit){const {m,y:yy}=monthOf(cur.hit.i);$("verdict").textContent=t.verdictFmt(t.monthsLong[m],yy)}else $("verdict").textContent=t.notYet;
+  $("m-op").textContent=fmt(cur.op);
+  $("m-cov").textContent=(cur.op/COUPON).toFixed(1).replace(".",lang==="en"?".":",")+"×";
+  $("m-low").textContent=fmt(cur.low);
+}
+
+/* ---- calculator ---- */
+function calc(){
+  const t=T[lang], a=+$("ticket").value;
+  $("amt").textContent=fmt(a);
+  $("amt-sub").textContent=t.amtSub(Math.round(a/RAISE*100));
+  $("o-month").textContent=fmt(a*0.015);
+  $("o-min").textContent=fmt(a*0.18);
+  $("o-18").textContent=fmt(a*0.27);
+  const h=model(+$("util").value/100).hit;
+  if(h){const {m,y}=monthOf(h.i);$("o-back").textContent=t.backFmt(t.months[(m+1)%12],y)}else $("o-back").textContent="08.2028";
+}
+
+/* ---- funds ---- */
+const FUNDS=[[57358,"#557553"],[13900,"#819481"],[10000,"#a2b9a2"],[5000,"#c9d6c9"],[3700,"#e0ffa2"]];
+function funds(){
+  const t=T[lang], tot=FUNDS.reduce((s,f)=>s+f[0],0);
+  $("fbar").innerHTML=FUNDS.map(f=>`<div style="width:${f[0]/tot*100}%;background:${f[1]}"></div>`).join("");
+  $("funds").innerHTML=FUNDS.map((f,k)=>`<li><i style="background:${f[1]}"></i><span>${t.funds[k]}</span><b>${fmt(f[0])}</b></li>`).join("");
+  $("ftotal").textContent=fmt(tot);
+}
+
+/* ---- i18n ---- */
+function apply(){
+  const t=T[lang];document.documentElement.lang=lang;document.title=t.title;
+  document.querySelectorAll("[data-i]").forEach(el=>{const v=t[el.dataset.i];if(typeof v!=="string")return; if(el.hasAttribute("data-html"))el.innerHTML=v; else el.textContent=v});
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang)));
+  funds();calc();drawChart(+$("util").value/100);
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{lang=b.dataset.lang;try{localStorage.setItem("ev8-lang",lang)}catch(e){};try{history.replaceState(null,"","#"+lang)}catch(e){};apply()}));
+$("ticket").addEventListener("input",calc);
+$("util").addEventListener("input",()=>{drawChart(+$("util").value/100);calc()});
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const el=$(b.dataset.copy), txt=el.textContent.trim(), t=T[lang];
+  const done=()=>{b.textContent=t.copied;setTimeout(()=>b.textContent=t.copy,1600)};
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)};
+  try{navigator.clipboard.writeText(txt).then(done,sel)}catch(e){sel()}
+}));
+window.addEventListener("hashchange",()=>{const h=location.hash.replace("#","");if((h==="en"||h==="ru"||h==="ka")&&h!==lang){lang=h;apply()}});
+apply();
+</script>
+
+</body>
+</html>
