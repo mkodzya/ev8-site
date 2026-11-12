@@ -5,7 +5,7 @@
 // entrance: the lamp comes on, the moped appears out of the dark, the figures
 // follow (Mika, 03.10.2026: "as if you really walk into a garage").
 import { dict, href, asset, type Locale } from '../i18n';
-import { models, BATTERIES } from '../data/models';
+import { models } from '../data/models';
 
 interface Props { locale: Locale; variant?: 'page' | 'inset'; id?: string; }
 const { locale, variant = 'inset', id = 'garage' } = Astro.props;
@@ -16,7 +16,7 @@ const pad = (i: number) => String(i).padStart(2, '0');
 // fleet yet, that it is insured and when it comes (Kardu, 11.10.2026; models.ts).
 const num = (x: number) => (locale === 'en' ? String(x) : String(x).replace('.', ','));
 const specs: { label: string; value: (m: (typeof models)[number]) => string }[] = [
-  { label: t.range, value: (m) => t.rangeValue.replace('{km}', String(m.rangeKm)).replace('{n}', String(BATTERIES)) },
+  { label: t.range, value: (m) => t.rangeValue.replace('{km}', String(m.rangeKm)).replace('{n}', String(m.batteries)) },
   { label: t.motor, value: (m) => t.motorValue.replace('{w}', String(m.motorW)) },
   { label: t.battery, value: (m) => t.batteryValue.replace('{v}', String(m.battery.volts)).replace('{ah}', String(m.battery.ah)) },
   { label: t.charge, value: (m) => t.chargeValue.replace('{h}', num(m.chargeHours)) },
