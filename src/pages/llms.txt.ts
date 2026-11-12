@@ -5,7 +5,7 @@
 // as the pages, so it never says anything the site does not (Kardu, 04.11.2026).
 import type { APIRoute } from 'astro';
 import { dict } from '../i18n';
-import { models, fullName, fromGel, BATTERIES, DEPOSIT_GEL, contact } from '../data/models';
+import { models, fullName, fromGel, DEPOSIT_GEL, contact } from '../data/models';
 import { googleReviews } from '../data/reviews';
 import { faqItems } from '../lib/faq';
 import { PAGES, prodUrl } from '../lib/seo';
@@ -32,7 +32,7 @@ export const GET: APIRoute = () => {
   };
   const model = (m: (typeof models)[number]) =>
     `- ${fullName(m)}: ${m.weeklyGel} GEL a week; ${m.licence === 'none' ? 'no licence needed' : 'AM licence category needed'}; ` +
-    `${m.rangeKm} km on one battery; ${m.motorW} W motor; ${m.battery.volts} V ${m.battery.ah} Ah battery, full charge in ${m.chargeHours} h` +
+    `${m.batteries} ${m.batteries === 1 ? 'battery and charger' : 'batteries and chargers'} included; ${m.rangeKm} km on one battery; ${m.motorW} W motor; ${m.battery.volts} V ${m.battery.ah} Ah battery, full charge in ${m.chargeHours} h` +
     `${m.deliveryBox ? '; delivery box' : ''}${m.insurance ? '; compulsory insurance included' : ''}${m.from ? `; ${en.garage.soonShort}, booking open now` : ''}`;
 
   const lines = [
@@ -45,7 +45,7 @@ export const GET: APIRoute = () => {
     '## Key facts',
     '',
     `- Rent by the week, from ${fromGel} GEL a week; minimum one week. Deposit ${DEPOSIT_GEL} GEL.`,
-    `- ${BATTERIES} batteries and ${BATTERIES} chargers come with every moped; consumables and repairs are included.`,
+    `- Batteries and chargers come with the moped (${models.map((m) => `${fullName(m)}: ${m.batteries} + ${m.batteries}`).join(', ')}); consumables and repairs are included.`,
     `- Battery swap stations: ${en.stationsPage.stations.map(([n, a]) => `${n} (${a})`).join('; ')}. Swaps 24/7, 3.49 GEL a swap, about 15 seconds.`,
     `- Showroom: ${en.footer.address}; ${en.footer.hours}. Free test ride. No delivery: mopeds are handed over at the showroom.`,
     `- Phone ${contact.phone}, email ${contact.email}. Instagram ${contact.instagram}, Facebook ${contact.facebook}.`,
