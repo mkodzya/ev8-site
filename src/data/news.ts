@@ -52,19 +52,6 @@ export const issues: Issue[] = [
     items: [
       {
         date: '2026-11-12',
-        source: 'priceshub.ge',
-        url: 'https://priceshub.ge/',
-        ka: {
-          title: 'რეგულარი ბენზინი — 3,97 ₾ ლიტრი',
-          text: '12 ნოემბერს რეგულარი ბენზინის (92/93) ფასის მედიანა საქართველოს ბენზინგასამართ ქსელებში ლიტრზე 3,97 ₾ იყო, 5 ნოემბერს — 4,00 ₾.',
-        },
-        en: {
-          title: 'Regular petrol: 3.97 ₾ a litre',
-          text: 'On 12 November the median price of regular petrol (92/93) across Georgia’s filling-station chains was 3.97 ₾ a litre, down from 4.00 ₾ on 5 November.',
-        },
-      },
-      {
-        date: '2026-11-12',
         source: 'Crystalauto (BM.GE)',
         url: 'https://www.crystalauto.ge/news/8924-noembris-bolos-rustavelis-gamzirze-shuknishnebi-ar-ikneba-chartuli-tumtsa-proekti-dasruleb',
         ka: {

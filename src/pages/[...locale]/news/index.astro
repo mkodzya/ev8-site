@@ -3,6 +3,7 @@
 // full, the earlier ones as a list. The items and their rules: src/data/news.ts.
 import Base from '../../../layouts/Base.astro';
 import NewsIssue from '../../../components/NewsIssue.astro';
+import PetrolChart from '../../../components/PetrolChart.astro';
 import { dict, href, localePaths, type Locale } from '../../../i18n';
 import { fromGel } from '../../../data/models';
 import { issues, latest, range, issuePath, issueLd } from '../../../lib/news';
@@ -26,6 +27,7 @@ const earlier = issues.slice(1);
       {latest && (
         <>
           <h2 class="h2 news-week"><a href={href(locale, issuePath(latest))}>{t.week.replace('{range}', range(latest))}</a></h2>
+          <PetrolChart locale={locale} until={latest.to} />
           <NewsIssue locale={locale} issue={latest} />
         </>
       )}
