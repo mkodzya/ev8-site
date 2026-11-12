@@ -46,6 +46,52 @@ export interface Issue {
 
 export const issues: Issue[] = [
   {
+    date: '2026-11-12',
+    from: '2026-11-06',
+    to: '2026-11-12',
+    items: [
+      {
+        date: '2026-11-12',
+        source: 'priceshub.ge',
+        url: 'https://priceshub.ge/',
+        ka: {
+          title: 'რეგულარი ბენზინი — 3,97 ₾ ლიტრი',
+          text: '12 ნოემბერს რეგულარი ბენზინის (92/93) ფასის მედიანა საქართველოს ბენზინგასამართ ქსელებში ლიტრზე 3,97 ₾ იყო, 5 ნოემბერს — 4,00 ₾.',
+        },
+        en: {
+          title: 'Regular petrol: 3.97 ₾ a litre',
+          text: 'On 12 November the median price of regular petrol (92/93) across Georgia’s filling-station chains was 3.97 ₾ a litre, down from 4.00 ₾ on 5 November.',
+        },
+      },
+      {
+        date: '2026-11-12',
+        source: 'Crystalauto (BM.GE)',
+        url: 'https://www.crystalauto.ge/news/8924-noembris-bolos-rustavelis-gamzirze-shuknishnebi-ar-ikneba-chartuli-tumtsa-proekti-dasruleb',
+        ka: {
+          title: 'რუსთაველის გამზირზე შუქნიშნები საახალწლო ღონისძიებების დასრულებამდე არ ჩაირთვება',
+          text: 'თბილისის მერის, კახა კალაძის თქმით, რუსთაველის გამზირის რეაბილიტაცია დათქმულ ვადაში, ნოემბრის ბოლოს დასრულდება. შუქნიშნები დამონტაჟდება, მაგრამ საახალწლო ღონისძიებების დასრულებამდე არ ჩაირთვება და გამზირზე მოძრაობის ახალი სქემები იმოქმედებს. ავტობუსებს თავიანთი ზოლები დარჩებათ.',
+        },
+        en: {
+          title: 'Rustaveli Avenue: traffic lights stay off until the New Year events are over',
+          text: 'Tbilisi mayor Kakha Kaladze says the rehabilitation of Rustaveli Avenue will be finished on schedule at the end of November. The traffic lights will be installed but not switched on until the New Year events are over, and new traffic schemes will apply on the avenue meanwhile. Buses keep their own lanes.',
+        },
+      },
+      {
+        date: '2026-11-11',
+        source: 'Crystalauto (BM.GE)',
+        url: 'https://www.crystalauto.ge/news/8918-13-noembers-metekhis-khidze-sagzao-modzraoba-ormkhrivad-sheizghudeba',
+        ka: {
+          title: '13 ნოემბერს მეტეხის ხიდზე მოძრაობა ორივე მიმართულებით შეიზღუდება',
+          text: 'ტრანსპორტისა და ურბანული განვითარების სააგენტოს ცნობით, 13 ნოემბერს, 08:00-დან 20:00-მდე, დაგეგმილი ღონისძიების გამო მეტეხის ხიდზე მოძრაობა ორმხრივად შეიზღუდება. ვახტანგ გორგასლის ქუჩიდან ხიდისკენ მარჯვნივ მოხვევა შეუძლებელი იქნება — თავისუფლების მოედნისკენ კოტე აფხაზის ქუჩით უნდა იმოძრაოთ. ევროპის მოედანზე წრიული მოძრაობა არ იცვლება.',
+        },
+        en: {
+          title: 'Metekhi Bridge closed both ways on 13 November',
+          text: 'On 13 November, from 08:00 to 20:00, traffic on Metekhi Bridge will be closed in both directions for a planned event, the Transport and Urban Development Agency says. Vehicles coming from Vakhtang Gorgasali Street cannot turn right onto the bridge and continue towards Freedom Square via Kote Apkhazi Street. The roundabout at Europe Square stays as it is.',
+        },
+      },
+    ],
+  },
+  {
     date: '2026-11-05',
     from: '2026-10-29',
     to: '2026-11-05',
