@@ -138,6 +138,10 @@ address and its day; the text is our short retelling in Georgian and English, ne
 sentences, and no private person's name. A week without news has no issue — it is skipped, never
 filled. A weekly scheduled task drafts the issue and puts it on the preview; it reaches ev8.ge with a
 release, on Kardu's word.
+The petrol price is not a news item: it is a chart above the issue (Kardu, 12.11.2026), one point a
+week in `src/data/petrol.ts` — the calculator's own number (median of regular petrol across the chains on
+priceshub.ge), drawn at build time by `src/components/PetrolChart.astro`. The weekly task adds that
+Thursday's price; the weeks before 12.11.2026 come from priceshub.ge's 90-day archive, counted the same way.
 
 ## The server's door
 Redirects and cache headers are not in the pages: the server's door (Caddy) applies them

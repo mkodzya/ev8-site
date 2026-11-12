@@ -820,6 +820,23 @@ html[data-theme='light'][data-page='garage'] body::before { content: ''; positio
 .news-item p { margin: 0; max-width: 62ch; }
 .news-meta { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .news-src { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 500; color: var(--accent); text-decoration: none; }
+
+/* Petrol chart on the news pages (src/components/PetrolChart.astro). */
+.petrol { margin: 8px 0 12px; max-width: 560px; padding: 16px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.petrol-k { margin: 0; font-size: 13px; color: var(--muted); }
+.petrol-big { margin: 2px 0 0; font-size: 40px; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.petrol-big small { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+.petrol-delta { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 13px; font-weight: 500; }
+.petrol-delta.up { background: var(--soft); }
+.petrol svg { display: block; width: 100%; height: auto; margin-top: 12px; }
+.petrol-grid { stroke: var(--line); stroke-width: 1; }
+.petrol-ax { fill: var(--muted); font-size: 10px; font-family: var(--f); font-variant-numeric: tabular-nums; }
+.petrol-area { fill: var(--brand); opacity: 0.12; }
+.petrol-line { fill: none; stroke: var(--brand); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.petrol-dot { fill: var(--brand); }
+.petrol-now { fill: var(--ink); stroke: var(--surface); stroke-width: 2; }
+.petrol-src { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+.petrol-src a { color: var(--accent); }
 .news-src:hover { text-decoration: underline; }
 .info > div > .news-week:not(:first-child) { margin-top: 32px; }
 .news-archive { list-style: none; margin: 0; padding: 0; }

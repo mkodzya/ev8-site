@@ -1,0 +1,57 @@
+---
+// Regular petrol week by week (src/data/petrol.ts), drawn at build time as a
+// plain SVG: no script, no third-party chart. On an issue's page it ends on
+// the issue's last day, so an old issue keeps the picture it had.
+import { dict, type Locale } from '../i18n';
+import { petrol, PETROL_SOURCE } from '../data/petrol';
+
+interface Props { locale: Locale; until: string; }
+const { locale, until } = Astro.props;
+const t = dict(locale).news.petrol;
+const pts = petrol.filter((p) => p.date <= until);
+const last = pts.at(-1);
+const prev = pts.at(-2);
+const dec = locale === 'en' ? '.' : ',';
+const gel = (tetri: number) => (tetri / 100).toFixed(2).replace('.', dec);
+const dm = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}`;
+
+// Geometry: 360 × 190, plot from x 44 to 344, y 18 to 156.
+const W = 360, X0 = 44, X1 = 344, Y0 = 18, Y1 = 156;
+const step = 10; // tetri between grid lines
+const lo = pts.length ? Math.floor((Math.min(...pts.map((p) => p.tetri)) - 2) / step) * step : 0;
+const hi = pts.length ? Math.ceil((Math.max(...pts.map((p) => p.tetri)) + 2) / step) * step : 1;
+const x = (i: number) => (pts.length < 2 ? X1 : X0 + (i * (X1 - X0)) / (pts.length - 1));
+const y = (v: number) => Y1 - ((v - lo) * (Y1 - Y0)) / (hi - lo);
+const grid: number[] = [];
+for (let v = lo; v <= hi; v += step) grid.push(v);
+const line = pts.map((p, i) => `${x(i).toFixed(1)},${y(p.tetri).toFixed(1)}`).join(' ');
+const area = pts.length > 1 ? `${X0},${Y1} ${line} ${X1},${Y1}` : '';
+// Date labels: the first point, every fourth after it, and the last.
+const labelled = pts.map((_, i) => i).filter((i) => i === pts.length - 1 || (i % 4 === 0 && pts.length - 1 - i >= 2));
+const diff = last && prev ? last.tetri - prev.tetri : null;
+const delta = diff === null ? '' : diff === 0 ? t.same : t.delta.replace('{d}', `${diff > 0 ? '+' : '−'}${gel(Math.abs(diff))}`);
+const aria = t.aria + ': ' + pts.map((p) => `${dm(p.date)} ${gel(p.tetri)}`).join(', ');
+---
+{last && pts.length > 1 && (
+  <figure class="petrol">
+    <p class="petrol-k">{t.title}</p>
+    <p class="petrol-big">{gel(last.tetri)} <small>{t.unit}</small></p>
+    {delta && <span class={`petrol-delta${diff && diff > 0 ? ' up' : ''}`}>{delta}</span>}
+    <svg viewBox={`0 0 ${W} 190`} role="img" aria-label={aria}>
+      {grid.map((v) => (
+        <g>
+          <line x1={X0} x2={X1} y1={y(v)} y2={y(v)} class="petrol-grid" />
+          <text x={X0 - 6} y={y(v) + 3.5} text-anchor="end" class="petrol-ax">{gel(v)}</text>
+        </g>
+      ))}
+      <polygon points={area} class="petrol-area" />
+      <polyline points={line} class="petrol-line" />
+      {pts.map((p, i) => i < pts.length - 1 && <circle cx={x(i)} cy={y(p.tetri)} r="2.6" class="petrol-dot" />)}
+      <circle cx={x(pts.length - 1)} cy={y(last.tetri)} r="5" class="petrol-now" />
+      {labelled.map((i) => (
+        <text x={x(i)} y="178" text-anchor={i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle'} class="petrol-ax">{dm(pts[i].date)}</text>
+      ))}
+    </svg>
+    <figcaption class="petrol-src">{t.note}{' '}<a href={PETROL_SOURCE} rel="noopener" target="_blank">priceshub.ge</a></figcaption>
+  </figure>
+)}

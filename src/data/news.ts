@@ -46,6 +46,26 @@ export interface Issue {
 
 export const issues: Issue[] = [
   {
+    date: '2026-11-12',
+    from: '2026-11-06',
+    to: '2026-11-12',
+    items: [
+      {
+        date: '2026-11-12',
+        source: 'Crystalauto (BM.GE)',
+        url: 'https://www.crystalauto.ge/news/8924-noembris-bolos-rustavelis-gamzirze-shuknishnebi-ar-ikneba-chartuli-tumtsa-proekti-dasruleb',
+        ka: {
+          title: 'რუსთაველის გამზირზე შუქნიშნები საახალწლო ღონისძიებების დასრულებამდე არ ჩაირთვება',
+          text: 'თბილისის მერის, კახა კალაძის თქმით, რუსთაველის გამზირის რეაბილიტაცია დათქმულ ვადაში, ნოემბრის ბოლოს დასრულდება. შუქნიშნები დამონტაჟდება, მაგრამ საახალწლო ღონისძიებების დასრულებამდე არ ჩაირთვება და გამზირზე მოძრაობის ახალი სქემები იმოქმედებს. ავტობუსებს თავიანთი ზოლები დარჩებათ.',
+        },
+        en: {
+          title: 'Rustaveli Avenue: traffic lights stay off until the New Year events are over',
+          text: 'Tbilisi mayor Kakha Kaladze says the rehabilitation of Rustaveli Avenue will be finished on schedule at the end of November. The traffic lights will be installed but not switched on until the New Year events are over, and new traffic schemes will apply on the avenue meanwhile. Buses keep their own lanes.',
+        },
+      },
+    ],
+  },
+  {
     date: '2026-11-05',
     from: '2026-10-29',
     to: '2026-11-05',
