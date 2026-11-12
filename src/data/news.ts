@@ -76,19 +76,6 @@ export const issues: Issue[] = [
           text: 'Tbilisi mayor Kakha Kaladze says the rehabilitation of Rustaveli Avenue will be finished on schedule at the end of November. The traffic lights will be installed but not switched on until the New Year events are over, and new traffic schemes will apply on the avenue meanwhile. Buses keep their own lanes.',
         },
       },
-      {
-        date: '2026-11-11',
-        source: 'Crystalauto (BM.GE)',
-        url: 'https://www.crystalauto.ge/news/8918-13-noembers-metekhis-khidze-sagzao-modzraoba-ormkhrivad-sheizghudeba',
-        ka: {
-          title: '13 ნოემბერს მეტეხის ხიდზე მოძრაობა ორივე მიმართულებით შეიზღუდება',
-          text: 'ტრანსპორტისა და ურბანული განვითარების სააგენტოს ცნობით, 13 ნოემბერს, 08:00-დან 20:00-მდე, დაგეგმილი ღონისძიების გამო მეტეხის ხიდზე მოძრაობა ორმხრივად შეიზღუდება. ვახტანგ გორგასლის ქუჩიდან ხიდისკენ მარჯვნივ მოხვევა შეუძლებელი იქნება — თავისუფლების მოედნისკენ კოტე აფხაზის ქუჩით უნდა იმოძრაოთ. ევროპის მოედანზე წრიული მოძრაობა არ იცვლება.',
-        },
-        en: {
-          title: 'Metekhi Bridge closed both ways on 13 November',
-          text: 'On 13 November, from 08:00 to 20:00, traffic on Metekhi Bridge will be closed in both directions for a planned event, the Transport and Urban Development Agency says. Vehicles coming from Vakhtang Gorgasali Street cannot turn right onto the bridge and continue towards Freedom Square via Kote Apkhazi Street. The roundabout at Europe Square stays as it is.',
-        },
-      },
     ],
   },
   {
