@@ -52,6 +52,6 @@ const aria = t.aria + ': ' + pts.map((p) => `${dm(p.date)} ${gel(p.tetri)}`).joi
         <text x={x(i)} y="178" text-anchor={i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle'} class="petrol-ax">{dm(pts[i].date)}</text>
       ))}
     </svg>
-    <figcaption class="petrol-src">{t.note} <a href={PETROL_SOURCE} rel="noopener" target="_blank">priceshub.ge</a></figcaption>
+    <figcaption class="petrol-src">{t.note}{' '}<a href={PETROL_SOURCE} rel="noopener" target="_blank">priceshub.ge</a></figcaption>
   </figure>
 )}
