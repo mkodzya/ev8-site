@@ -72,7 +72,9 @@ input[type=date]{width:100%;font:500 16px var(--body);color:var(--ink);backgroun
 .figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #262b26}
 .figs div{min-width:0}
 .figs small{display:block;font-size:12px;opacity:.7}
-.figs strong{display:block;font:700 18px/1.25 var(--display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.figs strong{display:block;font:700 17px/1.25 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:400px){.figs strong{font-size:15px}}
+.models i{font-style:normal}
 .warn{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
 details{margin-top:14px}
 summary{cursor:pointer;font-weight:600;padding:4px 0}
@@ -194,7 +196,7 @@ let skip = 0;
 const $ = (id) => document.getElementById(id);
 const pad = (n) => String(n).padStart(2, '0');
 const fmt = (d) => pad(d.getUTCDate()) + '.' + pad(d.getUTCMonth() + 1) + '.' + d.getUTCFullYear();
-const money = (n) => n.toLocaleString(lang === 'ru' ? 'ru-RU' : 'ka-GE').replace(/ /g, ' ') + ' ₾';
+const money = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0₾';
 const addDays = (d, n) => new Date(d.getTime() + n * 864e5);
 const parse = (v) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null; };
 
