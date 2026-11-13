@@ -1,0 +1,248 @@
+---
+// The team's buyout calculator (Kardu, 13.11.2026): pick the moped, the day the contract
+// starts and the weeks the courier skipped, and see how many weekly payments are left to
+// the day the moped becomes theirs. For EV8 and its managers only: an unlisted address,
+// no links to it, noindex, not in the sitemap — like the investor page.
+// The rule (Kardu, 13.11.2026): the moped is the renter's after 30 / 36 / 52 weekly payments
+// (XL1200 / Eagle / S70 Pro) at the usual weekly price; the counts live in src/data/models.ts
+// (buyoutWeeks), the prices beside them. Georgian for the managers, Russian for Kardu.
+import { models, fullName, DEPOSIT_GEL } from '../../../../data/models';
+
+const data = models.map((m) => ({ id: m.id, name: fullName(m), price: m.weeklyGel, weeks: m.buyoutWeeks, from: m.from ?? '' }));
+---
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>EV8 · გამოსყიდვა</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap">
+<style>
+/* One column, phone first: the choice on top, the answer right under it, the schedule folded. Colours from the EV8 brand. */
+:root{
+  --bg:#fbfbfb; --surface:#fff; --surface-2:#f3f3f3; --ink:#0b0b0b; --muted:#5d5d5d; --line:#e6ebe7;
+  --brand:#819481; --accent:#557553; --accent-soft:#e3ebe3; --lime:#e0ffa2; --warn:#a3420a; --warn-soft:#fdeadf;
+  --display:"Be Vietnam Pro","Noto Sans Georgian","Inter",system-ui,sans-serif;
+  --body:"Noto Sans Georgian","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e110e; --surface:#151a15; --surface-2:#1b211b; --ink:#eef1ee; --muted:#a5b0a5; --line:#263026;
+  --brand:#a2b9a2; --accent:#a2b9a2; --accent-soft:#1f2b20; --warn:#ffb27e; --warn-soft:#3a2414; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e110e; --surface:#151a15; --surface-2:#1b211b; --ink:#eef1ee; --muted:#a5b0a5; --line:#263026;
+  --brand:#a2b9a2; --accent:#a2b9a2; --accent-soft:#1f2b20; --warn:#ffb27e; --warn-soft:#3a2414; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body)}
+html[lang="ru"] body{font-family:"Inter","Noto Sans Georgian",system-ui,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left)) 56px max(16px,env(safe-area-inset-right))}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.logo{font:700 22px/1 var(--display);letter-spacing:.04em;color:var(--brand)}
+.tag{font-size:12px;color:var(--muted)}
+.langs{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.langs button{font:600 13px var(--body);border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+h1{font:700 clamp(24px,6vw,32px)/1.15 var(--display);margin:0 0 6px;letter-spacing:-.01em;text-wrap:balance}
+.lead{margin:0 0 22px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}
+.card + .card{margin-top:14px}
+label.cap,.cap{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 8px}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.models input{position:absolute;opacity:0;pointer-events:none}
+.models label{display:block;border:1.5px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;min-height:84px;transition:border-color .2s ease, background .2s ease}
+.models input:checked + label{border-color:var(--accent);background:var(--accent-soft)}
+.models input:focus-visible + label{outline:2px solid var(--brand);outline-offset:2px}
+.models b{display:block;font:700 15px/1.2 var(--display)}
+.models span{display:block;font-size:13px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+input[type=date]{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:46px}
+.stepper{display:flex;align-items:center;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;min-height:46px}
+.stepper button{width:46px;height:44px;border:0;background:none;font:600 20px var(--body);color:var(--ink);cursor:pointer}
+.stepper output{flex:1;text-align:center;font:600 18px var(--display);font-variant-numeric:tabular-nums}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.answer{background:#0b0b0b;color:#fff;border-color:#0b0b0b}
+.answer .cap{color:#a9aea9}
+.big{font:700 clamp(30px,9vw,42px)/1.05 var(--display);font-variant-numeric:tabular-nums;margin:2px 0 4px;color:#e0ffa2}
+.dow{font-size:14px;opacity:.75}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #262b26}
+.figs div{min-width:0}
+.figs small{display:block;font-size:12px;opacity:.7}
+.figs strong{display:block;font:700 18px/1.25 var(--display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.warn{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:600;padding:4px 0}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td:last-child,th:last-child{text-align:right}
+.notes{margin:18px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+.notes li+li{margin-top:6px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="logo">EV8</div><div class="tag" data-t="internal"></div></div>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="ka" aria-pressed="true">ქარ</button>
+      <button type="button" data-lang="ru" aria-pressed="false">РУС</button>
+    </div>
+  </header>
+
+  <h1 data-t="title"></h1>
+  <p class="lead" data-t="lead"></p>
+
+  <section class="card">
+    <span class="cap" data-t="model"></span>
+    <div class="models">
+      {data.map((m, i) => (
+        <div>
+          <input type="radio" name="model" id={`m-${m.id}`} value={m.id} checked={i === 0} />
+          <label for={`m-${m.id}`}><b>{m.name}</b><span>{m.price} ₾ / <i data-t="weekShort"></i></span><span>{m.weeks} <i data-t="paymentsShort"></i></span></label>
+        </div>
+      ))}
+    </div>
+    <div class="row">
+      <div>
+        <label class="cap" for="start" data-t="start"></label>
+        <input type="date" id="start" required>
+      </div>
+      <div>
+        <span class="cap" id="skip-cap" data-t="skipped"></span>
+        <div class="stepper" role="group" aria-labelledby="skip-cap">
+          <button type="button" id="minus" aria-label="−">−</button>
+          <output id="skip" aria-live="polite">0</output>
+          <button type="button" id="plus" aria-label="+">+</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint" data-t="skippedHint"></p>
+  </section>
+
+  <section class="card answer" aria-live="polite">
+    <span class="cap" data-t="ownCap"></span>
+    <div class="big" id="own">—</div>
+    <div class="dow" id="own-dow"></div>
+    <div class="figs">
+      <div><small data-t="payments"></small><strong id="f-n">—</strong></div>
+      <div><small data-t="total"></small><strong id="f-total">—</strong></div>
+      <div><small data-t="last"></small><strong id="f-last">—</strong></div>
+    </div>
+  </section>
+  <div class="warn" id="s70" hidden data-t="s70"></div>
+
+  <details class="card">
+    <summary data-t="schedule"></summary>
+    <p class="hint" data-t="scheduleHint"></p>
+    <table>
+      <thead><tr><th>№</th><th data-t="date"></th><th data-t="paid"></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </details>
+
+  <ul class="notes">
+    <li data-t="rule"></li>
+    <li data-t="deposit"></li>
+    <li data-t="prorata"></li>
+  </ul>
+</div>
+
+<script is:inline define:vars={{ data, deposit: DEPOSIT_GEL }}>
+const T = {
+  ka: {
+    internal: 'შიდა გვერდი — EV8-ის გუნდისთვის',
+    title: 'მოპედის გამოსყიდვის კალკულატორი',
+    lead: 'აირჩიე მოდელი, ხელშეკრულების დაწყების თარიღი და გამოტოვებული კვირები — და ნახავ, როდის გადადის მოპედი კლიენტის საკუთრებაში.',
+    model: 'მოდელი', weekShort: 'კვირა', paymentsShort: 'გადახდა',
+    start: 'ხელშეკრულების დაწყება', skipped: 'გამოტოვებული კვირები',
+    skippedHint: 'კვირა, რომელიც არ გადაიხადა ან პაუზაზე იყო, არ ითვლება: ყოველი ასეთი კვირა გამოსყიდვის თარიღს 7 დღით გადაწევს.',
+    ownCap: 'მოპედი კლიენტის საკუთრებაში გადადის', payments: 'გადახდა', total: 'ჯამში', last: 'ბოლო გადახდა',
+    s70: 'S70 Pro პარკში 2027 წლის იანვრიდან იქნება — ხელშეკრულება მანამდე ვერ დაიწყება.',
+    schedule: 'გადახდების გრაფიკი', scheduleHint: 'გრაფიკი გამოტოვებული კვირების გარეშეა: თითოეული გამოტოვებული კვირა მომდევნო თარიღებს 7 დღით გადაწევს.',
+    date: 'თარიღი', paid: 'ჯამში გადახდილი',
+    rule: 'წესი: XL1200 — 30, Eagle — 36, S70 Pro — 52 კვირის გადახდა ჩვეულებრივ ფასად (Kardu, 13.11.2026).',
+    deposit: 'დეპოზიტი ({d} ₾) ცალკე იხდება და ამ ჯამში არ შედის.',
+    prorata: 'თუ გადახდის დღე გადაწეულია, პირველი კვირის ფასი დღეების მიხედვით იცვლება — კალკულატორი ამას არ ითვლის.',
+    days: ['კვირა','ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი'],
+  },
+  ru: {
+    internal: 'Внутренняя страница — для команды EV8',
+    title: 'Калькулятор выкупа мопеда',
+    lead: 'Выбери модель, дату начала договора и пропущенные недели — и увидишь, когда мопед переходит в собственность клиента.',
+    model: 'Модель', weekShort: 'нед.', paymentsShort: 'платежей',
+    start: 'Начало договора', skipped: 'Пропущенные недели',
+    skippedHint: 'Неделя, которую не оплатили или стояли на паузе, не засчитывается: каждая такая неделя сдвигает дату выкупа на 7 дней.',
+    ownCap: 'Мопед переходит в собственность клиента', payments: 'Платежей', total: 'Всего', last: 'Последний платёж',
+    s70: 'S70 Pro появится в парке с января 2027 — договор раньше не начнётся.',
+    schedule: 'График платежей', scheduleHint: 'График без пропусков: каждая пропущенная неделя сдвигает следующие даты на 7 дней.',
+    date: 'Дата', paid: 'Оплачено всего',
+    rule: 'Правило: XL1200 — 30, Eagle — 36, S70 Pro — 52 недельных платежа по обычной цене (Kardu, 13.11.2026).',
+    deposit: 'Залог ({d} ₾) вносится отдельно и в эту сумму не входит.',
+    prorata: 'Если день оплаты перенесён, цена первой недели меняется по дням — калькулятор этого не считает.',
+    days: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+  },
+};
+let lang = 'ka';
+try { const s = localStorage.getItem('ev8-buyout-lang'); if (s === 'ru' || s === 'ka') lang = s; } catch (e) {}
+let skip = 0;
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, '0');
+const fmt = (d) => pad(d.getUTCDate()) + '.' + pad(d.getUTCMonth() + 1) + '.' + d.getUTCFullYear();
+const money = (n) => n.toLocaleString(lang === 'ru' ? 'ru-RU' : 'ka-GE').replace(/ /g, ' ') + ' ₾';
+const addDays = (d, n) => new Date(d.getTime() + n * 864e5);
+const parse = (v) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null; };
+
+// Today in Tbilisi as the default start.
+const today = new Date(Date.now() + 4 * 3600e3).toISOString().slice(0, 10);
+$('start').value = today;
+
+function texts() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-t]').forEach((el) => {
+    el.textContent = T[lang][el.dataset.t].replace('{d}', deposit);
+  });
+  document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.title = 'EV8 · ' + (lang === 'ru' ? 'выкуп' : 'გამოსყიდვა');
+}
+
+function calc() {
+  const m = data.find((x) => x.id === document.querySelector('input[name=model]:checked').value);
+  const start = parse($('start').value);
+  $('skip').textContent = skip;
+  $('s70').hidden = !(m.from && start && $('start').value.slice(0, 7) < m.from);
+  if (!start) { ['own', 'f-n', 'f-total', 'f-last'].forEach((id) => ($(id).textContent = '—')); $('own-dow').textContent = ''; $('rows').innerHTML = ''; return; }
+  // Payment k (1..N) is due at the start of week k; with no gaps that is start + 7(k-1).
+  // The moped is the client's when the last paid week ends: start + 7(N + skipped).
+  const own = addDays(start, 7 * (m.weeks + skip));
+  const last = addDays(start, 7 * (m.weeks - 1 + skip));
+  $('own').textContent = fmt(own);
+  $('own-dow').textContent = T[lang].days[own.getUTCDay()];
+  $('f-n').textContent = m.weeks + ' × ' + m.price + ' ₾';
+  $('f-total').textContent = money(m.weeks * m.price);
+  $('f-last').textContent = fmt(last);
+  let html = '';
+  for (let k = 1; k <= m.weeks; k++) {
+    html += '<tr><td>' + k + '</td><td>' + fmt(addDays(start, 7 * (k - 1))) + '</td><td>' + money(k * m.price) + '</td></tr>';
+  }
+  $('rows').innerHTML = html;
+}
+
+document.querySelectorAll('input[name=model]').forEach((r) => r.addEventListener('change', calc));
+$('start').addEventListener('input', calc);
+$('minus').addEventListener('click', () => { skip = Math.max(0, skip - 1); calc(); });
+$('plus').addEventListener('click', () => { skip = Math.min(104, skip + 1); calc(); });
+document.querySelectorAll('.langs button').forEach((b) => b.addEventListener('click', () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem('ev8-buyout-lang', lang); } catch (e) {}
+  texts(); calc();
+}));
+texts(); calc();
+</script>
+</body>
+</html>
