@@ -35,15 +35,18 @@ export interface Model {
   /** Batteries that come with the moped, and as many chargers (Kardu: XL1200 and Eagle two,
    *  11.10.2026, "Даем по 2 батареи"; S70 Pro one battery and one charger, 12.11.2026). */
   batteries: number;
+  /** Weekly payments after which the moped becomes the renter's (rent-to-own): Kardu, 13.11.2026 —
+   *  30 / 36 / 52 at the usual weekly price. Used only by the team's buyout calculator, not shown publicly. */
+  buyoutWeeks: number;
 }
 
 
 export const DEPOSIT_GEL = 180;
 
 export const models: Model[] = [
-  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none', rangeKm: 50, motorW: 800, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true, batteries: 2 },
-  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM', rangeKm: 50, motorW: 1200, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true, batteries: 2 },
-  { id: 's70-pro', name: 'S70 Pro', brand: 'Luyuan', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01', rangeKm: 75, motorW: 1200, battery: { volts: 72, ah: 27 }, chargeHours: 3.5, deliveryBox: true, batteries: 1 },
+  { id: 'xl1200', name: 'XL1200', weeklyGel: 140, level: 1, image: 'img/models/xl1200.webp', thumb: 'img/models/xl1200-thumb.webp', licence: 'none', rangeKm: 50, motorW: 800, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true, batteries: 2, buyoutWeeks: 30 },
+  { id: 'eagle', name: 'Eagle', weeklyGel: 155, level: 2, image: 'img/models/eagle.webp', thumb: 'img/models/eagle-thumb.webp', licence: 'AM', rangeKm: 50, motorW: 1200, battery: { volts: 60, ah: 20 }, chargeHours: 3, deliveryBox: true, batteries: 2, buyoutWeeks: 36 },
+  { id: 's70-pro', name: 'S70 Pro', brand: 'Luyuan', weeklyGel: 185, level: 3, image: 'img/models/s70-pro.webp', thumb: 'img/models/s70-pro-thumb.webp', licence: 'AM', insurance: true, from: '2027-01', rangeKm: 75, motorW: 1200, battery: { volts: 72, ah: 27 }, chargeHours: 3.5, deliveryBox: true, batteries: 1, buyoutWeeks: 52 },
 ];
 
 /** The name with its maker, for titles, search and questions: "Luyuan S70 Pro". */
